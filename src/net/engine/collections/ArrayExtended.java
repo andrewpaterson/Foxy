@@ -3,17 +3,11 @@ package net.engine.collections;
 
 import java.util.ArrayList;
 
-public class ArrayListExtended<E> extends ArrayList<E>
+public class ArrayExtended<E> extends ArrayList<E>
 {
   private E defaultValue;
 
-  public ArrayListExtended()
-  {
-    super();
-    this.defaultValue = null;
-  }
-
-  public ArrayListExtended(E defaultValue)
+  public ArrayExtended(E defaultValue)
   {
     super();
     this.defaultValue = defaultValue;

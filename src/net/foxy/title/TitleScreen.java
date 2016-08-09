@@ -9,6 +9,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
+import static net.engine.common.GameRandom.random;
 
 public class TitleScreen extends Stage
 {
@@ -24,9 +25,19 @@ public class TitleScreen extends Stage
   {
     graphics.clearRect(0, 0, width, height);
 
+    graphics.setColor(Color.DARK_GRAY);
     String start = "Start";
     graphics.setFont(font);
     graphics.drawChars(start.toCharArray(), 0, start.length(), 100, 100);
+    graphics.drawRect(100, 100, 200, 50);
+
+    for (int i = 0; i < 10; i++)
+    {
+      int x = random.nextInt(width - 50);
+      int y = random.nextInt(height);
+      int widthX = random.nextInt(100) + 50;
+      graphics.drawLine(x, y, x + widthX, y);
+    }
   }
 
   @Override
@@ -43,6 +54,7 @@ public class TitleScreen extends Stage
           int modifiersEx = mouseEvent.getModifiersEx();
           if ((modifiersEx & BUTTON1_DOWN_MASK) != 0)
           {
+            System.out.println(mouseEvent.getPoint());
             stageManager.setStage(new NightOne());
           }
         }

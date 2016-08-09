@@ -1,6 +1,6 @@
 package net.engine.input;
 
-import net.engine.collections.ArrayListExtended;
+import net.engine.collections.ArrayExtended;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -16,16 +16,16 @@ import java.util.List;
 public class GameInput
 {
   protected List<InputEvent> events;
-  protected ArrayListExtended<Boolean> keyboardState;
+  protected ArrayExtended<Boolean> keyboardState;
   protected Point mouseLocation;
-  protected ArrayListExtended<Boolean> mouseState;
+  protected ArrayExtended<Boolean> mouseState;
 
   public GameInput()
   {
     events = new ArrayList<>();
-    keyboardState = new ArrayListExtended<>(Boolean.FALSE);
+    keyboardState = new ArrayExtended<>(Boolean.FALSE);
     mouseLocation = MouseInfo.getPointerInfo().getLocation();
-    mouseState = new ArrayListExtended<>(Boolean.FALSE);
+    mouseState = new ArrayExtended<>(Boolean.FALSE);
   }
 
   public void setMouseLocation()

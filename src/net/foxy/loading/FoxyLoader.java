@@ -9,7 +9,7 @@ public class FoxyLoader extends Loader
   {
     try
     {
-      Thread.sleep(2000);
+      Thread.sleep(200);
     }
     catch (InterruptedException e)
     {

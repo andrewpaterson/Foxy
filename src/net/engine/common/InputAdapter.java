@@ -11,7 +11,8 @@ public class InputAdapter
         MouseMotionListener,
         MouseWheelListener,
         KeyListener,
-        MouseListener
+        MouseListener,
+        ComponentListener
 
 {
   private GameInput input;
@@ -24,6 +25,7 @@ public class InputAdapter
     component.addMouseWheelListener(this);
     component.addKeyListener(this);
     component.addMouseListener(this);
+    component.addComponentListener(this);
   }
 
   @Override
@@ -113,6 +115,22 @@ public class InputAdapter
   }
 
   public void mouseExited(MouseEvent e)
+  {
+  }
+
+  public void componentResized(ComponentEvent e)
+  {
+  }
+
+  public void componentMoved(ComponentEvent e)
+  {
+  }
+
+  public void componentShown(ComponentEvent e)
+  {
+  }
+
+  public void componentHidden(ComponentEvent e)
   {
   }
 }
