@@ -24,7 +24,7 @@ public class FoxyLoader extends Loader
 
     try
     {
-      Thread.sleep(200);
+      Thread.sleep(1500);
     }
     catch (InterruptedException e)
     {
