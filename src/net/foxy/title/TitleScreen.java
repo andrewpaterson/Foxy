@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
-import static net.engine.game.GameRandom.random;
+import static net.engine.global.GlobalRandom.random;
 
 public class TitleScreen extends FoxyStage
 {
