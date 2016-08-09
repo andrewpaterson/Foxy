@@ -6,15 +6,14 @@ import java.awt.*;
 
 public class Game
 {
-  protected Stage currentStage;
-  protected Stage nextStage;
+  protected StageManager stageManager;
   protected String title;
 
   public Game(String title)
   {
-    currentStage = null;
-    nextStage = null;
+    super();
     this.title = title;
+    this.stageManager = new StageManager();
   }
 
   protected void run()
@@ -47,6 +46,7 @@ public class Game
 
   private void renderStage(Graphics graphics, int width, int height)
   {
+    Stage currentStage = stageManager.getCurrentStage();
     if (currentStage != null)
     {
       currentStage.render(graphics, width, height);
@@ -55,13 +55,7 @@ public class Game
 
   private void tickStage(long nanoDelta, GameInput input)
   {
-    if (nextStage != null)
-    {
-      currentStage = nextStage;
-      nextStage.stageEnding();
-      nextStage = null;
-      currentStage.stageStarting(this);
-    }
+    Stage currentStage = stageManager.tickStage();
 
     if (currentStage != null)
     {
@@ -72,7 +66,7 @@ public class Game
 
   public void setStage(Stage stage)
   {
-    nextStage = stage;
+    stageManager.setStage(stage);
   }
 }
 

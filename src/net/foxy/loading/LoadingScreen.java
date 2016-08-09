@@ -1,7 +1,8 @@
 package net.foxy.loading;
 
-import net.engine.common.Game;
 import net.engine.common.Stage;
+import net.engine.common.StageManager;
+import net.engine.initial.Loader;
 import net.engine.input.GameInput;
 import net.foxy.title.TitleScreen;
 
@@ -11,23 +12,18 @@ import static net.engine.common.GameRandom.random;
 
 public class LoadingScreen extends Stage
 {
-  private float count;
-  private Game game;
+  private Loader loader;
 
   public LoadingScreen()
   {
-    count = 0;
   }
 
-  @Override
-  public void stageStarting(Game game)
-  {
-    this.game = game;
-  }
 
   @Override
-  public void stageEnding()
+  public void stageStarting(StageManager stageManager)
   {
+    super.stageStarting(stageManager);
+    loader = new FoxyLoader();
   }
 
   @Override
@@ -45,10 +41,9 @@ public class LoadingScreen extends Stage
   public void tick(double time, GameInput input)
   {
     input.popEvents();
-    count += time;
-    if (count > 2)
+    if (loader.isDone())
     {
-      game.setStage(new TitleScreen());
+      stageManager.setStage(new TitleScreen());
     }
   }
 

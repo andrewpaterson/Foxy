@@ -6,8 +6,11 @@ import java.awt.*;
 
 public abstract class Stage
 {
-  public void stageStarting(Game game)
+  protected StageManager stageManager;
+
+  public void stageStarting(StageManager stageManager)
   {
+    this.stageManager = stageManager;
   }
 
   public void stageEnding()
