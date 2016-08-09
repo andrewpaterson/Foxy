@@ -18,7 +18,7 @@ public class GlobalGraphics
     return graphicsConfiguration;
   }
 
-  private static GraphicsEnvironment getGraphicsEnvironment()
+  public static GraphicsEnvironment getGraphicsEnvironment()
   {
     if (localGraphicsEnvironment == null)
     {
@@ -36,6 +36,43 @@ public class GlobalGraphics
     g2d.drawImage(image, dx, dy, dx + width, dy + height, sx, sy, sx + width, sy + height, null);
     g2d.dispose();
     return copy;
+  }
+
+  public static DisplayMode getDisplayMode(int width, int height)
+  {
+    GraphicsDevice graphicsDevice = getGraphicsEnvironment().getDefaultScreenDevice();
+
+    int bitDepth = graphicsDevice.getDisplayMode().getBitDepth();
+    int refreshRate = graphicsDevice.getDisplayMode().getRefreshRate();
+
+    DisplayMode[] displayModes = graphicsDevice.getDisplayModes();
+
+    for (DisplayMode displayMode : displayModes)
+    {
+      if (displayMode.getHeight() == height)
+      {
+        if (displayMode.getWidth() == width)
+        {
+          if (displayMode.getBitDepth() == bitDepth)
+          {
+            if (displayMode.getRefreshRate() == refreshRate)
+            {
+              return displayMode;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  public static void fullScreen(Window window, int width, int height)
+  {
+    DisplayMode displayMode = GlobalGraphics.getDisplayMode(width, height);
+
+    GraphicsDevice graphicsDevice = GlobalGraphics.getGraphicsEnvironment().getDefaultScreenDevice();
+    graphicsDevice.setFullScreenWindow(window);
+    graphicsDevice.setDisplayMode(displayMode);
   }
 }
 

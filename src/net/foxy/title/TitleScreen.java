@@ -45,6 +45,46 @@ public class TitleScreen extends FoxyStage
 
   private void renderStatic(Graphics graphics, int width, int height)
   {
+    renderStaticDots(graphics, width, height);
+    renderStaticLines(graphics, width, height);
+
+    int bars = random.nextInt(5);
+    if (bars == 1)
+    {
+      renderStaticBar(graphics, width, height);
+    }
+    else if (bars == 0)
+    {
+      renderStaticBar(graphics, width, height);
+      renderStaticBar(graphics, width, height);
+      renderStaticBar(graphics, width, height);
+    }
+  }
+
+  private void renderStaticBar(Graphics graphics, int width, int height)
+  {
+    int barHeight = random.nextInt(20) + 5;
+    int top = random.nextInt(height - barHeight);
+    for (int y = 0; y < barHeight; y++)
+    {
+      int type = random.nextInt(10);
+      if (type > 1)
+      {
+        if ((type >= 2) && type <= 4)
+        {
+          graphics.setColor(Color.BLACK);
+        }
+        else
+        {
+          graphics.setColor(Color.GRAY);
+        }
+        graphics.drawLine(0, y + top, width, y + top);
+      }
+    }
+  }
+
+  private void renderStaticLines(Graphics graphics, int width, int height)
+  {
     graphics.setColor(Color.DARK_GRAY);
     for (int i = 0; i < 10; i++)
     {
@@ -52,6 +92,17 @@ public class TitleScreen extends FoxyStage
       int y = random.nextInt(height);
       int widthX = random.nextInt(100) + 50;
       graphics.drawLine(x, y, x + widthX, y);
+    }
+  }
+
+  private void renderStaticDots(Graphics graphics, int width, int height)
+  {
+    graphics.setColor(Color.LIGHT_GRAY);
+    for (int i = 0; i < 2000; i++)
+    {
+      int x = random.nextInt(width);
+      int y = random.nextInt(height);
+      graphics.drawLine(x - 1, y, x + 1, y);
     }
   }
 

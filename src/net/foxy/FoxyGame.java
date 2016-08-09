@@ -1,6 +1,7 @@
 package net.foxy;
 
 import net.engine.cel.CelStore;
+import net.engine.game.FrameConfig;
 import net.engine.game.Game;
 import net.foxy.loading.LoadingScreen;
 import net.foxy.nights.NightOne;
@@ -12,7 +13,7 @@ public class FoxyGame extends Game
 
   public FoxyGame()
   {
-    super("Five Nights at Foxy's");
+    super(new FrameConfig("Five Nights at Foxy's", 1280, 720));
     celStore = new CelStore();
   }
 

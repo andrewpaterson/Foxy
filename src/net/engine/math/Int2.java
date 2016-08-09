@@ -1,8 +1,5 @@
 package net.engine.math;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class Int2
 {
   public int x;

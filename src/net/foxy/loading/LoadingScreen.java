@@ -31,7 +31,7 @@ public class LoadingScreen extends FoxyStage
   {
     graphics.clearRect(0, 0, width, height);
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 4000; i++)
     {
       drawRect(graphics, width, height);
     }

@@ -10,9 +10,6 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class GameInput
 {
   protected List<InputEvent> events;

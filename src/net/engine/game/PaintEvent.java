@@ -3,9 +3,6 @@ package net.engine.game;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class PaintEvent implements ActionListener
 {
   protected GameCanvas gameCanvas;

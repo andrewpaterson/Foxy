@@ -7,18 +7,18 @@ import java.awt.*;
 public class Game
 {
   protected StageManager stageManager;
-  protected String title;
+  protected FrameConfig config;
 
-  public Game(String title)
+  public Game(FrameConfig config)
   {
     super();
-    this.title = title;
+    this.config = config;
     this.stageManager = new StageManager();
   }
 
   protected void run()
   {
-    GameFrame gameFrame = new GameFrame(title);
+    GameFrame gameFrame = new GameFrame(config);
     gameFrame.setVisible(true);
     gameFrame.start();
     GameCanvas gameCanvas = gameFrame.getCanvas();

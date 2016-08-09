@@ -4,9 +4,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class Scene
 {
   protected List<Sprite> sprites;

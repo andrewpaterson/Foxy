@@ -1,5 +1,6 @@
 package net.engine.game;
 
+import net.engine.global.GlobalGraphics;
 import net.engine.input.GameInput;
 
 import javax.swing.*;
@@ -11,16 +12,28 @@ public class GameFrame
   private GameCanvas canvas;
   private GameInput input;
 
-  public GameFrame(String title) throws HeadlessException
+  public GameFrame(FrameConfig config) throws HeadlessException
   {
-    super(title);
+    super(config.title);
 
     canvas = new GameCanvas();
     input = null;
 
     add(canvas, BorderLayout.CENTER);
-    setSize(600, 400);
 
+    setSize(config.width, config.height);
+    setLocation(config.left, config.top);
+    setAlwaysOnTop(config.onTop);
+    setUndecorated(!config.decorated);
+    setFullScreen(config.fullScreen);
+  }
+
+  private void setFullScreen(boolean fullScreen)
+  {
+    if (fullScreen)
+    {
+      GlobalGraphics.fullScreen(this, getWidth(), getHeight());
+    }
   }
 
   @Override
