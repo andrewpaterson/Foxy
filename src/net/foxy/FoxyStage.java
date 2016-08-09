@@ -1,7 +1,7 @@
 package net.foxy;
 
 import net.engine.cel.CelStore;
-import net.engine.common.game.Stage;
+import net.engine.game.Stage;
 
 public abstract class FoxyStage extends Stage
 {

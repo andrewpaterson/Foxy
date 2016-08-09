@@ -1,6 +1,6 @@
 package net.engine.cel;
 
-import net.engine.common.global.GlobalGraphics;
+import net.engine.global.GlobalGraphics;
 import net.engine.math.Int2;
 
 import java.awt.*;

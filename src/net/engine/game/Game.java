@@ -1,4 +1,4 @@
-package net.engine.common.game;
+package net.engine.game;
 
 import net.engine.input.GameInput;
 

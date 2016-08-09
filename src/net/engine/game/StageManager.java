@@ -1,6 +1,4 @@
-package net.engine.common.game;
-
-import net.foxy.loading.LoadingScreen;
+package net.engine.game;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

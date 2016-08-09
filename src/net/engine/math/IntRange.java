@@ -1,11 +1,11 @@
-package net.engine;
+package net.engine.math;
 
-public class IntegerRange
+public class IntRange
 {
   int min;
   int max;
 
-  public IntegerRange(int min, int max)
+  public IntRange(int min, int max)
   {
     if (max >= min)
     {

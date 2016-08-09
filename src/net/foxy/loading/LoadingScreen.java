@@ -1,16 +1,15 @@
 package net.foxy.loading;
 
 import net.engine.cel.CelStore;
-import net.engine.common.game.Stage;
-import net.engine.common.game.StageManager;
+import net.engine.game.Stage;
+import net.engine.game.StageManager;
 import net.engine.initial.Loader;
 import net.engine.input.GameInput;
 import net.foxy.FoxyStage;
-import net.foxy.title.TitleScreen;
 
 import java.awt.*;
 
-import static net.engine.common.game.GameRandom.random;
+import static net.engine.game.GameRandom.random;
 
 public class LoadingScreen extends FoxyStage
 {

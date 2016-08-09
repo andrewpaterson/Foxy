@@ -1,7 +1,7 @@
 package net.engine.cel;
 
-import net.engine.IntegerRange;
-import net.engine.common.global.GlobalGraphics;
+import net.engine.math.IntRange;
+import net.engine.global.GlobalGraphics;
 import net.engine.math.Int2;
 import net.engine.picture.Picture;
 
@@ -291,10 +291,10 @@ public class CelHelper
       {
         addFlippedFrame((Integer) object, horizontal, vertical);
       }
-      else if (object instanceof IntegerRange)
+      else if (object instanceof IntRange)
       {
-        IntegerRange integerRange = (IntegerRange) object;
-        for (int frame = integerRange.getMin(); frame <= integerRange.getMax(); frame++)
+        IntRange intRange = (IntRange) object;
+        for (int frame = intRange.getMin(); frame <= intRange.getMax(); frame++)
         {
           addFlippedFrame(frame, horizontal, vertical);
         }

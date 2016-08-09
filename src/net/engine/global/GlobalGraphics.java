@@ -1,11 +1,8 @@
-package net.engine.common.global;
+package net.engine.global;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class GlobalGraphics
 {
   private static GraphicsEnvironment localGraphicsEnvironment;

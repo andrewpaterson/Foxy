@@ -1,8 +1,7 @@
 package net.foxy;
 
 import net.engine.cel.CelStore;
-import net.engine.common.game.Game;
-import net.foxy.loading.FoxyLoader;
+import net.engine.game.Game;
 import net.foxy.loading.LoadingScreen;
 import net.foxy.nights.NightOne;
 import net.foxy.title.TitleScreen;
