@@ -1,6 +1,9 @@
 package net.foxy.loading;
 
+import net.engine.common.Game;
 import net.engine.common.Stage;
+import net.engine.input.GameInput;
+import net.foxy.title.TitleScreen;
 
 import java.awt.*;
 
@@ -8,20 +11,45 @@ import static net.engine.common.GameRandom.random;
 
 public class LoadingScreen extends Stage
 {
+  private float count;
+  private Game game;
+
+  public LoadingScreen()
+  {
+    count = 0;
+  }
+
+  @Override
+  public void stageStarting(Game game)
+  {
+    this.game = game;
+  }
+
+  @Override
+  public void stageEnding()
+  {
+  }
+
   @Override
   public void render(Graphics graphics, int width, int height)
   {
     graphics.clearRect(0, 0, width, height);
 
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 1000; i++)
     {
       drawRect(graphics, width, height);
     }
   }
 
   @Override
-  public void tick(double time)
+  public void tick(double time, GameInput input)
   {
+    input.popEvents();
+    count += time;
+    if (count > 2)
+    {
+      game.setStage(new TitleScreen());
+    }
   }
 
   private void drawRect(Graphics graphics, int width, int height)

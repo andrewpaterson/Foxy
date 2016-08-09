@@ -1,22 +1,32 @@
 package net.engine.common;
 
+import net.engine.input.GameInput;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
-public class GameFrame extends JFrame implements WindowListener
+public class GameFrame
+        extends JFrame
 {
   private GameCanvas canvas;
+  private GameInput input;
 
   public GameFrame(String title) throws HeadlessException
   {
     super(title);
 
     canvas = new GameCanvas();
+    input = null;
+
     add(canvas, BorderLayout.CENTER);
     setSize(600, 400);
-    addWindowListener(this);
+
+  }
+
+  @Override
+  public void setVisible(boolean b)
+  {
+    super.setVisible(b);
   }
 
   public GameCanvas getCanvas()
@@ -24,40 +34,18 @@ public class GameFrame extends JFrame implements WindowListener
     return canvas;
   }
 
-  @Override
-  public void windowOpened(WindowEvent e)
+  public void start()
   {
+    input = new GameInput();
+    new InputAdapter(this, canvas, input);
+
+    canvas.start();
   }
 
-  @Override
-  public void windowClosing(WindowEvent e)
+  public GameInput processInput()
   {
-    System.exit(0);
-  }
-
-  @Override
-  public void windowClosed(WindowEvent e)
-  {
-  }
-
-  @Override
-  public void windowIconified(WindowEvent e)
-  {
-  }
-
-  @Override
-  public void windowDeiconified(WindowEvent e)
-  {
-  }
-
-  @Override
-  public void windowActivated(WindowEvent e)
-  {
-  }
-
-  @Override
-  public void windowDeactivated(WindowEvent e)
-  {
+    input.setMouseLocation();
+    return input;
   }
 }
 
