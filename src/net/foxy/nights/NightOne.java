@@ -1,6 +1,6 @@
 package net.foxy.nights;
 
-import net.engine.common.Stage;
+import net.engine.common.game.Stage;
 import net.engine.input.GameInput;
 
 import java.awt.*;

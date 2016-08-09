@@ -34,7 +34,7 @@ public class CelStore
     if (storedCelHelper == null)
     {
       celHelpers.put(name, cels);
-  }
+    }
   }
 }
 

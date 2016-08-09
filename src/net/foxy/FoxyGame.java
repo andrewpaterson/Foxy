@@ -1,6 +1,6 @@
 package net.foxy;
 
-import net.engine.common.Game;
+import net.engine.common.game.Game;
 import net.foxy.loading.LoadingScreen;
 
 public class FoxyGame extends Game

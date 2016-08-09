@@ -8,18 +8,11 @@ import java.awt.image.WritableRaster;
 
 public class CelTrimmer
 {
-  private BufferedImage bufferedImage;
-  private Float2 offsetTopLeft;
-  private Float2 offsetBottomRight;
-
-  public CelTrimmer(BufferedImage bufferedImage)
+  public CelTrimmer()
   {
-    offsetTopLeft = null;
-    offsetBottomRight = null;
-    this.bufferedImage = trim(bufferedImage);
   }
 
-  private BufferedImage trim(BufferedImage bufferedImage)
+  public Cel trim(BufferedImage bufferedImage)
   {
     WritableRaster raster = bufferedImage.getRaster();
 
@@ -72,20 +65,13 @@ public class CelTrimmer
 
     if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0))
     {
-      setOffsets(new Float2(0, 0), new Float2(0, 0));
-      return bufferedImage;
-    } else
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(0, 0), new Float2(0, 0));
+    }
+    else
     {
       bufferedImage = convertToBufferedImage(bufferedImage, 0, 0, left, top, width, height, Transparency.TRANSLUCENT);
-      setOffsets(new Float2(left, top), new Float2(right, bottom));
-      return bufferedImage;
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(left, top), new Float2(right, bottom));
     }
-  }
-
-  private void setOffsets(Float2 offsetTopLeft, Float2 offsetBottomRight)
-  {
-    this.offsetTopLeft = offsetTopLeft;
-    this.offsetBottomRight = offsetBottomRight;
   }
 
   private boolean isRowTransparent(WritableRaster raster, int x1, int x2, int y)
@@ -135,21 +121,6 @@ public class CelTrimmer
   {
     GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
     return graphicsEnvironment.getDefaultScreenDevice().getDefaultConfiguration();
-  }
-
-  public BufferedImage getBufferedImage()
-  {
-    return bufferedImage;
-  }
-
-  public Float2 getOffsetTopLeft()
-  {
-    return offsetTopLeft;
-  }
-
-  public Float2 getOffsetBottomRight()
-  {
-    return offsetBottomRight;
   }
 }
 

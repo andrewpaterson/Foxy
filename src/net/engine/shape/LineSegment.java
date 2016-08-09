@@ -41,7 +41,8 @@ public class LineSegment extends Shape
       direction.y /= length;
       this.end = calculateEnd();
       return true;
-    } else
+    }
+    else
     {
       this.length = 0;
       this.direction = null;

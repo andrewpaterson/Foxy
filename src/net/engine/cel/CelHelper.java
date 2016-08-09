@@ -140,7 +140,8 @@ public class CelHelper
     {
       width = source.getWidth(null);
       columnCount = 1;
-    } else
+    }
+    else
     {
       if (columnCount == -1)
       {
@@ -162,7 +163,8 @@ public class CelHelper
     {
       height = source.getHeight(null);
       rowCount = 1;
-    } else
+    }
+    else
     {
       if (rowCount == -1)
       {
@@ -194,7 +196,8 @@ public class CelHelper
           addCel(source, sx, sy, width, height, trim);
         }
       }
-    } else
+    }
+    else
     {
       for (int x = 0; x < columnCount; x++)
       {
@@ -275,7 +278,8 @@ public class CelHelper
       if (object instanceof Integer)
       {
         addFlippedFrame((Integer) object, horizontal, vertical);
-      } else if (object instanceof IntegerRange)
+      }
+      else if (object instanceof IntegerRange)
       {
         IntegerRange integerRange = (IntegerRange) object;
         for (int frame = integerRange.getMin(); frame <= integerRange.getMax(); frame++)
@@ -316,7 +320,8 @@ public class CelHelper
       dx2 = 0;
       left = cel.getOffsetBottomRight().x;
       right = cel.getOffsetTopLeft().x;
-    } else
+    }
+    else
     {
       dx1 = 0;
       dx2 = imageWidth;
@@ -330,7 +335,8 @@ public class CelHelper
       dy2 = 0;
       top = cel.getOffsetBottomRight().y;
       bottom = cel.getOffsetTopLeft().y;
-    } else
+    }
+    else
     {
       dy1 = 0;
       dy2 = imageHeight;
@@ -360,25 +366,14 @@ public class CelHelper
 
   private Cel newCel(BufferedImage bufferedImage, boolean trim)
   {
-    return newCel(bufferedImage, Cel.CENTERED, Cel.CENTERED, trim);
-  }
-
-  private Cel newCel(BufferedImage bufferedImage, int horizontalAlignment, int verticalAlignment, boolean trim)
-  {
     if (trim)
     {
-      CelTrimmer celTrimmer = new CelTrimmer(bufferedImage);
-
-      if (celTrimmer.getBufferedImage() != null)
-      {
-        return new Cel(celTrimmer.getBufferedImage(), horizontalAlignment, verticalAlignment, celTrimmer.getOffsetTopLeft(), celTrimmer.getOffsetBottomRight());
-      } else
-      {
-        return null;
-      }
-    } else
+      CelTrimmer celTrimmer = new CelTrimmer();
+      return celTrimmer.trim(bufferedImage);
+    }
+    else
     {
-      return new Cel(bufferedImage, horizontalAlignment, verticalAlignment, new Float2(0, 0), new Float2(0, 0));
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(0, 0), new Float2(0, 0));
     }
   }
 }

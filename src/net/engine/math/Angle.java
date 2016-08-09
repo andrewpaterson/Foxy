@@ -20,7 +20,8 @@ public class Angle
       if (fireDirection.x < 0)
       {
         angle = -(angle + Math.PI);
-      } else
+      }
+      else
       {
         angle = Math.PI - angle;
       }
@@ -70,10 +71,12 @@ public class Angle
     if (angleBetween > maxChange)
     {
       return currentAngle + maxChange;
-    } else if (angleBetween < -maxChange)
+    }
+    else if (angleBetween < -maxChange)
     {
       return currentAngle - maxChange;
-    } else
+    }
+    else
     {
       return requiredAngle;
     }
@@ -98,7 +101,8 @@ public class Angle
       }
       double remove = _180s * (Math.PI);
       return angle + remove;
-    } else if (angle > Math.PI)
+    }
+    else if (angle > Math.PI)
     {
       int _180s = ((int) (angle / (Math.PI)));
       if (_180s % 2 == 1)
@@ -107,7 +111,8 @@ public class Angle
       }
       double remove = _180s * (Math.PI);
       return angle - remove;
-    } else
+    }
+    else
     {
       return angle;
     }

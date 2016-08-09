@@ -77,7 +77,8 @@ public class Picture
         x0 += dx;
         setPixel(x0, Math.round(m * x0 + b), colourIndex);
       }
-    } else if (dy != 0)
+    }
+    else if (dy != 0)
     {                              // slope >= 1
       float m = (float) dx / (float) dy;      // compute slope
       float b = x0 - m * y0;

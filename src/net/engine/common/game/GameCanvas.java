@@ -1,4 +1,4 @@
-package net.engine.common;
+package net.engine.common.game;
 
 import javax.swing.*;
 import java.awt.*;

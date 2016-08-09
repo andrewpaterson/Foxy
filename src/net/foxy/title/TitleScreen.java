@@ -1,6 +1,6 @@
 package net.foxy.title;
 
-import net.engine.common.Stage;
+import net.engine.common.game.Stage;
 import net.engine.input.GameInput;
 import net.foxy.nights.NightOne;
 
@@ -9,7 +9,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
-import static net.engine.common.GameRandom.random;
+import static net.engine.common.game.GameRandom.random;
 
 public class TitleScreen extends Stage
 {

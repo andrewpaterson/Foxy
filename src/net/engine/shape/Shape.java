@@ -45,10 +45,12 @@ public class Shape
     {
       f = (new Float2(v1)).cross(line.direction);
       return f < radiusSquare;
-    } else if (sphereAlongRay < 0)
+    }
+    else if (sphereAlongRay < 0)
     {
       return pointCircleIntersect(line.start, circle);
-    } else
+    }
+    else
     {
       return pointCircleIntersect(line.end, circle);
     }

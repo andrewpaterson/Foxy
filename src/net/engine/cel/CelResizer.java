@@ -48,7 +48,8 @@ public class CelResizer
           E1 = equals(B, F) ? F : E;
           E2 = equals(D, H) ? D : E;
           E3 = equals(H, F) ? F : E;
-        } else
+        }
+        else
         {
           E0 = E;
           E1 = E;
@@ -73,7 +74,8 @@ public class CelResizer
     if ((ai1[0] == ai2[0]) && (ai1[1] == ai2[1]) && (ai1[2] == ai2[2]) && (ai1[3] == ai2[3]))
     {
       return true;
-    } else
+    }
+    else
     {
       return false;
     }

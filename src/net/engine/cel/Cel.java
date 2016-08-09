@@ -54,10 +54,12 @@ public class Cel
     if (horizontalAlignment == LEFT_ALIGNED)
     {
       return offsetTopLeft.x;
-    } else if (horizontalAlignment == CENTERED)
+    }
+    else if (horizontalAlignment == CENTERED)
     {
       return ((offsetTopLeft.x + width + offsetBottomRight.x) / 2) - width - offsetBottomRight.x;
-    } else if (horizontalAlignment == RIGHT_ALIGNED)
+    }
+    else if (horizontalAlignment == RIGHT_ALIGNED)
     {
       return -offsetBottomRight.x - width;
     }
@@ -70,10 +72,12 @@ public class Cel
     if (verticalAlignment == TOP_ALIGNED)
     {
       return offsetTopLeft.y;
-    } else if (verticalAlignment == CENTERED)
+    }
+    else if (verticalAlignment == CENTERED)
     {
       return ((offsetTopLeft.y + height + offsetBottomRight.y) / 2) - height - offsetBottomRight.y;
-    } else if (verticalAlignment == BOTTOM_ALIGNED)
+    }
+    else if (verticalAlignment == BOTTOM_ALIGNED)
     {
       return -offsetTopLeft.y - height;
     }
@@ -86,10 +90,12 @@ public class Cel
     if (verticalAlignment == TOP_ALIGNED)
     {
       return offsetBottomRight.y + height;
-    } else if (verticalAlignment == CENTERED)
+    }
+    else if (verticalAlignment == CENTERED)
     {
       return ((offsetBottomRight.y + height + offsetTopLeft.y) / 2) - offsetBottomRight.y;
-    } else if (verticalAlignment == BOTTOM_ALIGNED)
+    }
+    else if (verticalAlignment == BOTTOM_ALIGNED)
     {
       return offsetBottomRight.y;
     }
@@ -120,10 +126,12 @@ public class Cel
     if (horizontalAlignment == LEFT_ALIGNED)
     {
       return 0;
-    } else if (horizontalAlignment == CENTERED)
+    }
+    else if (horizontalAlignment == CENTERED)
     {
       return (offsetTopLeft.x + width + offsetBottomRight.x) / 2;
-    } else if (horizontalAlignment == RIGHT_ALIGNED)
+    }
+    else if (horizontalAlignment == RIGHT_ALIGNED)
     {
       return offsetTopLeft.x + width + offsetBottomRight.x;
     }
@@ -136,10 +144,12 @@ public class Cel
     if (verticalAlignment == TOP_ALIGNED)
     {
       return 0;
-    } else if (verticalAlignment == CENTERED)
+    }
+    else if (verticalAlignment == CENTERED)
     {
       return (offsetTopLeft.y + height + offsetBottomRight.y) / 2;
-    } else if (verticalAlignment == BOTTOM_ALIGNED)
+    }
+    else if (verticalAlignment == BOTTOM_ALIGNED)
     {
       return offsetTopLeft.y + height + offsetBottomRight.y;
     }

@@ -11,7 +11,8 @@ public class IntegerRange
     {
       this.min = min;
       this.max = max;
-    } else
+    }
+    else
     {
       this.min = max;
       this.max = min;
