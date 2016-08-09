@@ -1,8 +1,5 @@
 package net.engine.initial;
 
-/**
- * Created by andrew on 2016/08/09.
- */
 public class LoaderRunnable implements Runnable
 {
   private boolean done;

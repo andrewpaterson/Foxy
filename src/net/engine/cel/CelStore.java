@@ -6,34 +6,24 @@ import java.util.Map;
 
 public class CelStore
 {
-  private static CelStore instance = null;
-  private Map<String, List<Cel>> celHelpers;
-
-  public static CelStore getInstance()
-  {
-    if (instance == null)
-    {
-      instance = new CelStore();
-    }
-    return instance;
-  }
+  private Map<String, List<Cel>> cels;
 
   public CelStore()
   {
-    celHelpers = new LinkedHashMap<>();
+    cels = new LinkedHashMap<>();
   }
 
   public List<Cel> get(String name)
   {
-    return celHelpers.get(name);
+    return cels.get(name);
   }
 
   public void addCels(String name, List<Cel> cels)
   {
-    List<Cel> storedCelHelper = celHelpers.get(name);
+    List<Cel> storedCelHelper = this.cels.get(name);
     if (storedCelHelper == null)
     {
-      celHelpers.put(name, cels);
+      this.cels.put(name, cels);
     }
   }
 }

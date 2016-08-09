@@ -1,7 +1,8 @@
 package net.engine.cel;
 
 import net.engine.IntegerRange;
-import net.engine.math.Float2;
+import net.engine.common.global.GlobalGraphics;
+import net.engine.math.Int2;
 import net.engine.picture.Picture;
 
 import javax.imageio.ImageIO;
@@ -48,6 +49,14 @@ public class CelHelper
     this();
     BufferedImage image = convertFromPicture(picture);
     breakIntoFrames(image, cellCountX, cellCountY, leftToRightFirst, trim);
+  }
+
+  public CelHelper(Font font, Color color, String text)
+  {
+    this();
+
+    BufferedImage image = convertFromFont(font, color, text);
+    addCel(image, true);
   }
 
   public CelHelper(Picture picture)
@@ -108,6 +117,26 @@ public class CelHelper
         }
       }
     }
+    return image;
+  }
+
+  private BufferedImage convertFromFont(Font font, Color color, String text)
+  {
+    GraphicsConfiguration graphicsConfiguration = GlobalGraphics.getGraphicsConfiguration();
+    BufferedImage temporaryImage = graphicsConfiguration.createCompatibleImage(10, 10, Transparency.TRANSLUCENT);
+    Graphics2D temporaryGraphics = temporaryImage.createGraphics();
+    FontMetrics fontMetrics = temporaryGraphics.getFontMetrics(font);
+    int height = fontMetrics.getHeight();
+    int stringWidth = fontMetrics.stringWidth(text);
+    int charWidth = fontMetrics.charWidth('M');
+    temporaryGraphics.dispose();
+
+    BufferedImage image = new BufferedImage(stringWidth + charWidth, height + height / 2, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D fontGraphics = image.createGraphics();
+    fontGraphics.setFont(font);
+    fontGraphics.setColor(color);
+    fontGraphics.drawChars(text.toCharArray(), 0, text.length(), charWidth / 2, height + height / 4);
+    fontGraphics.dispose();
     return image;
   }
 
@@ -215,7 +244,7 @@ public class CelHelper
 
   private Cel addCel(Image source, int sx, int sy, int width, int height, boolean trim)
   {
-    Cel cel = newCel(convertToBufferedImage(source, 0, 0, sx, sy, width, height, Transparency.TRANSLUCENT), trim);
+    Cel cel = newCel(GlobalGraphics.convertToBufferedImage(source, 0, 0, sx, sy, width, height, Transparency.TRANSLUCENT), trim);
     cels.add(cel);
     return cel;
   }
@@ -233,23 +262,6 @@ public class CelHelper
     int height = image.getHeight(null);
     int width = image.getWidth(null);
     addCel(image, 0, 0, width, height, trim);
-  }
-
-  private BufferedImage convertToBufferedImage(Image image, int dx, int dy, int sx, int sy, int width, int height, int transparency)
-  {
-    GraphicsConfiguration graphicsConfiguration = getGraphicsConfiguration();
-
-    BufferedImage copy = graphicsConfiguration.createCompatibleImage(width, height, transparency);
-    Graphics2D g2d = copy.createGraphics();
-    g2d.drawImage(image, dx, dy, dx + width, dy + height, sx, sy, sx + width, sy + height, null);
-    g2d.dispose();
-    return copy;
-  }
-
-  private GraphicsConfiguration getGraphicsConfiguration()
-  {
-    GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    return graphicsEnvironment.getDefaultScreenDevice().getDefaultConfiguration();
   }
 
   public Cel get(int frame)
@@ -308,12 +320,12 @@ public class CelHelper
     imageWidth = bufferedImage.getWidth();
     imageHeight = bufferedImage.getHeight();
 
-    GraphicsConfiguration graphicsConfiguration = getGraphicsConfiguration();
+    GraphicsConfiguration graphicsConfiguration = GlobalGraphics.getGraphicsConfiguration();
     BufferedImage newFrame = graphicsConfiguration.createCompatibleImage(imageWidth, imageHeight, bufferedImage.getType());
     Graphics2D g2d = newFrame.createGraphics();
 
     int dx1, dy1, dx2, dy2;
-    float top, left, bottom, right;
+    int top, left, bottom, right;
     if (horizontal)
     {
       dx1 = imageWidth;
@@ -346,13 +358,13 @@ public class CelHelper
 
     g2d.drawImage(cel.getBufferedImage(), dx1, dy1, dx2, dy2, 0, 0, imageWidth, imageHeight, null);
 
-    Cel newCel = new Cel(newFrame, cel.getHorizontalAlignment(), cel.getVerticalAlignment(), new Float2(left, top), new Float2(right, bottom));
+    Cel newCel = new Cel(newFrame, cel.getHorizontalAlignment(), cel.getVerticalAlignment(), new Int2(left, top), new Int2(right, bottom));
     cels.add(newCel);
 
     return cels.size() - 1;
   }
 
-  public CelHelper offsetFrames(float left, float top, float right, float bottom)
+  public CelHelper offsetFrames(int left, int top, int right, int bottom)
   {
     for (Cel cel : cels)
     {
@@ -373,7 +385,7 @@ public class CelHelper
     }
     else
     {
-      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(0, 0), new Float2(0, 0));
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Int2(0, 0), new Int2(0, 0));
     }
   }
 }

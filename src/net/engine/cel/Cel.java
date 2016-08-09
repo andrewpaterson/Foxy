@@ -1,6 +1,6 @@
 package net.engine.cel;
 
-import net.engine.math.Float2;
+import net.engine.math.Int2;
 
 import java.awt.image.BufferedImage;
 
@@ -13,13 +13,13 @@ public class Cel
   public static final int BOTTOM_ALIGNED = 4;
 
   private BufferedImage bufferedImage;
-  private Float2 offsetTopLeft;
-  private Float2 offsetBottomRight;
+  private Int2 offsetTopLeft;
+  private Int2 offsetBottomRight;
 
   private int horizontalAlignment;
   private int verticalAlignment;
 
-  public Cel(BufferedImage bufferedImage, int horizontalAlignment, int verticalAlignment, Float2 offsetTopLeft, Float2 offsetBottomRight)
+  public Cel(BufferedImage bufferedImage, int horizontalAlignment, int verticalAlignment, Int2 offsetTopLeft, Int2 offsetBottomRight)
   {
     this.bufferedImage = bufferedImage;
     this.horizontalAlignment = horizontalAlignment;
@@ -48,7 +48,7 @@ public class Cel
     this.verticalAlignment = verticalAlignment;
   }
 
-  public float getGraphicsLeft()
+  public int getGraphicsLeft()
   {
     int width = bufferedImage.getWidth();
     if (horizontalAlignment == LEFT_ALIGNED)
@@ -66,7 +66,7 @@ public class Cel
     return 0;
   }
 
-  public float getGraphicsTop()
+  public int getGraphicsTop()
   {
     int height = bufferedImage.getHeight();
     if (verticalAlignment == TOP_ALIGNED)
@@ -84,25 +84,7 @@ public class Cel
     return 0;
   }
 
-  public float getGraphicsBottom()
-  {
-    int height = bufferedImage.getHeight();
-    if (verticalAlignment == TOP_ALIGNED)
-    {
-      return offsetBottomRight.y + height;
-    }
-    else if (verticalAlignment == CENTERED)
-    {
-      return ((offsetBottomRight.y + height + offsetTopLeft.y) / 2) - offsetBottomRight.y;
-    }
-    else if (verticalAlignment == BOTTOM_ALIGNED)
-    {
-      return offsetBottomRight.y;
-    }
-    return 0;
-  }
-
-  public float getGraphicsRight()
+  public int getGraphicsRight()
   {
     int width = bufferedImage.getWidth();
     if (horizontalAlignment == LEFT_ALIGNED)
@@ -120,7 +102,36 @@ public class Cel
     return 0;
   }
 
-  public float getRelativeLeft()
+  public int getGraphicsBottom()
+  {
+    int height = bufferedImage.getHeight();
+    if (verticalAlignment == TOP_ALIGNED)
+    {
+      return offsetBottomRight.y + height;
+    }
+    else if (verticalAlignment == CENTERED)
+    {
+      return ((offsetBottomRight.y + height + offsetTopLeft.y) / 2) - offsetBottomRight.y;
+    }
+    else if (verticalAlignment == BOTTOM_ALIGNED)
+    {
+      return offsetBottomRight.y;
+    }
+    return 0;
+  }
+
+  public int getGraphicsWidth()
+  {
+    return bufferedImage.getWidth();
+  }
+
+  public int getGraphicsHeight()
+  {
+    return bufferedImage.getHeight();
+  }
+
+
+  public int getRelativeLeft()
   {
     int width = bufferedImage.getWidth();
     if (horizontalAlignment == LEFT_ALIGNED)
@@ -138,7 +149,7 @@ public class Cel
     return 0;
   }
 
-  public float getRelativeTop()
+  public int getRelativeTop()
   {
     int height = bufferedImage.getHeight();
     if (verticalAlignment == TOP_ALIGNED)
@@ -162,7 +173,7 @@ public class Cel
     setVerticalAlignment(verticalAlignment);
   }
 
-  public void setOffset(float left, float top, float right, float bottom)
+  public void setOffset(int left, int top, int right, int bottom)
   {
     offsetTopLeft.x = left;
     offsetTopLeft.y = top;
@@ -170,7 +181,7 @@ public class Cel
     offsetBottomRight.y = bottom;
   }
 
-  public void offset(float left, float top, float right, float bottom)
+  public void offset(int left, int top, int right, int bottom)
   {
     offsetTopLeft.x += left;
     offsetTopLeft.y += top;
@@ -183,12 +194,12 @@ public class Cel
     return bufferedImage;
   }
 
-  public Float2 getOffsetTopLeft()
+  public Int2 getOffsetTopLeft()
   {
     return offsetTopLeft;
   }
 
-  public Float2 getOffsetBottomRight()
+  public Int2 getOffsetBottomRight()
   {
     return offsetBottomRight;
   }

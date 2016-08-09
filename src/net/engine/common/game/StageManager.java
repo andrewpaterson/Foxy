@@ -1,14 +1,22 @@
 package net.engine.common.game;
 
+import net.foxy.loading.LoadingScreen;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class StageManager
 {
   protected Stage currentStage;
   protected Stage nextStage;
 
+  protected Map<String, Stage> stages;
+
   public StageManager()
   {
     currentStage = null;
     nextStage = null;
+    stages = new LinkedHashMap<>();
   }
 
   public void setStage(Stage stage)
@@ -32,6 +40,17 @@ public class StageManager
     }
 
     return currentStage;
+  }
+
+  public void addStage(String name, Stage stage)
+  {
+    stages.put(name, stage);
+  }
+
+  public void setStage(String name)
+  {
+    Stage stage = stages.get(name);
+    setStage(stage);
   }
 }
 

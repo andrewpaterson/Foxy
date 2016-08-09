@@ -3,6 +3,7 @@ package net.engine.cel;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
+//Should be Picture Resizer.
 public class CelResizer
 {
   //from http://scale2x.sourceforge.net/algorithm.html
@@ -81,3 +82,4 @@ public class CelResizer
     }
   }
 }
+

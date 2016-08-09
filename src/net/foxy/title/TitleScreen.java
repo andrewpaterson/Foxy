@@ -1,23 +1,23 @@
 package net.foxy.title;
 
-import net.engine.common.game.Stage;
+import net.engine.cel.Cel;
+import net.engine.cel.CelStore;
 import net.engine.input.GameInput;
-import net.foxy.nights.NightOne;
+import net.foxy.FoxyStage;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
 import static net.engine.common.game.GameRandom.random;
 
-public class TitleScreen extends Stage
+public class TitleScreen extends FoxyStage
 {
-  private Font font;
-
-  public TitleScreen()
+  public TitleScreen(CelStore celStore)
   {
-    font = new Font("Jokerman", Font.PLAIN, 35);
+    super(celStore);
   }
 
   @Override
@@ -25,11 +25,13 @@ public class TitleScreen extends Stage
   {
     graphics.clearRect(0, 0, width, height);
 
+    List<Cel> cels = celStore.get("Start Text");
+
+    Cel startCel = cels.get(0);
+    graphics.drawImage(startCel.getBufferedImage(), 50, 50, null);
+
     graphics.setColor(Color.DARK_GRAY);
-    String start = "Start";
-    graphics.setFont(font);
-    graphics.drawChars(start.toCharArray(), 0, start.length(), 100, 100);
-    graphics.drawRect(100, 100, 200, 50);
+    graphics.drawRect(50, 50, startCel.getGraphicsWidth(), startCel.getGraphicsHeight());
 
     for (int i = 0; i < 10; i++)
     {
@@ -55,7 +57,7 @@ public class TitleScreen extends Stage
           if ((modifiersEx & BUTTON1_DOWN_MASK) != 0)
           {
             System.out.println(mouseEvent.getPoint());
-            stageManager.setStage(new NightOne());
+            stageManager.setStage("Night One");
           }
         }
       }

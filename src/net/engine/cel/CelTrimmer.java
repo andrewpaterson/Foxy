@@ -1,6 +1,7 @@
 package net.engine.cel;
 
-import net.engine.math.Float2;
+import net.engine.common.global.GlobalGraphics;
+import net.engine.math.Int2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -65,12 +66,12 @@ public class CelTrimmer
 
     if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0))
     {
-      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(0, 0), new Float2(0, 0));
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Int2(0, 0), new Int2(0, 0));
     }
     else
     {
-      bufferedImage = convertToBufferedImage(bufferedImage, 0, 0, left, top, width, height, Transparency.TRANSLUCENT);
-      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Float2(left, top), new Float2(right, bottom));
+      bufferedImage = GlobalGraphics.convertToBufferedImage(bufferedImage, 0, 0, left, top, width, height, Transparency.TRANSLUCENT);
+      return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Int2(left, top), new Int2(right, bottom));
     }
   }
 
@@ -103,24 +104,6 @@ public class CelTrimmer
     int colour[] = new int[4];
     raster.getPixel(x, y, colour);
     return colour[3] == 0;
-  }
-
-
-  private BufferedImage convertToBufferedImage(Image image, int dx, int dy, int sx, int sy, int width, int height, int transparency)
-  {
-    GraphicsConfiguration graphicsConfiguration = getGraphicsConfiguration();
-
-    BufferedImage copy = graphicsConfiguration.createCompatibleImage(width, height, transparency);
-    Graphics2D g2d = copy.createGraphics();
-    g2d.drawImage(image, dx, dy, dx + width, dy + height, sx, sy, sx + width, sy + height, null);
-    g2d.dispose();
-    return copy;
-  }
-
-  private GraphicsConfiguration getGraphicsConfiguration()
-  {
-    GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    return graphicsEnvironment.getDefaultScreenDevice().getDefaultConfiguration();
   }
 }
 

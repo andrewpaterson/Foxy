@@ -64,9 +64,9 @@ public class Game
     }
   }
 
-  public void setStage(Stage stage)
+  public void setStage(String name)
   {
-    stageManager.setStage(stage);
+    stageManager.setStage(name);
   }
 }
 

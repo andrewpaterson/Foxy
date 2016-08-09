@@ -1,20 +1,19 @@
 package net.foxy.nights;
 
-import net.engine.common.game.Stage;
+import net.engine.cel.CelStore;
 import net.engine.input.GameInput;
+import net.foxy.FoxyStage;
 
 import java.awt.*;
 
-/**
- * Created by andrew on 2016/08/09.
- */
-public class NightOne extends Stage
+public class NightOne extends FoxyStage
 {
   protected float brightness;
   protected float direction;
 
-  public NightOne()
+  public NightOne(CelStore celStore)
   {
+    super(celStore);
     brightness = 1;
     direction = -1;
   }

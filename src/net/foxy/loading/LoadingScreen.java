@@ -1,29 +1,31 @@
 package net.foxy.loading;
 
+import net.engine.cel.CelStore;
 import net.engine.common.game.Stage;
 import net.engine.common.game.StageManager;
 import net.engine.initial.Loader;
 import net.engine.input.GameInput;
+import net.foxy.FoxyStage;
 import net.foxy.title.TitleScreen;
 
 import java.awt.*;
 
 import static net.engine.common.game.GameRandom.random;
 
-public class LoadingScreen extends Stage
+public class LoadingScreen extends FoxyStage
 {
   private Loader loader;
 
-  public LoadingScreen()
+  public LoadingScreen(CelStore celStore)
   {
+    super(celStore);
+    this.loader = new FoxyLoader(celStore);
   }
-
 
   @Override
   public void stageStarting(StageManager stageManager)
   {
     super.stageStarting(stageManager);
-    loader = new FoxyLoader();
   }
 
   @Override
@@ -43,7 +45,7 @@ public class LoadingScreen extends Stage
     input.popEvents();
     if (loader.isDone())
     {
-      stageManager.setStage(new TitleScreen());
+      stageManager.setStage("Title");
     }
   }
 
