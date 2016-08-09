@@ -1,5 +1,6 @@
 package net.foxy.loading;
 
+import net.engine.cel.Cel;
 import net.engine.cel.CelHelper;
 import net.engine.cel.CelStore;
 import net.engine.initial.Loader;
@@ -19,7 +20,7 @@ public class FoxyLoader extends Loader
   @Override
   public void load()
   {
-    celStore.addCels("Start Text", new CelHelper(new Font("Verdana", Font.PLAIN, 35), Color.RED, "Start").getCels());
+    celStore.addCels("Start Text", new CelHelper(new Font("Verdana", Font.PLAIN, 35), Color.RED, "Start").setAlignment(Cel.LEFT_ALIGNED, Cel.TOP_ALIGNED).getCels());
 
     try
     {

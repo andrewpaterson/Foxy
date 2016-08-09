@@ -1,7 +1,11 @@
 package net.engine.collections;
 
 
+import net.engine.cel.Cel;
+
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ArrayExtended<E> extends ArrayList<E>
 {
@@ -10,6 +14,12 @@ public class ArrayExtended<E> extends ArrayList<E>
   public ArrayExtended(E defaultValue)
   {
     super();
+    this.defaultValue = defaultValue;
+  }
+
+  public ArrayExtended(Collection<? extends E> c, E defaultValue)
+  {
+    super(c);
     this.defaultValue = defaultValue;
   }
 

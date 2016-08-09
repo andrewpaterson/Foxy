@@ -131,7 +131,7 @@ public class Cel
   }
 
 
-  public int getRelativeLeft()
+  public int getLeft()
   {
     int width = bufferedImage.getWidth();
     if (horizontalAlignment == LEFT_ALIGNED)
@@ -149,7 +149,7 @@ public class Cel
     return 0;
   }
 
-  public int getRelativeTop()
+  public int getTop()
   {
     int height = bufferedImage.getHeight();
     if (verticalAlignment == TOP_ALIGNED)
@@ -212,6 +212,16 @@ public class Cel
   public int getVerticalAlignment()
   {
     return verticalAlignment;
+  }
+
+  public int getWidth()
+  {
+    return offsetTopLeft.x + getGraphicsWidth() + offsetBottomRight.x;
+  }
+
+  public int getHeight()
+  {
+    return offsetTopLeft.y + getGraphicsHeight() + offsetBottomRight.y;
   }
 }
 

@@ -1,23 +1,36 @@
 package net.foxy.title;
 
-import net.engine.cel.Cel;
 import net.engine.cel.CelStore;
+import net.engine.game.StageManager;
 import net.engine.input.GameInput;
+import net.engine.scene.Camera;
+import net.engine.scene.Scene;
+import net.engine.scene.Sprite;
 import net.foxy.FoxyStage;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
 import static net.engine.global.GlobalRandom.random;
 
 public class TitleScreen extends FoxyStage
 {
+  protected Scene scene = new Scene();
+  protected Sprite startText;
+
   public TitleScreen(CelStore celStore)
   {
     super(celStore);
+  }
+
+  @Override
+  public void stageStarting(StageManager stageManager)
+  {
+    super.stageStarting(stageManager);
+    startText = new Sprite(celStore.get("Start Text").get(0));
+    scene.addSprite(startText.setPosition(100, 50));
   }
 
   @Override
@@ -25,14 +38,14 @@ public class TitleScreen extends FoxyStage
   {
     graphics.clearRect(0, 0, width, height);
 
-    List<Cel> cels = celStore.get("Start Text");
+    scene.render(graphics, width, height);
 
-    Cel startCel = cels.get(0);
-    graphics.drawImage(startCel.getBufferedImage(), 50, 50, null);
+    renderStatic(graphics, width, height);
+  }
 
+  private void renderStatic(Graphics graphics, int width, int height)
+  {
     graphics.setColor(Color.DARK_GRAY);
-    graphics.drawRect(50, 50, startCel.getGraphicsWidth(), startCel.getGraphicsHeight());
-
     for (int i = 0; i < 10; i++)
     {
       int x = random.nextInt(width - 50);
@@ -56,8 +69,13 @@ public class TitleScreen extends FoxyStage
           int modifiersEx = mouseEvent.getModifiersEx();
           if ((modifiersEx & BUTTON1_DOWN_MASK) != 0)
           {
-            System.out.println(mouseEvent.getPoint());
-            stageManager.setStage("Night One");
+            Point point = mouseEvent.getPoint();
+            Camera camera = scene.getCamera();
+            Rectangle rectangle = startText.toRectangle(camera);
+            if (rectangle.contains(point))
+            {
+              stageManager.setStage("Night One");
+            }
           }
         }
       }

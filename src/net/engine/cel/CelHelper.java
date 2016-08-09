@@ -1,5 +1,6 @@
 package net.engine.cel;
 
+import com.sun.javafx.scene.control.behavior.OrientedKeyBinding;
 import net.engine.math.IntRange;
 import net.engine.global.GlobalGraphics;
 import net.engine.math.Int2;
@@ -244,7 +245,7 @@ public class CelHelper
 
   private Cel addCel(Image source, int sx, int sy, int width, int height, boolean trim)
   {
-    Cel cel = newCel(GlobalGraphics.convertToBufferedImage(source, 0, 0, sx, sy, width, height, Transparency.TRANSLUCENT), trim);
+    Cel cel = createCel(GlobalGraphics.convertToBufferedImage(source, 0, 0, sx, sy, width, height, Transparency.TRANSLUCENT), trim);
     cels.add(cel);
     return cel;
   }
@@ -376,7 +377,7 @@ public class CelHelper
     return this;
   }
 
-  private Cel newCel(BufferedImage bufferedImage, boolean trim)
+  private Cel createCel(BufferedImage bufferedImage, boolean trim)
   {
     if (trim)
     {
@@ -387,6 +388,18 @@ public class CelHelper
     {
       return new Cel(bufferedImage, Cel.CENTERED, Cel.CENTERED, new Int2(0, 0), new Int2(0, 0));
     }
+  }
+
+  public CelHelper setAlignment(int horizontalAlignment, int verticalAlignment)
+  {
+    for (Cel cel : cels)
+    {
+      if (cel != null)
+      {
+        cel.setAlignment(horizontalAlignment, verticalAlignment);
+      }
+    }
+    return this;
   }
 }
 
