@@ -1,9 +1,8 @@
 package net.engine.cel;
 
-import com.sun.javafx.scene.control.behavior.OrientedKeyBinding;
-import net.engine.math.IntRange;
 import net.engine.global.GlobalGraphics;
 import net.engine.math.Int2;
+import net.engine.math.IntRange;
 import net.engine.picture.Picture;
 
 import javax.imageio.ImageIO;
@@ -118,7 +117,13 @@ public class CelHelper
         }
       }
     }
+    image.releaseWritableTile(0, 0);
     return image;
+  }
+
+  private BufferedImage convertFromIntArray(int width, int height, int[] data)
+  {
+    return GlobalGraphics.convertFromIntArray(width, height, data, new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
   }
 
   private BufferedImage convertFromFont(Font font, Color color, String text)

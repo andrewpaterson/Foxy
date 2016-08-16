@@ -57,7 +57,8 @@ public class GameFrame
 
   public GameInput processInput()
   {
-    input.setMouseLocation();
+    Point mousePosition = canvas.getMousePosition();
+    input.setMouseLocation(mousePosition);
     return input;
   }
 }

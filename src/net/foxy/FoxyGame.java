@@ -19,7 +19,6 @@ public class FoxyGame extends Game
 
   private void start()
   {
-
     stageManager.addStage("Loading", new LoadingScreen(celStore));
     stageManager.addStage("Title", new TitleScreen(celStore));
     stageManager.addStage("Night One", new NightOne(celStore));

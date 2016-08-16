@@ -2,6 +2,7 @@ package net.engine.global;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 
 public class GlobalGraphics
 {
@@ -73,6 +74,26 @@ public class GlobalGraphics
     GraphicsDevice graphicsDevice = GlobalGraphics.getGraphicsEnvironment().getDefaultScreenDevice();
     graphicsDevice.setFullScreenWindow(window);
     graphicsDevice.setDisplayMode(displayMode);
+  }
+
+  public static BufferedImage convertFromIntArray(int width, int height, int[] data, BufferedImage image)
+  {
+    int colour[] = new int[4];
+    WritableRaster raster = image.getWritableTile(0, 0);
+    for (int y = 0; y < height; y++)
+    {
+      for (int x = 0; x < width; x++)
+      {
+        int color = data[y * width + x];
+        colour[3] = (color & 0xff000000) >>> 24;
+        colour[0] = color & 0xff;
+        colour[1] = (color & 0xff00) >>> 8;
+        colour[2] = (color & 0xff0000) >>> 16;
+        raster.setPixel(x, y, colour);
+      }
+    }
+    image.releaseWritableTile(0, 0);
+    return image;
   }
 }
 

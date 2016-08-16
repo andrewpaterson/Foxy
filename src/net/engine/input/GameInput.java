@@ -21,13 +21,13 @@ public class GameInput
   {
     events = new ArrayList<>();
     keyboardState = new ArrayExtended<>(Boolean.FALSE);
-    mouseLocation = MouseInfo.getPointerInfo().getLocation();
+    mouseLocation = null;
     mouseState = new ArrayExtended<>(Boolean.FALSE);
   }
 
-  public void setMouseLocation()
+  public void setMouseLocation(Point mousePosition)
   {
-    mouseLocation = MouseInfo.getPointerInfo().getLocation();
+    mouseLocation = mousePosition;
   }
 
   public boolean getKeyState(int key)
@@ -45,9 +45,23 @@ public class GameInput
     return mouseState.safeGet(button);
   }
 
+  public Point getMouseLocation()
+  {
+    return mouseLocation;
+  }
+
   public void setMouseButtonState(int button, boolean state)
   {
-    mouseState.set(button, state);
+    int realButton = button;
+    if (button == 1)
+    {
+      realButton = 0;
+    }
+    else if (button == 3)
+    {
+      realButton = 1;
+    }
+    mouseState.set(realButton, state);
   }
 
   public void addKeyEvent(KeyEvent keyEvent)
