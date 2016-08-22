@@ -8,38 +8,38 @@ public class FluidField
   int SIZE;
 
   //v is velocities
-  float[] u;
-  float[] v;
-  float[] u_prev;
-  float[] v_prev;
+  float[] velocityX;
+  float[] velocityY;
+  float[] velocityPreviousX;
+  float[] velocityPreviousY;
 
-  float[] dens;
-  float[] dens_prev;
+  float[] density;
+  float[] densityPrevious;
 
   float[] zero;
 
-  float dt;
+  float timeStep;
   float viscosity;
   float attrition;
 
-  public FluidField(int n, float dt, float viscosity, float attrition)
+  public FluidField(int n, float timeStep, float viscosity, float attrition)
   {
     // Number of columns and rows in our system
     this.N = n;
-    this.dt = dt;
+    this.timeStep = timeStep;
     this.viscosity = viscosity;
     this.attrition = attrition;
 
     SIZE = (N + 2) * (N + 2);
 
     //v is velocities
-    u = new float[SIZE];
-    v = new float[SIZE];
-    u_prev = new float[SIZE];
-    v_prev = new float[SIZE];
+    velocityX = new float[SIZE];
+    velocityY = new float[SIZE];
+    velocityPreviousX = new float[SIZE];
+    velocityPreviousY = new float[SIZE];
 
-    dens = new float[SIZE];
-    dens_prev = new float[SIZE];
+    density = new float[SIZE];
+    densityPrevious = new float[SIZE];
 
     zero = new float[SIZE];
   }
@@ -51,12 +51,12 @@ public class FluidField
 
     for (i = 0; i < sz; i++)
     {
-      u[i] = 0.0f;
-      v[i] = 0.0f;
-      u_prev[i] = 0.0f;
-      v_prev[i] = 0.0f;
-      dens[i] = 0.0f;
-      dens_prev[i] = 0.0f;
+      velocityX[i] = 0.0f;
+      velocityY[i] = 0.0f;
+      velocityPreviousX[i] = 0.0f;
+      velocityPreviousY[i] = 0.0f;
+      density[i] = 0.0f;
+      densityPrevious[i] = 0.0f;
     }
   }
 
@@ -175,130 +175,133 @@ public class FluidField
    * Calculating advections. This ensures that the density follows a given velocity field.
    **/
   void advect(int n,
-              int b,
-              float[] d,
-              float[] d0,
-              float[] u,
-              float[] v,
+              int boundaryHack,
+              float[] density,
+              float[] densityPrevious,
+              float[] velocityX,
+              float[] velocityY,
               float dt)
   {
-    int i, j, i0, j0, i1, j1;
-    float x, y, s0, t0, s1, t1, dt0;
+    int xIndex, yIndex, xIndex1, yIndex1;
+    float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal, timeStepScaledByWidth;
 
-    dt0 = dt * n;
-    for (i = 1; i <= n; i++)
+    timeStepScaledByWidth = dt * n;
+    for (int x = 1; x <= n; x++)
     {
-      for (j = 1; j <= n; j++)
+      for (int y = 1; y <= n; y++)
       {
-        x = i - dt0 * u[IX(i, j)];
-        y = j - dt0 * v[IX(i, j)];
+        int index = IX(x, y);
 
-        if (x < 0.5f)
+        newX = x - timeStepScaledByWidth * velocityX[index];
+        newY = y - timeStepScaledByWidth * velocityY[index];
+
+        if (newX < 0.5f)
         {
-          x = 0.5f;
+          newX = 0.5f;
         }
-        if (x > (n + 0.5f))
+        if (newX > (n + 0.5f))
         {
-          x = n + 0.5f;
+          newX = n + 0.5f;
         }
-        if (y < 0.5f)
+        if (newY < 0.5f)
         {
-          y = 0.5f;
+          newY = 0.5f;
         }
-        if (y > (n + 0.5f))
+        if (newY > (n + 0.5f))
         {
-          y = n + 0.5f;
+          newY = n + 0.5f;
         }
 
-        i0 = (int) x;
-        i1 = i0 + 1;
+        xIndex = (int) newX;
+        xIndex1 = xIndex + 1;
 
-        j0 = (int) y;
-        j1 = j0 + 1;
+        yIndex = (int) newY;
+        yIndex1 = yIndex + 1;
 
-        s1 = x - i0;
-        s0 = 1 - s1;
+        xVelocityDecimal = newX - xIndex;
+        oneMinusXVelocityDecimal = 1 - xVelocityDecimal;
 
-        t1 = y - j0;
-        t0 = 1 - t1;
+        yVelocityDecimal = newY - yIndex;
+        oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
 
-        d[IX(i, j)] = s0 * (t0 * d0[IX(i0, j0)] + t1 * d0[IX(i0, j1)]) +
-                s1 * (t0 * d0[IX(i1, j0)] + t1 * d0[IX(i1, j1)]);
+        density[index] = oneMinusXVelocityDecimal *  (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
+                xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
       }
     }
-    setBnd(n, b, d);
+
+    setBnd(n, boundaryHack, density);
   }
 
   /**
    * 1 step of the density solver.
    */
   void densStep(int n,
-                float[] x,
-                float[] x0,
-                float[] u,
-                float[] v,
+                float[] density,
+                float[] densityPrevious,
+                float[] velocityX,
+                float[] velocityY,
                 float diff,
-                float dt)
+                float timeStep)
   {
-    addTimeScaled(n, n, x, x0, dt);
+    addTimeScaled(n, n, density, densityPrevious, timeStep);
 
     //   swap(x0, x);
-    float[] temp = x0;
-    x0 = x;
-    x = temp;
+    float[] temp = densityPrevious;
+    densityPrevious = density;
+    density = temp;
 
-    diffuse(n, 0, x, x0, diff, dt);
+    diffuse(n, 0, density, densityPrevious, diff, timeStep);
 
     //   swap(x0, x);
-    temp = x0;
-    x0 = x;
-    x = temp;
+    temp = densityPrevious;
+    densityPrevious = density;
+    density = temp;
 
-    advect(n, 0, x, x0, u, v, dt);
+    advect(n, 0, density, densityPrevious, velocityX, velocityY, timeStep);
   }
 
   /**
    * 1 step of the velocity solver.
    */
-  void velStep(int n,
-               float[] u,
-               float[] v,
-               float[] u0,
-               float[] v0,
-               float visc,
-               float dt)
+  void velocityStep(int n,
+                    float[] velocityX,
+                    float[] velocityY,
+                    float[] velocityPreviousX,
+                    float[] velocityPreviousY,
+                    float viscosity,
+                    float timeStep)
   {
-    addTimeScaled(n, n, u, u0, dt);
-    addTimeScaled(n, n, v, v0, dt);
+    addTimeScaled(n, n, velocityX, velocityPreviousX, timeStep);
+    addTimeScaled(n, n, velocityY, velocityPreviousY, timeStep);
 
     //    swap(u0, u);
-    float[] temp = u0;
-    u0 = u;
-    u = temp;
+    float[] temp = velocityPreviousX;
+    velocityPreviousX = velocityX;
+    velocityX = temp;
 
-    diffuse(n, 1, u, u0, visc, dt);
+    diffuse(n, 1, velocityX, velocityPreviousX, viscosity, timeStep);
 
     //    swap(v0, v);
-    temp = v0;
-    v0 = v;
-    v = temp;
+    temp = velocityPreviousY;
+    velocityPreviousY = velocityY;
+    velocityY = temp;
 
-    diffuse(n, 2, v, v0, visc, dt);
-    project(n, u, v, u0, v0);
+    diffuse(n, 2, velocityY, velocityPreviousY, viscosity, timeStep);
+    project(n, velocityX, velocityY, velocityPreviousX, velocityPreviousY);
 
     //    swap(u0, u);
-    temp = u0;
-    u0 = u;
-    u = temp;
+    temp = velocityPreviousX;
+    velocityPreviousX = velocityX;
+    velocityX = temp;
 
     //    swap(v0, v);
-    temp = v0;
-    v0 = v;
-    v = temp;
+    temp = velocityPreviousY;
+    velocityPreviousY = velocityY;
+    velocityY = temp;
 
-    advect(n, 1, u, u0, u0, v0, dt);
-    advect(n, 2, v, v0, u0, v0, dt);
-    project(n, u, v, u0, v0);
+    advect(n, 1, velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
+    advect(n, 2, velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
+    project(n, velocityX, velocityY, velocityPreviousX, velocityPreviousY);
   }
 
   void project(int n,
@@ -369,19 +372,19 @@ public class FluidField
 
   public float getDensity(int x, int y)
   {
-    return dens[IX(x, y)];
+    return density[IX(x, y)];
   }
 
   public void setForce(int i, int j, float u, float v)
   {
-    this.u[IX(i, j)] = u;
-    this.v[IX(i, j)] = v;
+    this.velocityX[IX(i, j)] = u;
+    this.velocityY[IX(i, j)] = v;
 
   }
 
   public void setDensity(int i, int j, float source)
   {
-    dens_prev[IX(i, j)] = source; //Set density to initial value
+    densityPrevious[IX(i, j)] = source; //Set density to initial value
   }
 
   public void clearPrevious()
@@ -389,9 +392,9 @@ public class FluidField
     int size = SIZE;
     for (int i = 0; i < size; i++)
     {
-      u_prev[i] = 0.0f;
-      v_prev[i] = 0.0f;
-      dens_prev[i] = 0.0f;
+      velocityPreviousX[i] = 0.0f;
+      velocityPreviousY[i] = 0.0f;
+      densityPrevious[i] = 0.0f;
     }
   }
 
@@ -399,8 +402,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    velStep(N, u, v, u_prev, v_prev, viscosity, dt);
-    densStep(N, dens, dens_prev, u, v, attrition, dt);
+    velocityStep(N, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep);
+    densStep(N, density, densityPrevious, velocityX, velocityY, attrition, timeStep);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;
