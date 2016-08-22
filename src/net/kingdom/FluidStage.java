@@ -36,28 +36,23 @@ public class FluidStage extends Stage
     this.size = size;
   }
 
-  void drawDensity(Graphics graphics, int bufferWidth, int bufferHeight, FluidField fluidField)
+  void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
   {
-    int i, j;
-    float d00, d01, d10, d11;
+    int x, y;
 
     int fieldWidth = fluidField.getWidth();
     int fieldHeight = fluidField.getHeight();
-    for (i = 0; i <= fieldWidth; i++)
+    for (y = 0; y <= fieldHeight; y++)
     {
-      for (j = 0; j <= fieldHeight; j++)
+      for (x = 0; x <= fieldWidth; x++)
       {
-        fluidField.getDensity(i, j);
-        d00 = fluidField.getDensity(i, j);
-        d01 = fluidField.getDensity(i, j + 1);
-        d10 = fluidField.getDensity(i + 1, j);
-        d11 = fluidField.getDensity(i + 1, j + 1);
+        float density = fluidField.getDensity(x, y);
 
-        pixels[(i + ((fieldWidth + 2) * j))] = getColour((d00 + d01 + d10 + d11) / 4);
+        pixels[(x + ((fieldWidth + 2) * y))] = getColour(density);
       }
     }
     GlobalGraphics.convertFromIntArray(fieldWidth + 2, fieldHeight + 2, pixels, bufferedImage);
-    graphics.drawImage(bufferedImage, 0, 0, bufferWidth, bufferHeight, 0, 0, fieldWidth + 1, fieldHeight + 1, null);
+    graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fieldWidth + 1, fieldHeight + 1, null);
   }
 
   private int getColour(float colour)

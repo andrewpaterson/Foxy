@@ -8,7 +8,7 @@ import net.engine.game.Game;
  */
 public class KingdomGame extends Game
 {
-  public static int scale = 2;
+  public static int scale = 3;
   public static int height = 340;
   public static int width = 604;
 
