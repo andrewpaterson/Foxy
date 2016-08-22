@@ -15,25 +15,27 @@ import java.util.List;
 public class FluidStage extends Stage
 {
   protected float force;
-  protected float source;
-  protected int size;
+  protected float clickDensity;
+  protected int width;
+  protected int height;
   protected FluidField fluidField;
 
-  //For ui
   protected boolean mLeftPressed = false;
   protected boolean mRightPressed = true;
-  protected int mx;
-  protected int my; //Current mouse position
-  protected int omx;
-  protected int omy; //Old mouse position
+  protected int mouseX;
+  protected int mouseY;
+  protected int oldMouseX;
+  protected int oldMouseY;
+
   protected BufferedImage bufferedImage = null;
   protected int[] pixels = null;
 
-  public FluidStage(float force, float source, int size)
+  public FluidStage(float force, float clickDensity, int width, int height)
   {
     this.force = force;
-    this.source = source;
-    this.size = size;
+    this.clickDensity = clickDensity;
+    this.width = width;
+    this.height = height;
   }
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
@@ -74,15 +76,15 @@ public class FluidStage extends Stage
     int fieldWidth = fluidField.getWidth();
     int fieldHeight = fluidField.getHeight();
 
-    fluidField.clearPrevious();
+    fluidField.clearPrevious(fieldWidth, fieldHeight);
 
     if (!(mLeftPressed || mRightPressed))
     {
       return;
     }
 
-    int i = (int) ((mx / (float) bufferWidth) * fieldWidth + 1);
-    int j = (int) ((my / (float) bufferHeight) * fieldHeight + 1);
+    int i = (int) ((mouseX / (float) bufferWidth) * fieldWidth + 1);
+    int j = (int) ((mouseY / (float) bufferHeight) * fieldHeight + 1);
 
     if ((i < 1) || (i > fieldWidth)
             || (j < 1) || (j > fieldHeight))
@@ -92,16 +94,16 @@ public class FluidStage extends Stage
 
     if (mLeftPressed)
     {
-      fluidField.setForce(i, j, force * (mx - omx), -force * (omy - my));
+      fluidField.setForce(i, j, force * (mouseX - oldMouseX), -force * (oldMouseY - mouseY));
     }
 
     if (mRightPressed)
     {
-      fluidField.setDensity(i, j, source);
+      fluidField.setDensity(i, j, clickDensity);
     }
 
-    omx = mx;
-    omy = my;
+    oldMouseX = mouseX;
+    oldMouseY = mouseY;
   }
 
   void mousePressed(GameInput input)
@@ -109,10 +111,10 @@ public class FluidStage extends Stage
     Point mouseLocation = input.getMouseLocation();
     if (mouseLocation != null)
     {
-      omx = mouseLocation.x;
-      mx = omx;
-      omy = mouseLocation.y;
-      my = omy;
+      oldMouseX = mouseLocation.x;
+      mouseX = oldMouseX;
+      oldMouseY = mouseLocation.y;
+      mouseY = oldMouseY;
       mLeftPressed = input.getMouseButtonState(0);
       mRightPressed = input.getMouseButtonState(1);
     }
@@ -140,9 +142,9 @@ public class FluidStage extends Stage
   public void stageStarting(StageManager stageManager)
   {
     super.stageStarting(stageManager);
-    fluidField = new FluidField(size, 0.2f, 0, 0);
-    bufferedImage = new BufferedImage(size + 2, size + 2, BufferedImage.TYPE_INT_ARGB);
-    pixels = new int[(size + 2) * (size + 2)];
+    fluidField = new FluidField(width, height, 0.2f, 0, 0);
+    bufferedImage = new BufferedImage(width + 2, height + 2, BufferedImage.TYPE_INT_ARGB);
+    pixels = new int[(width + 2) * (height + 2)];
   }
 
   @Override
@@ -178,8 +180,8 @@ public class FluidStage extends Stage
     Point mouseLocation = input.getMouseLocation();
     if (mouseLocation != null)
     {
-      mx = mouseLocation.x;
-      my = mouseLocation.y;
+      mouseX = mouseLocation.x;
+      mouseY = mouseLocation.y;
     }
   }
 }

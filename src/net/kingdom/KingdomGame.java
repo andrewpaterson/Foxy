@@ -19,7 +19,7 @@ public class KingdomGame extends Game
 
   private void start()
   {
-    stageManager.addStage("Fluid", new FluidStage(5.0f, 100.0f, height));
+    stageManager.addStage("Fluid", new FluidStage(5.0f, 100.0f, width, height));
     stageManager.setStage("Fluid");
 
     run();
