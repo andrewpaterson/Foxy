@@ -127,13 +127,22 @@ public class FluidField
    */
   void diffuse(int n, int boundaryHack, float[] destination, float[] source, float diff, float timeStep)
   {
-    int x, y, iteration;
-    float a = 0;
     if (diff != 0)
     {
-      a = timeStep * diff * n * n;
+      float a = timeStep * diff * n * n;
+      diffuse(n, boundaryHack, destination, source, a);
     }
+    else
+    {
+      copy(n, boundaryHack, destination, source);
+    }
+  }
 
+  private void diffuse(int n, int boundaryHack, float[] destination, float[] source, float a)
+  {
+    int iteration;
+    int x;
+    int y;
     for (iteration = 0; iteration < 1; iteration++)
     {
       for (x = 1; x <= n; x++)
@@ -147,6 +156,12 @@ public class FluidField
       }
       setBnd(n, boundaryHack, destination);
     }
+  }
+
+  private void copy(int n, int boundaryHack, float[] destination, float[] source)
+  {
+    System.arraycopy(source, 0, destination, 0, SIZE);
+    setBnd(n, boundaryHack, destination);
   }
 
   /**
@@ -281,48 +296,47 @@ public class FluidField
   }
 
   void project(int n,
-               float[] u,
-               float[] v,
+               float[] destinationVelocityX,
+               float[] destinationVelocityY,
                float[] p,
                float[] div)
   {
-    int i, j, k;
     float h = 1.0f / n;
-    for (i = 1; i <= n; i++)
+    for (int x = 1; x <= n; x++)
     {
-      for (j = 1; j <= n; j++)
+      for (int y = 1; y <= n; y++)
       {
-        div[IX(i, j)] = -0.5f * h * (u[IX(i + 1, j)] - u[IX(i - 1, j)] +
-                v[IX(i, j + 1)] - v[IX(i, j - 1)]);
-        p[IX(i, j)] = 0;
+        div[IX(x, y)] = -0.5f * h * (destinationVelocityX[IX(x + 1, y)] - destinationVelocityX[IX(x - 1, y)] + destinationVelocityY[IX(x, y + 1)] - destinationVelocityY[IX(x, y - 1)]);
+        p[IX(x, y)] = 0;
       }
     }
     setBnd(n, 0, div);
     setBnd(n, 0, p);
 
-    for (k = 0; k < 20; k++)
+    for (int iterations = 0; iterations < 10; iterations++)
     {
-      for (i = 1; i <= n; i++)
+      for (int x = 1; x <= n; x++)
       {
-        for (j = 1; j <= n; j++)
+        for (int y = 1; y <= n; y++)
         {
-          p[IX(i, j)] = (div[IX(i, j)] + p[IX(i - 1, j)] + p[IX(i + 1, j)] +
-                  p[IX(i, j - 1)] + p[IX(i, j + 1)]) / 4;
+          int index = IX(x, y);
+          p[index] = (div[index] + p[index - 1] + p[index + 1] + p[index - n - 2] + p[index + n + 2]) / 4;
         }
       }
       setBnd(n, 0, p);
     }
 
-    for (i = 1; i <= n; i++)
+    for (int x = 1; x <= n; x++)
     {
-      for (j = 1; j <= n; j++)
+      for (int y = 1; y <= n; y++)
       {
-        u[IX(i, j)] -= 0.5f * (p[IX(i + 1, j)] - p[IX(i - 1, j)]) / h;
-        v[IX(i, j)] -= 0.5f * (p[IX(i, j + 1)] - p[IX(i, j - 1)]) / h;
+        int index = IX(x, y);
+        destinationVelocityX[index] -= 0.5f * (p[index + 1] - p[index - 1]) / h;
+        destinationVelocityY[index] -= 0.5f * (p[index + n + 2] - p[index - n - 2]) / h;
       }
     }
-    setBnd(n, 1, u);
-    setBnd(n, 2, v);
+    setBnd(n, 1, destinationVelocityX);
+    setBnd(n, 2, destinationVelocityY);
   }
 
   public int getWidth()
