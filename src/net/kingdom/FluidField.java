@@ -17,16 +17,16 @@ public class FluidField
   float[] dens_prev;
 
   float dt;
-  float visc;
-  float diff;
+  float viscosity;
+  float attrition;
 
-  public FluidField(int n, float dt, float visc, float diff)
+  public FluidField(int n, float dt, float viscosity, float attrition)
   {
     // Number of columns and rows in our system
     this.N = n;
     this.dt = dt;
-    this.visc = visc;
-    this.diff = diff;
+    this.viscosity = viscosity;
+    this.attrition = attrition;
 
     SIZE = (N + 2) * (N + 2);
 
@@ -128,7 +128,11 @@ public class FluidField
   void diffuse(int n, int boundaryHack, float[] destination, float[] source, float diff, float timeStep)
   {
     int x, y, iteration;
-    float a = timeStep * diff * n * n;
+    float a = 0;
+    if (diff != 0)
+    {
+      a = timeStep * diff * n * n;
+    }
 
     for (iteration = 0; iteration < 1; iteration++)
     {
@@ -137,7 +141,8 @@ public class FluidField
         for (y = 1; y <= n; y++)
         {
           int index = IX(x, y);
-          destination[index] = (source[index] + a * (destination[index - 1] + destination[index + 1] + destination[index - n - 2] + destination[index + n + 2])) / (1 + (4 * a));
+          float summedAdjacentValues = destination[index - 1] + destination[index + 1] + destination[index - n - 2] + destination[index + n + 2];
+          destination[index] = (source[index] + a * summedAdjacentValues) / (1 + (4 * a));
         }
       }
       setBnd(n, boundaryHack, destination);
@@ -362,8 +367,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    velStep(N, u, v, u_prev, v_prev, visc, dt);
-    densStep(N, dens, dens_prev, u, v, diff, dt);
+    velStep(N, u, v, u_prev, v_prev, viscosity, dt);
+    densStep(N, dens, dens_prev, u, v, attrition, dt);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;
