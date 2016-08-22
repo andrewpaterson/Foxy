@@ -14,8 +14,9 @@ import java.util.List;
 
 public class FluidStage extends Stage
 {
-  protected float force = 5.0f;
-  protected float source = 100.0f;
+  protected float force;
+  protected float source;
+  protected int size;
   protected FluidField fluidField;
 
   //For ui
@@ -27,6 +28,13 @@ public class FluidStage extends Stage
   protected int omy; //Old mouse position
   protected BufferedImage bufferedImage = null;
   protected int[] pixels = null;
+
+  public FluidStage(float force, float source, int size)
+  {
+    this.force = force;
+    this.source = source;
+    this.size = size;
+  }
 
   void drawDensity(Graphics graphics, int bufferWidth, int bufferHeight, FluidField fluidField)
   {
@@ -137,7 +145,6 @@ public class FluidStage extends Stage
   public void stageStarting(StageManager stageManager)
   {
     super.stageStarting(stageManager);
-    int size = 340;
     fluidField = new FluidField(size, 0.2f, 0, 0);
     bufferedImage = new BufferedImage(size + 2, size + 2, BufferedImage.TYPE_INT_ARGB);
     pixels = new int[(size + 2) * (size + 2)];

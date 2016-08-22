@@ -20,15 +20,15 @@ public class FluidField
 
   float timeStep;
   float viscosity;
-  float attrition;
+  float diffusionRate;
 
-  public FluidField(int n, float timeStep, float viscosity, float attrition)
+  public FluidField(int n, float timeStep, float viscosity, float diffusionRate)
   {
     // Number of columns and rows in our system
     this.N = n;
     this.timeStep = timeStep;
     this.viscosity = viscosity;
-    this.attrition = attrition;
+    this.diffusionRate = diffusionRate;
 
     SIZE = (N + 2) * (N + 2);
 
@@ -60,7 +60,6 @@ public class FluidField
     }
   }
 
-  //Helper function to get an element from a 1D array as if it were a 2D array
   int IX(int x, int y)
   {
     return (x + ((N + 2) * y));
@@ -129,12 +128,18 @@ public class FluidField
    * Diffusion at rate diff. Each cell will exchange density with direct neighbours.
    * Uses Gauss-Seidel relaxation.
    */
-  void diffuse(int n, int boundaryHack, float[] destination, float[] source, float diff, float timeStep)
+  void diffuse(int n,
+               int boundaryHack,
+               float[] destination,
+               float[] source,
+               float diff,
+               float timeStep,
+               int iterations)
   {
     if (diff != 0)
     {
       float a = timeStep * diff * n * n;
-      diffuse(n, boundaryHack, destination, source, a);
+      diffuse(n, boundaryHack, destination, source, a, iterations);
     }
     else
     {
@@ -142,14 +147,19 @@ public class FluidField
     }
   }
 
-  private void diffuse(int n, int boundaryHack, float[] destination, float[] source, float a)
+  private void diffuse(int n,
+                       int boundaryHack,
+                       float[] destination,
+                       float[] source,
+                       float a,
+                       int iterations)
   {
-    int iteration;
+    int i;
     int x;
     int y;
 
     float constant = 1.0f / (1.0f + (4 * a));
-    for (iteration = 0; iteration < 10; iteration++)
+    for (i = 0; i < iterations; i++)
     {
       for (x = 1; x <= n; x++)
       {
@@ -178,8 +188,8 @@ public class FluidField
               int boundaryHack,
               float[] density,
               float[] densityPrevious,
-              float[] velocityX,
-              float[] velocityY,
+              float[] velocityU,
+              float[] velocityV,
               float dt)
   {
     int xIndex, yIndex, xIndex1, yIndex1;
@@ -192,8 +202,8 @@ public class FluidField
       {
         int index = IX(x, y);
 
-        newX = x - timeStepScaledByWidth * velocityX[index];
-        newY = y - timeStepScaledByWidth * velocityY[index];
+        newX = x - timeStepScaledByWidth * velocityU[index];
+        newY = y - timeStepScaledByWidth * velocityV[index];
 
         if (newX < 0.5f)
         {
@@ -224,7 +234,7 @@ public class FluidField
         yVelocityDecimal = newY - yIndex;
         oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
 
-        density[index] = oneMinusXVelocityDecimal *  (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
+        density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
                 xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
       }
     }
@@ -241,7 +251,8 @@ public class FluidField
                 float[] velocityX,
                 float[] velocityY,
                 float diff,
-                float timeStep)
+                float timeStep,
+                int iterations)
   {
     addTimeScaled(n, n, density, densityPrevious, timeStep);
 
@@ -250,7 +261,7 @@ public class FluidField
     densityPrevious = density;
     density = temp;
 
-    diffuse(n, 0, density, densityPrevious, diff, timeStep);
+    diffuse(n, 0, density, densityPrevious, diff, timeStep, iterations);
 
     //   swap(x0, x);
     temp = densityPrevious;
@@ -269,46 +280,29 @@ public class FluidField
                     float[] velocityPreviousX,
                     float[] velocityPreviousY,
                     float viscosity,
-                    float timeStep)
+                    float timeStep,
+                    int iterations)
   {
     addTimeScaled(n, n, velocityX, velocityPreviousX, timeStep);
     addTimeScaled(n, n, velocityY, velocityPreviousY, timeStep);
 
-    //    swap(u0, u);
-    float[] temp = velocityPreviousX;
-    velocityPreviousX = velocityX;
-    velocityX = temp;
+    diffuse(n, 1, velocityPreviousX, velocityX, viscosity, timeStep, 10);
+    diffuse(n, 2, velocityPreviousY, velocityY, viscosity, timeStep, 10);
 
-    diffuse(n, 1, velocityX, velocityPreviousX, viscosity, timeStep);
-
-    //    swap(v0, v);
-    temp = velocityPreviousY;
-    velocityPreviousY = velocityY;
-    velocityY = temp;
-
-    diffuse(n, 2, velocityY, velocityPreviousY, viscosity, timeStep);
-    project(n, velocityX, velocityY, velocityPreviousX, velocityPreviousY);
-
-    //    swap(u0, u);
-    temp = velocityPreviousX;
-    velocityPreviousX = velocityX;
-    velocityX = temp;
-
-    //    swap(v0, v);
-    temp = velocityPreviousY;
-    velocityPreviousY = velocityY;
-    velocityY = temp;
+    project(n, velocityPreviousX, velocityPreviousY, velocityX, velocityY, iterations);
 
     advect(n, 1, velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
     advect(n, 2, velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
-    project(n, velocityX, velocityY, velocityPreviousX, velocityPreviousY);
+
+    project(n, velocityX, velocityY, velocityPreviousX, velocityPreviousY, iterations);
   }
 
   void project(int n,
                float[] destinationVelocityX,
                float[] destinationVelocityY,
                float[] p,
-               float[] div)
+               float[] div,
+               int iterations)
   {
     float h = 1.0f / n;
     float halfHNegative = -0.5f * h;
@@ -328,7 +322,7 @@ public class FluidField
     setBnd(n, 0, div);
     setBnd(n, 0, p);
 
-    for (int iterations = 0; iterations < 20; iterations++)
+    for (int i = 0; i < iterations; i++)
     {
       for (int x = 1; x <= n; x++)
       {
@@ -402,8 +396,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    velocityStep(N, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep);
-    densStep(N, density, densityPrevious, velocityX, velocityY, attrition, timeStep);
+    velocityStep(N, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, 10);
+    densStep(N, density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, 10);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;
