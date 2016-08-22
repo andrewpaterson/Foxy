@@ -137,9 +137,10 @@ public class FluidStage extends Stage
   public void stageStarting(StageManager stageManager)
   {
     super.stageStarting(stageManager);
-    fluidField = new FluidField(196, 0.4f, 0, 0);
-    bufferedImage = new BufferedImage(196 + 2, 196 + 2, BufferedImage.TYPE_INT_ARGB);
-    pixels = new int[(196 + 2) * (196 + 2)];
+    int size = 340;
+    fluidField = new FluidField(size, 0.4f, 0, 0);
+    bufferedImage = new BufferedImage(size + 2, size + 2, BufferedImage.TYPE_INT_ARGB);
+    pixels = new int[(size + 2) * (size + 2)];
   }
 
   @Override

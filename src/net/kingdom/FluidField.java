@@ -154,9 +154,6 @@ public class FluidField
         {
           x = n + 0.5f;
         }
-        i0 = (int) x;
-        i1 = i0 + 1;
-
         if (y < 0.5f)
         {
           y = 0.5f;
@@ -165,6 +162,10 @@ public class FluidField
         {
           y = n + 0.5f;
         }
+
+        i0 = (int) x;
+        i1 = i0 + 1;
+
         j0 = (int) y;
         j1 = j0 + 1;
 
@@ -332,8 +333,12 @@ public class FluidField
 
   public void tick()
   {
+    long startTime = System.nanoTime();
     velStep(N, u, v, u_prev, v_prev, visc, dt);
     densStep(N, dens, dens_prev, u, v, diff, dt);
+    long endTime = System.nanoTime();
+    double timeInSeconds = (double)(endTime - startTime)/1000000000;
+    System.out.println(String.format("%.3f", timeInSeconds));
   }
 }
 

@@ -8,9 +8,11 @@ import net.engine.game.Game;
  */
 public class KingdomGame extends Game
 {
+  public static int scale = 2;
+
   public KingdomGame()
   {
-    super(new FrameConfig("Nothing Starts", 604, 340));
+    super(new FrameConfig("Nothing Starts", 640 * scale, 340 * scale));
   }
 
   private void start()
