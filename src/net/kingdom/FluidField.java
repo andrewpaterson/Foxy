@@ -175,10 +175,6 @@ public class FluidField
     setBnd(n, boundaryHack, destination);
   }
 
-  /**
-   * 3rd Step :
-   * Calculating advections. This ensures that the density follows a given velocity field.
-   **/
   void advect(int n,
               int boundaryHack,
               float[] density,
