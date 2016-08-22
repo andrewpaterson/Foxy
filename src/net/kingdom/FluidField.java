@@ -57,44 +57,66 @@ public class FluidField
   }
 
   //Helper function to get an element from a 1D array as if it were a 2D array
-  int IX(int i, int j)
+  int IX(int x, int y)
   {
-    return (i + ((N + 2) * j));
+    return (x + ((N + 2) * y));
   }
 
   /**
    * Sets boundary for diffusion. It is bound vertically and horizontally in a box.
    **/
-  void setBnd(int n, int b, float[] x)
+
+  void setBnd(int n, int boundaryHack, float[] destination)
   {
     int i;
 
-    for (i = 0; i <= n; i++)
+    if (boundaryHack == 0)
     {
-      x[IX(0, i)] = (b == 1 ? -x[IX(1, i)] : x[IX(1, i)]);
-      x[IX(n + 1, i)] = (b == 1 ? -x[IX(n, i)] : x[IX(n, i)]);
-      x[IX(i, 0)] = (b == 2 ? -x[IX(i, 1)] : x[IX(i, 1)]);
-      x[IX(i, n + 1)] = (b == 2 ? -x[IX(i, n)] : x[IX(i, n)]);
+      for (i = 0; i <= n; i++)
+      {
+        destination[IX(0, i)] = destination[IX(1, i)];
+        destination[IX(n + 1, i)] = destination[IX(n, i)];
+        destination[IX(i, 0)] = destination[IX(i, 1)];
+        destination[IX(i, n + 1)] = destination[IX(i, n)];
+      }
     }
-    x[IX(0, 0)] = 0.5f * (x[IX(1, 0)] + x[IX(0, 1)]);
-    x[IX(0, n + 1)] = 0.5f * (x[IX(1, n + 1)] + x[IX(0, n)]);
-    x[IX(n + 1, 0)] = 0.5f * (x[IX(n, 0)] + x[IX(n + 1, 1)]);
-    x[IX(n + 1, n + 1)] = 0.5f * (x[IX(n, n + 1)] + x[IX(n + 1, n)]);
+
+    if (boundaryHack == 1)
+    {
+      for (i = 0; i <= n; i++)
+      {
+        destination[IX(0, i)] = -destination[IX(1, i)];
+        destination[IX(n + 1, i)] = -destination[IX(n, i)];
+        destination[IX(i, 0)] = destination[IX(i, 1)];
+        destination[IX(i, n + 1)] = destination[IX(i, n)];
+      }
+    }
+
+    if (boundaryHack == 2)
+    {
+      for (i = 0; i <= n; i++)
+      {
+        destination[IX(0, i)] = destination[IX(1, i)];
+        destination[IX(n + 1, i)] = destination[IX(n, i)];
+        destination[IX(i, 0)] = -destination[IX(i, 1)];
+        destination[IX(i, n + 1)] = -destination[IX(i, n)];
+      }
+    }
+
+    destination[IX(0, 0)] = 0.5f * (destination[IX(1, 0)] + destination[IX(0, 1)]);
+    destination[IX(0, n + 1)] = 0.5f * (destination[IX(1, n + 1)] + destination[IX(0, n)]);
+    destination[IX(n + 1, 0)] = 0.5f * (destination[IX(n, 0)] + destination[IX(n + 1, 1)]);
+    destination[IX(n + 1, n + 1)] = 0.5f * (destination[IX(n, n + 1)] + destination[IX(n + 1, n)]);
   }
 
-  /**
-   * 1st step:
-   * Add a source held in s to the density held in x.
-   * dt is the timestep and n+2 is the row and col size.
-   */
-  void addSource(int n, float[] x, float[] s, float dt)
+  void addTimeScaled(int width, int height, float[] destination, float[] source, float timeStep)
   {
     int i;
-    int sz = (n + 2) * (n + 2);
+    int size = (width + 2) * (height + 2);
 
-    for (i = 0; i < sz; i++)
+    for (i = 0; i < size; i++)
     {
-      x[i] += dt * s[i];
+      destination[i] += timeStep * source[i];
     }
   }
 
@@ -103,23 +125,22 @@ public class FluidField
    * Diffusion at rate diff. Each cell will exchange density with direct neighbours.
    * Uses Gauss-Seidel relaxation.
    */
-  void diffuse(int n, int b, float[] x, float[] x0, float diff, float dt)
+  void diffuse(int n, int boundaryHack, float[] destination, float[] source, float diff, float timeStep)
   {
-    int i, j, k;
-    float a = dt * diff * n * n;
+    int x, y, iteration;
+    float a = timeStep * diff * n * n;
 
-    for (k = 0; k < 20; k++)
+    for (iteration = 0; iteration < 1; iteration++)
     {
-      for (i = 1; i <= n; i++)
+      for (x = 1; x <= n; x++)
       {
-        for (j = 1; j <= n; j++)
+        for (y = 1; y <= n; y++)
         {
-          x[IX(i, j)] = (x0[IX(i, j)] +
-                  a * (x[IX(i - 1, j)] + x[IX(i + 1, j)] + x[IX(i, j - 1)] + x[IX(i, j + 1)])) / (1 + (4 * a));
-
+          int index = IX(x, y);
+          destination[index] = (source[index] + a * (destination[index - 1] + destination[index + 1] + destination[index - n - 2] + destination[index + n + 2])) / (1 + (4 * a));
         }
       }
-      setBnd(n, b, x);
+      setBnd(n, boundaryHack, destination);
     }
   }
 
@@ -185,9 +206,15 @@ public class FluidField
   /**
    * 1 step of the density solver.
    */
-  void densStep(int n, float[] x, float[] x0, float[] u, float[] v, float diff, float dt)
+  void densStep(int n,
+                float[] x,
+                float[] x0,
+                float[] u,
+                float[] v,
+                float diff,
+                float dt)
   {
-    addSource(n, x, x0, dt);
+    addTimeScaled(n, n, x, x0, dt);
 
     //   swap(x0, x);
     float[] temp = x0;
@@ -215,8 +242,8 @@ public class FluidField
                float visc,
                float dt)
   {
-    addSource(n, u, u0, dt);
-    addSource(n, v, v0, dt);
+    addTimeScaled(n, n, u, u0, dt);
+    addTimeScaled(n, n, v, v0, dt);
 
     //    swap(u0, u);
     float[] temp = u0;
@@ -334,10 +361,12 @@ public class FluidField
   public void tick()
   {
     long startTime = System.nanoTime();
+
     velStep(N, u, v, u_prev, v_prev, visc, dt);
     densStep(N, dens, dens_prev, u, v, diff, dt);
+
     long endTime = System.nanoTime();
-    double timeInSeconds = (double)(endTime - startTime)/1000000000;
+    double timeInSeconds = (double) (endTime - startTime) / 1000000000;
     System.out.println(String.format("%.3f", timeInSeconds));
   }
 }
