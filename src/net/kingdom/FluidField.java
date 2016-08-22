@@ -3,30 +3,34 @@ package net.kingdom;
 public class FluidField
 {
   // Number of columns and rows in our system
-  int width;
-  int height;
+  private int width;
+  private int height;
 
-  float[] velocityX;
-  float[] velocityY;
-  float[] velocityPreviousX;
-  float[] velocityPreviousY;
+  private float[] velocityX;
+  private float[] velocityY;
+  private float[] velocityPreviousX;
+  private float[] velocityPreviousY;
 
-  float[] density;
-  float[] densityPrevious;
+  private float[] density;
+  private float[] densityPrevious;
 
-  float[] zero;
+  private float[] zero;
 
-  float timeStep;
-  float viscosity;
-  float diffusionRate;
+  private float timeStep;
+  private float viscosity;
+  private float diffusionRate;
+  private int velocityIterations;
+  private int densityIterations;
 
-  public FluidField(int width, int height, float timeStep, float viscosity, float diffusionRate)
+  public FluidField(int width, int height, float timeStep, float viscosity, float diffusionRate, int velocityIterations, int densityIterations)
   {
     this.width = width;
     this.height = height;
     this.timeStep = timeStep;
     this.viscosity = viscosity;
     this.diffusionRate = diffusionRate;
+    this.velocityIterations = velocityIterations;
+    this.densityIterations = densityIterations;
 
     int size = (width + 2) * (height + 2);
 
@@ -304,7 +308,6 @@ public class FluidField
     setBnd(width, height, 0, div);
     setBnd(width, height, 0, p);
 
-    float scale = 1.0f / 4.0f;
     for (int i = 0; i < iterations; i++)
     {
       for (int y = 1; y <= height; y++)
@@ -312,7 +315,7 @@ public class FluidField
         for (int x = 1; x <= width; x++)
         {
           int index = IX(x, y);
-          p[index] = scale * (div[index] + sumAdjacentValues(index, p, width));
+          p[index] = 0.25f * (div[index] + sumAdjacentValues(index, p, width));
         }
       }
 
@@ -379,8 +382,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    calculateVelocity(width, height, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, 10);
-    calculateDensity(width, height, density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, 10);
+    calculateVelocity(width, height, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, velocityIterations);
+    calculateDensity(width, height, density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, densityIterations);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;
