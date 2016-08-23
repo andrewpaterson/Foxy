@@ -2,6 +2,8 @@ package net.kingdom;
 
 import net.engine.game.FrameConfig;
 import net.engine.game.Game;
+import net.engine.thread.Threadanator;
+import net.engine.thread.Work;
 
 public class KingdomGame extends Game
 {
@@ -16,10 +18,14 @@ public class KingdomGame extends Game
 
   private void start()
   {
+    Threadanator.getInstance().start();
+
     stageManager.addStage("Fluid", new FluidStage(5.0f, 100.0f, width, height));
     stageManager.setStage("Fluid");
 
     run();
+
+    Threadanator.getInstance().stop();
   }
 
   public static void main(String[] args)
