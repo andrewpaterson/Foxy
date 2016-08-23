@@ -3,9 +3,6 @@ package net.kingdom;
 import net.engine.game.FrameConfig;
 import net.engine.game.Game;
 
-/**
- * Created by andrew on 2016/08/16.
- */
 public class KingdomGame extends Game
 {
   public static int scale = 3;

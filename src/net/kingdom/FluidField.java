@@ -1,5 +1,7 @@
 package net.kingdom;
 
+import java.util.Arrays;
+
 public class FluidField
 {
   // Number of columns and rows in our system
@@ -13,8 +15,6 @@ public class FluidField
 
   private float[] density;
   private float[] densityPrevious;
-
-  private float[] zero;
 
   private float timeStep;
   private float viscosity;
@@ -42,23 +42,17 @@ public class FluidField
     density = new float[size];
     densityPrevious = new float[size];
 
-    zero = new float[size];
+    clearData();
   }
 
   void clearData()
   {
-    int i;
-    int sz = (width + 2) * (height + 2);
-
-    for (i = 0; i < sz; i++)
-    {
-      velocityX[i] = 0.0f;
-      velocityY[i] = 0.0f;
-      velocityPreviousX[i] = 0.0f;
-      velocityPreviousY[i] = 0.0f;
-      density[i] = 0.0f;
-      densityPrevious[i] = 0.0f;
-    }
+    Arrays.fill(velocityX, 0.0f);
+    Arrays.fill(velocityY, 0.0f);
+    Arrays.fill(velocityPreviousX, 0.0f);
+    Arrays.fill(velocityPreviousY, 0.0f);
+    Arrays.fill(density, 0.0f);
+    Arrays.fill(densityPrevious, 0.0f);
   }
 
   int IX(int x, int y)
@@ -157,9 +151,9 @@ public class FluidField
     {
       for (int y = 1; y <= height; y++)
       {
-        for (int x = 1; x <= width; x++)
+        int index = IX(1, y);
+        for (int x = 1; x <= width; x++, index++)
         {
-          int index = IX(x, y);
           float adjacentValueSum = sumAdjacentValues(index, destination, width);
           destination[index] = constant * (source[index] + a * adjacentValueSum);
         }
@@ -194,10 +188,9 @@ public class FluidField
     float timeStepScaledByHeight = dt * height;
     for (int y = 1; y <= height; y++)
     {
-      for (int x = 1; x <= width; x++)
+      int index = IX(1, y);
+      for (int x = 1; x <= width; x++, index++)
       {
-        int index = IX(x, y);
-
         newX = x - timeStepScaledByWidth * velocityX[index];
         newY = y - timeStepScaledByHeight * velocityY[index];
 
@@ -296,14 +289,14 @@ public class FluidField
 
     for (int y = 1; y <= height; y++)
     {
-      for (int x = 1; x <= width; x++)
+      int index = IX(1, y);
+      for (int x = 1; x <= width; x++, index++)
       {
-        int index = IX(x, y);
         div[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + width + 2] - destinationVelocityY[index - width - 2]);
       }
     }
 
-    System.arraycopy(zero, 0, p, 0, (width + 2) * (height + 2));
+    Arrays.fill(p, 0);
 
     setBnd(width, height, 0, div);
     setBnd(width, height, 0, p);
@@ -312,9 +305,9 @@ public class FluidField
     {
       for (int y = 1; y <= height; y++)
       {
-        for (int x = 1; x <= width; x++)
+        int index = IX(1, y);
+        for (int x = 1; x <= width; x++, index++)
         {
-          int index = IX(x, y);
           p[index] = 0.25f * (div[index] + sumAdjacentValues(index, p, width));
         }
       }
@@ -324,9 +317,9 @@ public class FluidField
 
     for (int y = 1; y <= height; y++)
     {
-      for (int x = 1; x <= width; x++)
+      int index = IX(1, y);
+      for (int x = 1; x <= width; x++, index++)
       {
-        int index = IX(x, y);
         destinationVelocityX[index] += halfNNegative * (p[index + 1] - p[index - 1]);
         destinationVelocityY[index] += halfNNegative * (p[index + width + 2] - p[index - width - 2]);
       }
