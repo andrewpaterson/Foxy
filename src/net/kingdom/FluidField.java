@@ -6,6 +6,7 @@ public class FluidField
 {
   // Number of columns and rows in our system
   private int width;
+  private int stride;
   private int height;
 
   private float[] velocityX;
@@ -25,6 +26,7 @@ public class FluidField
   public FluidField(int width, int height, float timeStep, float viscosity, float diffusionRate, int velocityIterations, int densityIterations)
   {
     this.width = width;
+    this.stride = width + 2;
     this.height = height;
     this.timeStep = timeStep;
     this.viscosity = viscosity;
@@ -32,7 +34,7 @@ public class FluidField
     this.velocityIterations = velocityIterations;
     this.densityIterations = densityIterations;
 
-    int size = (width + 2) * (height + 2);
+    int size = (stride) * (height + 2);
 
     velocityX = new float[size];
     velocityY = new float[size];
@@ -57,7 +59,7 @@ public class FluidField
 
   int IX(int x, int y)
   {
-    return (x + ((width + 2) * y));
+    return x + stride * y;
   }
 
   /**
@@ -107,10 +109,10 @@ public class FluidField
 //    destination[IX(width + 1, width + 1)] = 0.5f * (destination[IX(width, width + 1)] + destination[IX(width + 1, width)]);
   }
 
-  void addTimeScaled(int width, int height, float[] destination, float[] source, float timeStep)
+  void addTimeScaled(float[] destination, float[] source, float timeStep)
   {
     int i;
-    int size = (width + 2) * (height + 2);
+    int size = (stride) * (height + 2);
 
     for (i = 0; i < size; i++)
     {
@@ -130,17 +132,15 @@ public class FluidField
     if (diffusionRate != 0)
     {
       float a = timeStep * diffusionRate * width * height;
-      diffuse(width, height, boundaryHack, destination, source, a, iterations);
+      diffuse(boundaryHack, destination, source, a, iterations);
     }
     else
     {
-      copy(width, height, boundaryHack, destination, source);
+      copy(boundaryHack, destination, source);
     }
   }
 
-  private void diffuse(int width,
-                       int height,
-                       int boundaryHack,
+  private void diffuse(int boundaryHack,
                        float[] destination,
                        float[] source,
                        float a,
@@ -162,19 +162,15 @@ public class FluidField
     }
   }
 
-  private void copy(int width,
-                    int height,
-                    int boundaryHack,
+  private void copy(int boundaryHack,
                     float[] destination,
                     float[] source)
   {
-    System.arraycopy(source, 0, destination, 0, (width + 2) * (height + 2));
+    System.arraycopy(source, 0, destination, 0, (stride) * (height + 2));
     setBnd(width, height, boundaryHack, destination);
   }
 
-  void advect(int width,
-              int height,
-              int boundaryHack,
+  void advect(int boundaryHack,
               float[] density,
               float[] densityPrevious,
               float[] velocityX,
@@ -231,9 +227,7 @@ public class FluidField
     setBnd(width, height, boundaryHack, density);
   }
 
-  void calculateDensity(int width,
-                        int height,
-                        float[] density,
+  void calculateDensity(float[] density,
                         float[] densityPrevious,
                         float[] velocityX,
                         float[] velocityY,
@@ -241,19 +235,17 @@ public class FluidField
                         float timeStep,
                         int iterations)
   {
-    addTimeScaled(width, height, density, densityPrevious, timeStep);
+    addTimeScaled(density, densityPrevious, timeStep);
 
     diffuse(width, height, 0, densityPrevious, density, diffusionRate, timeStep, iterations);
 
-    advect(width, height, 0, density, densityPrevious, velocityX, velocityY, timeStep);
+    advect(0, density, densityPrevious, velocityX, velocityY, timeStep);
   }
 
   /**
    * 1 step of the velocity solver.
    */
-  void calculateVelocity(int width,
-                         int height,
-                         float[] velocityX,
+  void calculateVelocity(float[] velocityX,
                          float[] velocityY,
                          float[] velocityPreviousX,
                          float[] velocityPreviousY,
@@ -261,23 +253,21 @@ public class FluidField
                          float timeStep,
                          int iterations)
   {
-    addTimeScaled(width, height, velocityX, velocityPreviousX, timeStep);
-    addTimeScaled(width, height, velocityY, velocityPreviousY, timeStep);
+    addTimeScaled(velocityX, velocityPreviousX, timeStep);
+    addTimeScaled(velocityY, velocityPreviousY, timeStep);
 
     diffuse(width, height, 1, velocityPreviousX, velocityX, viscosity, timeStep, 10);
     diffuse(width, height, 2, velocityPreviousY, velocityY, viscosity, timeStep, 10);
 
-    project(width, height, velocityPreviousX, velocityPreviousY, velocityX, velocityY, iterations);
+    project(velocityPreviousX, velocityPreviousY, velocityX, velocityY, iterations);
 
-    advect(width, height, 1, velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
-    advect(width, height, 2, velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
+    advect(1, velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
+    advect(2, velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
 
-    project(width, height, velocityX, velocityY, velocityPreviousX, velocityPreviousY, iterations);
+    project(velocityX, velocityY, velocityPreviousX, velocityPreviousY, iterations);
   }
 
-  void project(int width,
-               int height,
-               float[] destinationVelocityX,
+  void project(float[] destinationVelocityX,
                float[] destinationVelocityY,
                float[] p,
                float[] div,
@@ -292,7 +282,7 @@ public class FluidField
       int index = IX(1, y);
       for (int x = 1; x <= width; x++, index++)
       {
-        div[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + width + 2] - destinationVelocityY[index - width - 2]);
+        div[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + stride] - destinationVelocityY[index - width - 2]);
       }
     }
 
@@ -321,7 +311,7 @@ public class FluidField
       for (int x = 1; x <= width; x++, index++)
       {
         destinationVelocityX[index] += halfNNegative * (p[index + 1] - p[index - 1]);
-        destinationVelocityY[index] += halfNNegative * (p[index + width + 2] - p[index - width - 2]);
+        destinationVelocityY[index] += halfNNegative * (p[index + stride] - p[index - width - 2]);
       }
     }
     setBnd(width, height, 1, destinationVelocityX);
@@ -330,7 +320,7 @@ public class FluidField
 
   private float sumAdjacentValues(int index, float[] values, int width)
   {
-    return values[index - 1] + values[index + 1] + values[index - width - 2] + values[index + width + 2];
+    return values[index - 1] + values[index + 1] + values[index - width - 2] + values[index + stride];
   }
 
   public int getWidth()
@@ -360,9 +350,9 @@ public class FluidField
     densityPrevious[IX(i, j)] = source;
   }
 
-  public void clearPrevious(int width, int height)
+  public void clearPrevious()
   {
-    int size = (width + 2) * (height + 2);
+    int size = (stride) * (height + 2);
     for (int i = 0; i < size; i++)
     {
       velocityPreviousX[i] = 0.0f;
@@ -375,8 +365,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    calculateVelocity(width, height, velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, velocityIterations);
-    calculateDensity(width, height, density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, densityIterations);
+    calculateVelocity(velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, velocityIterations);
+    calculateDensity(density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, densityIterations);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;

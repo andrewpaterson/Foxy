@@ -76,7 +76,7 @@ public class FluidStage extends Stage
     int fieldWidth = fluidField.getWidth();
     int fieldHeight = fluidField.getHeight();
 
-    fluidField.clearPrevious(fieldWidth, fieldHeight);
+    fluidField.clearPrevious();
 
     if (!(mLeftPressed || mRightPressed))
     {
