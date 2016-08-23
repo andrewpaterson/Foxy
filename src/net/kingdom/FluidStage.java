@@ -4,6 +4,7 @@ import net.engine.game.Stage;
 import net.engine.game.StageManager;
 import net.engine.global.GlobalGraphics;
 import net.engine.input.GameInput;
+import net.kingdom.fluid.FluidField;
 
 import java.awt.*;
 import java.awt.event.InputEvent;

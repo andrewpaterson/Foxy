@@ -48,15 +48,38 @@ public class Threadanator
 
   public void stop()
   {
+    StopWork stopWork = new StopWork();
     for (int i = 0; i < threads.size(); i++)
     {
-      queue.add(new StopWork());
+      queue.add(stopWork);
     }
   }
 
   public int size()
   {
     return queue.size();
+  }
+
+  public void join()
+  {
+    Thread thread = Thread.currentThread();
+
+    JoinWork joinWork = new JoinWork(threads.size(), thread);
+    for (int i = 0; i < threads.size(); i++)
+    {
+      queue.add(joinWork);
+    }
+    while (!queue.isEmpty())
+    {
+      try
+      {
+        thread.join();
+      }
+      catch (InterruptedException e)
+      {
+        break;
+      }
+    }
   }
 }
 

@@ -1,4 +1,14 @@
-package net.kingdom;
+package net.kingdom.fluid;
+
+import net.engine.thread.Threadanator;
+import net.kingdom.fluid.advect.FluidAdvect1;
+import net.kingdom.fluid.advect.FluidAdvectParams;
+import net.kingdom.fluid.diffuse.FluidDiffuse1;
+import net.kingdom.fluid.diffuse.FluidDiffuseParams;
+import net.kingdom.fluid.project.FluidProject1;
+import net.kingdom.fluid.project.FluidProject2;
+import net.kingdom.fluid.project.FluidProject3;
+import net.kingdom.fluid.project.FluidProjectParams;
 
 import java.util.Arrays;
 
@@ -47,7 +57,7 @@ public class FluidField
     clearData();
   }
 
-  void clearData()
+  public void clearData()
   {
     Arrays.fill(velocityX, 0.0f);
     Arrays.fill(velocityY, 0.0f);
@@ -109,17 +119,6 @@ public class FluidField
 //    destination[IX(width + 1, width + 1)] = 0.5f * (destination[IX(width, width + 1)] + destination[IX(width + 1, width)]);
   }
 
-  void addTimeScaled(float[] destination, float[] source, float timeStep)
-  {
-    int i;
-    int size = (stride) * (height + 2);
-
-    for (i = 0; i < size; i++)
-    {
-      destination[i] += timeStep * source[i];
-    }
-  }
-
   void diffuse(int width,
                int height,
                int boundaryHack,
@@ -132,7 +131,7 @@ public class FluidField
     if (diffusionRate != 0)
     {
       float a = timeStep * diffusionRate * width * height;
-      diffuse(boundaryHack, destination, source, a, iterations);
+      diffuse(new FluidDiffuseParams(destination, source, a), boundaryHack, iterations);
     }
     else
     {
@@ -140,25 +139,32 @@ public class FluidField
     }
   }
 
-  private void diffuse(int boundaryHack,
-                       float[] destination,
-                       float[] source,
-                       float a,
+  private void diffuse(FluidDiffuseParams params,
+                       int boundaryHack,
                        int iterations)
   {
-    float constant = 1.0f / (1.0f + (4 * a));
+    float constant = 1.0f / (1.0f + (4 * params.a));
+    Threadanator threadanator = Threadanator.getInstance();
+
     for (int i = 0; i < iterations; i++)
     {
       for (int y = 1; y <= height; y++)
       {
         int index = IX(1, y);
-        for (int x = 1; x <= width; x++, index++)
-        {
-          float adjacentValueSum = sumAdjacentValues(index, destination);
-          destination[index] = constant * (source[index] + a * adjacentValueSum);
-        }
+        threadanator.add(new FluidDiffuse1(this, params, constant, index));
       }
-      setBnd(width, height, boundaryHack, destination);
+      threadanator.join();
+
+      setBnd(width, height, boundaryHack, params.destination);
+    }
+  }
+
+  public void diffuse1(FluidDiffuseParams params, float constant, int index)
+  {
+    for (int x = 1; x <= width; x++, index++)
+    {
+      float adjacentValueSum = sumAdjacentValues(index, params.destination);
+      params.destination[index] = constant * (params.source[index] + params.a * adjacentValueSum);
     }
   }
 
@@ -170,61 +176,67 @@ public class FluidField
     setBnd(width, height, boundaryHack, destination);
   }
 
-  void advect(int boundaryHack,
-              float[] density,
-              float[] densityPrevious,
-              float[] velocityX,
-              float[] velocityY,
-              float dt)
+  void advect(FluidAdvectParams params, int boundaryHack)
+  {
+    Threadanator threadanator = Threadanator.getInstance();
+
+    float timeStepScaledByWidth = params.dt * width;
+    float timeStepScaledByHeight = params.dt * height;
+
+    for (int y = 1; y <= height; y++)
+    {
+      int index = IX(1, y);
+
+      threadanator.add(new FluidAdvect1(this, params, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
+      advect1(params, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
+    }
+    threadanator.join();
+
+    setBnd(width, height, boundaryHack, density);
+  }
+
+  public void advect1(FluidAdvectParams params, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
   {
     int xIndex, yIndex, xIndex1, yIndex1;
     float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal;
 
-    float timeStepScaledByWidth = dt * width;
-    float timeStepScaledByHeight = dt * height;
-    for (int y = 1; y <= height; y++)
+    for (int x = 1; x <= width; x++, index++)
     {
-      int index = IX(1, y);
-      for (int x = 1; x <= width; x++, index++)
+      newX = x - timeStepScaledByWidth * params.velocityX[index];
+      newY = y - timeStepScaledByHeight * params.velocityY[index];
+
+      if (newX < 0.5f)
       {
-        newX = x - timeStepScaledByWidth * velocityX[index];
-        newY = y - timeStepScaledByHeight * velocityY[index];
-
-        if (newX < 0.5f)
-        {
-          newX = 0.5f;
-        }
-        if (newX > (width + 0.5f))
-        {
-          newX = width + 0.5f;
-        }
-        if (newY < 0.5f)
-        {
-          newY = 0.5f;
-        }
-        if (newY > (height + 0.5f))
-        {
-          newY = height + 0.5f;
-        }
-
-        xIndex = (int) newX;
-        xIndex1 = xIndex + 1;
-
-        yIndex = (int) newY;
-        yIndex1 = yIndex + 1;
-
-        xVelocityDecimal = newX - xIndex;
-        oneMinusXVelocityDecimal = 1 - xVelocityDecimal;
-
-        yVelocityDecimal = newY - yIndex;
-        oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
-
-        density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
-                xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
+        newX = 0.5f;
       }
-    }
+      if (newX > (width + 0.5f))
+      {
+        newX = width + 0.5f;
+      }
+      if (newY < 0.5f)
+      {
+        newY = 0.5f;
+      }
+      if (newY > (height + 0.5f))
+      {
+        newY = height + 0.5f;
+      }
 
-    setBnd(width, height, boundaryHack, density);
+      xIndex = (int) newX;
+      xIndex1 = xIndex + 1;
+
+      yIndex = (int) newY;
+      yIndex1 = yIndex + 1;
+
+      xVelocityDecimal = newX - xIndex;
+      oneMinusXVelocityDecimal = 1 - xVelocityDecimal;
+
+      yVelocityDecimal = newY - yIndex;
+      oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
+
+      params.density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * params.densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * params.densityPrevious[IX(xIndex, yIndex1)]) +
+              xVelocityDecimal * (oneMinusYVelocityDecimal * params.densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * params.densityPrevious[IX(xIndex1, yIndex1)]);
+    }
   }
 
   void calculateDensity(float[] density,
@@ -239,7 +251,7 @@ public class FluidField
 
     diffuse(width, height, 0, densityPrevious, density, diffusionRate, timeStep, iterations);
 
-    advect(0, density, densityPrevious, velocityX, velocityY, timeStep);
+    advect(new FluidAdvectParams(density, densityPrevious, velocityX, velocityY, timeStep), 0);
   }
 
   /**
@@ -259,63 +271,80 @@ public class FluidField
     diffuse(width, height, 1, velocityPreviousX, velocityX, viscosity, timeStep, 10);
     diffuse(width, height, 2, velocityPreviousY, velocityY, viscosity, timeStep, 10);
 
-    project(velocityPreviousX, velocityPreviousY, velocityX, velocityY, iterations);
+    project(new FluidProjectParams(velocityPreviousX, velocityPreviousY, velocityX, velocityY), iterations);
 
-    advect(1, velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
-    advect(2, velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
+    advect(new FluidAdvectParams(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep), 1);
+    advect(new FluidAdvectParams(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep), 2);
 
-    project(velocityX, velocityY, velocityPreviousX, velocityPreviousY, iterations);
+    project(new FluidProjectParams(velocityX, velocityY, velocityPreviousX, velocityPreviousY), iterations);
   }
 
-  void project(float[] destinationVelocityX,
-               float[] destinationVelocityY,
-               float[] sourceVelocityX,
-               float[] sourceVelocityY,
-               int iterations)
+  void project(FluidProjectParams params, int iterations)
   {
     float h = 1.0f / width;
     float halfHNegative = -0.5f * h;
     float halfNNegative = -0.5f * width;
 
+    Threadanator threadanator = Threadanator.getInstance();
+
     for (int y = 1; y <= height; y++)
     {
       int index = IX(1, y);
-      for (int x = 1; x <= width; x++, index++)
-      {
-        sourceVelocityY[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + stride] - destinationVelocityY[index - stride]);
-      }
+      threadanator.add(new FluidProject1(this, params, halfHNegative, index));
     }
+    threadanator.join();
 
-    Arrays.fill(sourceVelocityX, 0);
+    Arrays.fill(params.sourceVelocityX, 0);
 
-    setBnd(width, height, 0, sourceVelocityY);
-    setBnd(width, height, 0, sourceVelocityX);
+    setBnd(width, height, 0, params.sourceVelocityY);
+    setBnd(width, height, 0, params.sourceVelocityX);
 
     for (int i = 0; i < iterations; i++)
     {
       for (int y = 1; y <= height; y++)
       {
         int index = IX(1, y);
-        for (int x = 1; x <= width; x++, index++)
-        {
-          sourceVelocityX[index] = 0.25f * (sourceVelocityY[index] + sumAdjacentValues(index, sourceVelocityX));
-        }
+        threadanator.add(new FluidProject2(this, params, index));
       }
+      threadanator.join();
 
-      setBnd(width, height, 0, sourceVelocityX);
+      setBnd(width, height, 0, params.sourceVelocityX);
     }
 
     for (int y = 1; y <= height; y++)
     {
       int index = IX(1, y);
-      for (int x = 1; x <= width; x++, index++)
-      {
-        destinationVelocityX[index] += halfNNegative * (sourceVelocityX[index + 1] - sourceVelocityX[index - 1]);
-        destinationVelocityY[index] += halfNNegative * (sourceVelocityX[index + stride] - sourceVelocityX[index - stride]);
-      }
+      threadanator.add(new FluidProject3(this, params, halfNNegative, index));
     }
-    setBnd(width, height, 1, destinationVelocityX);
-    setBnd(width, height, 2, destinationVelocityY);
+    threadanator.join();
+
+    setBnd(width, height, 1, params.destinationVelocityX);
+    setBnd(width, height, 2, params.destinationVelocityY);
+  }
+
+  public void project1(FluidProjectParams params, float halfHNegative, int index)
+  {
+    for (int x = 1; x <= width; x++, index++)
+    {
+      params.sourceVelocityY[index] = halfHNegative * (params.destinationVelocityX[index + 1] - params.destinationVelocityX[index - 1] + params.destinationVelocityY[index + stride] - params.destinationVelocityY[index - stride]);
+    }
+  }
+
+  public void project2(FluidProjectParams params, int index)
+  {
+    for (int x = 1; x <= width; x++, index++)
+    {
+      params.sourceVelocityX[index] = 0.25f * (params.sourceVelocityY[index] + sumAdjacentValues(index, params.sourceVelocityX));
+    }
+  }
+
+  public void project3(FluidProjectParams params, float halfNNegative, int index)
+  {
+    for (int x = 1; x <= width; x++, index++)
+    {
+      params.destinationVelocityX[index] += halfNNegative * (params.sourceVelocityX[index + 1] - params.sourceVelocityX[index - 1]);
+      params.destinationVelocityY[index] += halfNNegative * (params.sourceVelocityX[index + stride] - params.sourceVelocityX[index - stride]);
+    }
   }
 
   private float sumAdjacentValues(int index, float[] values)
@@ -358,6 +387,17 @@ public class FluidField
       velocityPreviousX[i] = 0.0f;
       velocityPreviousY[i] = 0.0f;
       densityPrevious[i] = 0.0f;
+    }
+  }
+
+  void addTimeScaled(float[] destination, float[] source, float timeStep)
+  {
+    int i;
+    int size = (stride) * (height + 2);
+
+    for (i = 0; i < size; i++)
+    {
+      destination[i] += timeStep * source[i];
     }
   }
 

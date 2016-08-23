@@ -3,13 +3,12 @@ package net.kingdom;
 import net.engine.game.FrameConfig;
 import net.engine.game.Game;
 import net.engine.thread.Threadanator;
-import net.engine.thread.Work;
 
 public class KingdomGame extends Game
 {
   public static int scale = 1;
-  public static int height = 720;
-  public static int width = 1280;
+  public static int width = 640;
+  public static int height = 480;
 
   public KingdomGame()
   {
