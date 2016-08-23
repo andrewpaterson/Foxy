@@ -154,7 +154,7 @@ public class FluidField
         int index = IX(1, y);
         for (int x = 1; x <= width; x++, index++)
         {
-          float adjacentValueSum = sumAdjacentValues(index, destination, width);
+          float adjacentValueSum = sumAdjacentValues(index, destination);
           destination[index] = constant * (source[index] + a * adjacentValueSum);
         }
       }
@@ -269,8 +269,8 @@ public class FluidField
 
   void project(float[] destinationVelocityX,
                float[] destinationVelocityY,
-               float[] p,
-               float[] div,
+               float[] sourceVelocityX,
+               float[] sourceVelocityY,
                int iterations)
   {
     float h = 1.0f / width;
@@ -282,14 +282,14 @@ public class FluidField
       int index = IX(1, y);
       for (int x = 1; x <= width; x++, index++)
       {
-        div[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + stride] - destinationVelocityY[index - width - 2]);
+        sourceVelocityY[index] = halfHNegative * (destinationVelocityX[index + 1] - destinationVelocityX[index - 1] + destinationVelocityY[index + stride] - destinationVelocityY[index - stride]);
       }
     }
 
-    Arrays.fill(p, 0);
+    Arrays.fill(sourceVelocityX, 0);
 
-    setBnd(width, height, 0, div);
-    setBnd(width, height, 0, p);
+    setBnd(width, height, 0, sourceVelocityY);
+    setBnd(width, height, 0, sourceVelocityX);
 
     for (int i = 0; i < iterations; i++)
     {
@@ -298,11 +298,11 @@ public class FluidField
         int index = IX(1, y);
         for (int x = 1; x <= width; x++, index++)
         {
-          p[index] = 0.25f * (div[index] + sumAdjacentValues(index, p, width));
+          sourceVelocityX[index] = 0.25f * (sourceVelocityY[index] + sumAdjacentValues(index, sourceVelocityX));
         }
       }
 
-      setBnd(width, height, 0, p);
+      setBnd(width, height, 0, sourceVelocityX);
     }
 
     for (int y = 1; y <= height; y++)
@@ -310,17 +310,17 @@ public class FluidField
       int index = IX(1, y);
       for (int x = 1; x <= width; x++, index++)
       {
-        destinationVelocityX[index] += halfNNegative * (p[index + 1] - p[index - 1]);
-        destinationVelocityY[index] += halfNNegative * (p[index + stride] - p[index - width - 2]);
+        destinationVelocityX[index] += halfNNegative * (sourceVelocityX[index + 1] - sourceVelocityX[index - 1]);
+        destinationVelocityY[index] += halfNNegative * (sourceVelocityX[index + stride] - sourceVelocityX[index - stride]);
       }
     }
     setBnd(width, height, 1, destinationVelocityX);
     setBnd(width, height, 2, destinationVelocityY);
   }
 
-  private float sumAdjacentValues(int index, float[] values, int width)
+  private float sumAdjacentValues(int index, float[] values)
   {
-    return values[index - 1] + values[index + 1] + values[index - width - 2] + values[index + stride];
+    return values[index - 1] + values[index + 1] + values[index - stride] + values[index + stride];
   }
 
   public int getWidth()
@@ -352,7 +352,7 @@ public class FluidField
 
   public void clearPrevious()
   {
-    int size = (stride) * (height + 2);
+    int size = stride * (height + 2);
     for (int i = 0; i < size; i++)
     {
       velocityPreviousX[i] = 0.0f;
