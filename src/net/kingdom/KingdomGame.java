@@ -6,13 +6,13 @@ import net.engine.thread.Threadanator;
 
 public class KingdomGame extends Game
 {
-  public static int scale = 1;
-  public static int width = 640;
-  public static int height = 480;
+  public static int scale = 3;
+  public static int width = 604;
+  public static int height = 340;
 
   public KingdomGame()
   {
-    super(new FrameConfig("Nothing Starts", width * scale, height * scale));
+    super(new FrameConfig("Simulation Window", width * scale, height * scale));
   }
 
   private void start()

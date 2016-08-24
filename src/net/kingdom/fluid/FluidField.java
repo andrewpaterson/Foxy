@@ -33,7 +33,13 @@ public class FluidField
   private int velocityIterations;
   private int densityIterations;
 
-  public FluidField(int width, int height, float timeStep, float viscosity, float diffusionRate, int velocityIterations, int densityIterations)
+  public FluidField(int width,
+                    int height,
+                    float timeStep,
+                    float viscosity,
+                    float diffusionRate,
+                    int velocityIterations,
+                    int densityIterations)
   {
     this.width = width;
     this.stride = width + 2;
