@@ -2,13 +2,13 @@ package net.engine.thread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Threadanator
 {
-  private BlockingQueue<Work> queue;
-  private List<Thread> threads;
+  private final Thread mainThread;
+  private WorkQueue queue;
+  private List<ThreadRunnable> threads;
+  private Join join;
 
   private static Threadanator instance = null;
 
@@ -16,29 +16,90 @@ public class Threadanator
   {
     if (instance == null)
     {
-      instance = new Threadanator();
+      instance = new Threadanator(Thread.currentThread());
     }
     return instance;
   }
 
-  public Threadanator()
+  public Threadanator(Thread mainThread)
   {
     int availableProcessors = Runtime.getRuntime().availableProcessors();
-    queue = new LinkedBlockingQueue<>();
-    threads = new ArrayList<>(availableProcessors);
+    this.queue = new WorkQueue();
+    this.mainThread = mainThread;
+    this.join = new Join(availableProcessors, mainThread);
+    this.threads = new ArrayList<>(availableProcessors);
     for (int i = 0; i < availableProcessors; i++)
     {
-      Thread thread = new Thread(new ThreadRunnable(queue));
-      threads.add(thread);
+      ThreadRunnable threadRunnable = new ThreadRunnable(queue, join);
+      Thread thread = new Thread(threadRunnable);
+      thread.setName("Worker " + (i + 1));
+      threadRunnable.setThread(thread);
+      this.threads.add(threadRunnable);
     }
   }
 
   public void start()
   {
-    for (Thread thread : threads)
+    for (ThreadRunnable thread : threads)
     {
       thread.start();
     }
+
+    for (;;)
+    {
+      if (areAllRunning())
+      {
+        break;
+      }
+    }
+
+    for (;;)
+    {
+      if (areAllSleeping())
+      {
+        break;
+      }
+    }
+    System.out.println("All Sleeping");
+  }
+
+  private boolean areAllRunning()
+  {
+    boolean allStarted = true;
+    for (ThreadRunnable threadRunnable : threads)
+    {
+      if (!threadRunnable.isRunning())
+      {
+        allStarted = false;
+      }
+    }
+    return allStarted;
+  }
+
+  private boolean areAllSleeping()
+  {
+    boolean allSleeping = true;
+    for (ThreadRunnable threadRunnable : threads)
+    {
+      if (!threadRunnable.isSleeping())
+      {
+        allSleeping = false;
+      }
+    }
+    return allSleeping;
+  }
+
+  private boolean areAllAwake()
+  {
+    boolean allAwake = true;
+    for (ThreadRunnable threadRunnable : threads)
+    {
+      if (threadRunnable.isSleeping())
+      {
+        allAwake = false;
+      }
+    }
+    return allAwake;
   }
 
   public void add(Work work)
@@ -60,26 +121,35 @@ public class Threadanator
     return queue.size();
   }
 
-  public void join()
+  public void process()
   {
-    Thread thread = Thread.currentThread();
-
-    JoinWork joinWork = new JoinWork(threads.size(), thread);
-    for (int i = 0; i < threads.size(); i++)
+    for (ThreadRunnable thread : threads)
     {
-      queue.add(joinWork);
+      thread.interrupt();
     }
-    while (!queue.isEmpty())
+
+    for (ThreadRunnable thread : threads)
     {
-      try
-      {
-        thread.join();
-      }
-      catch (InterruptedException e)
+      thread.stopSleeping();
+    }
+
+    for (;;)
+    {
+      if (areAllAwake())
       {
         break;
       }
     }
+
+    try
+    {
+      mainThread.join();
+    }
+    catch (InterruptedException ignored)
+    {
+      System.out.println("Interrupted");
+    }
+    queue.clear();
   }
 }
 

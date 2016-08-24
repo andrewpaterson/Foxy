@@ -1,33 +1,91 @@
 package net.engine.thread;
 
-import java.util.concurrent.BlockingQueue;
-
-/**
- * Created by andrew on 2016/08/23.
- */
 public class ThreadRunnable implements Runnable
 {
-  private BlockingQueue<Work> queue;
+  private WorkQueue queue;
+  private Join join;
+  private Thread thread;
+  private boolean running;
+  private boolean sleeping;
 
-  public ThreadRunnable(BlockingQueue<Work> queue)
+  public ThreadRunnable(WorkQueue queue, Join join)
   {
     this.queue = queue;
+    this.join = join;
+    this.running = true;
+    sleeping = false;
   }
 
   @Override
   public void run()
   {
-    try
+    while (running)
     {
-      for (; ; )
+      Work work = queue.take();
+      if (work == null)
       {
-        Work work = queue.take();
+        sleeping = true;
+        boolean allDone = join.done(thread);
+        if (!allDone)
+        {
+          try
+          {
+            thread.join();
+          }
+          catch (InterruptedException ignored)
+          {
+          }
+        }
+        else
+        {
+          join.interruptMainThread();
+          try
+          {
+            thread.join();
+          }
+          catch (InterruptedException ignored)
+          {
+          }
+        }
+
+        while (sleeping)
+        {
+        }
+      }
+      else
+      {
         work.work();
       }
     }
-    catch (InterruptedException ignored)
-    {
-    }
+  }
+
+  public void interrupt()
+  {
+    thread.interrupt();
+  }
+
+  public void setThread(Thread thread)
+  {
+    this.thread = thread;
+  }
+
+  public void start()
+  {
+    thread.start();
+  }
+
+  public boolean isRunning()
+  {
+    return running;
+  }
+
+  public boolean isSleeping()
+  {
+    return sleeping;
+  }
+  public void stopSleeping()
+  {
+    sleeping = false;
   }
 }
 

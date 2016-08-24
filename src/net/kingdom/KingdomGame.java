@@ -3,6 +3,7 @@ package net.kingdom;
 import net.engine.game.FrameConfig;
 import net.engine.game.Game;
 import net.engine.thread.Threadanator;
+import net.engine.thread.Work;
 
 public class KingdomGame extends Game
 {
@@ -29,8 +30,36 @@ public class KingdomGame extends Game
 
   public static void main(String[] args)
   {
-    KingdomGame kingdomGame = new KingdomGame();
-    kingdomGame.start();
+//    KingdomGame kingdomGame = new KingdomGame();
+//    kingdomGame.start();
+
+    Threadanator threadanator = Threadanator.getInstance();
+    threadanator.start();
+
+    for (int k = 0; k < 100; k++)
+    {
+      int finalK = k;
+      Work work = new Work()
+      {
+        @Override
+        public void work()
+        {
+          int x = 0;
+          for (int i = 0; i < 1000; i++)
+          {
+            for (int j = 0; j < 1000; j++)
+            {
+              x += i - j;
+            }
+          }
+          System.out.println((x + finalK));
+        }
+      };
+      threadanator.add(work);
+    }
+    System.out.println("Start!");
+    threadanator.process();
+    System.out.println("Done!");
   }
 }
 

@@ -159,7 +159,7 @@ public class FluidField
         int index = IX(1, y);
         threadanator.add(new FluidDiffuse1(this, params, constant, index));
       }
-      threadanator.join();
+      threadanator.process();
 
       setBnd(width, height, boundaryHack, params.destination);
     }
@@ -196,7 +196,7 @@ public class FluidField
       threadanator.add(new FluidAdvect1(this, params, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
       advect1(params, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
     }
-    threadanator.join();
+    threadanator.process();
 
     setBnd(width, height, boundaryHack, density);
   }
@@ -298,7 +298,7 @@ public class FluidField
       int index = IX(1, y);
       threadanator.add(new FluidProject1(this, params, halfHNegative, index));
     }
-    threadanator.join();
+    threadanator.process();
 
     Arrays.fill(params.sourceVelocityX, 0);
 
@@ -312,7 +312,7 @@ public class FluidField
         int index = IX(1, y);
         threadanator.add(new FluidProject2(this, params, index));
       }
-      threadanator.join();
+      threadanator.process();
 
       setBnd(width, height, 0, params.sourceVelocityX);
     }
@@ -322,7 +322,7 @@ public class FluidField
       int index = IX(1, y);
       threadanator.add(new FluidProject3(this, params, halfNNegative, index));
     }
-    threadanator.join();
+    threadanator.process();
 
     setBnd(width, height, 1, params.destinationVelocityX);
     setBnd(width, height, 2, params.destinationVelocityY);
