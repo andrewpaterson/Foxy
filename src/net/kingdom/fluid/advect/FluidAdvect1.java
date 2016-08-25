@@ -3,9 +3,6 @@ package net.kingdom.fluid.advect;
 import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
 
-/**
- * Created by andrew on 2016/08/23.
- */
 public class FluidAdvect1 extends FluidWork
 {
   private final FluidField fluidField;

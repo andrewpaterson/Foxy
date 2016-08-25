@@ -24,6 +24,7 @@ public class Threadanator
   public Threadanator()
   {
     int availableProcessors = Runtime.getRuntime().availableProcessors() - 1;
+    availableProcessors = 0;
     this.queue = new WorkQueue();
     this.threads = new ArrayList<>(availableProcessors);
     this.joinWork = new JoinWork();

@@ -23,24 +23,19 @@ public class Game
     gameFrame.start();
     GameCanvas gameCanvas = gameFrame.getCanvas();
 
-    long lastTick = gameCanvas.getTick();
     long startTime = System.nanoTime();
 
     for (; ; )
     {
-      long renderTick = gameCanvas.getTick();
-      if (lastTick < renderTick)
-      {
-        lastTick = renderTick;
-        Graphics graphics = gameCanvas.beginFrame();
-        renderStage(graphics, gameCanvas.getWidth(), gameCanvas.getHeight());
-        gameCanvas.endFrame();
+      Graphics graphics = gameCanvas.beginFrame();
+      renderStage(graphics, gameCanvas.getWidth(), gameCanvas.getHeight());
+      gameCanvas.render();
+      gameCanvas.endFrame();
 
 
-        long currentTime = System.nanoTime();
-        tickStage(currentTime - startTime, gameFrame.processInput());
-        startTime = currentTime;
-      }
+      long currentTime = System.nanoTime();
+      tickStage(currentTime - startTime, gameFrame.processInput());
+      startTime = currentTime;
     }
   }
 
