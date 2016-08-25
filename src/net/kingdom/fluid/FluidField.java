@@ -159,6 +159,7 @@ public class FluidField
         int index = IX(1, y);
         threadanator.add(new FluidDiffuse1(this, params, constant, index));
       }
+      threadanator.addWait();
       threadanator.process();
 
       setBnd(width, height, boundaryHack, params.destination);
@@ -194,7 +195,6 @@ public class FluidField
       int index = IX(1, y);
 
       threadanator.add(new FluidAdvect1(this, params, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
-      advect1(params, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
     }
     threadanator.addWait();
     threadanator.process();

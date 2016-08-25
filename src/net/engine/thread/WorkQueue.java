@@ -55,7 +55,7 @@ public class WorkQueue
 
   public synchronized boolean isEmpty()
   {
-    return length == index;
+    return size() == 0;
   }
 }
 

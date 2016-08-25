@@ -24,7 +24,6 @@ public class Threadanator
   public Threadanator()
   {
     int availableProcessors = Runtime.getRuntime().availableProcessors() - 1;
-    availableProcessors = 0;
     this.queue = new WorkQueue();
     this.threads = new ArrayList<>(availableProcessors);
     this.joinWork = new JoinWork();
@@ -133,24 +132,16 @@ public class Threadanator
     }
   }
 
-  public int size()
-  {
-    return queue.size();
-  }
-
   public void process()
   {
     for (ThreadRunnable thread : threads)
     {
       thread.interrupt();
     }
-    while (!areAllAwake())
-    {
-    }
 
     work();
 
-    while (!areAllSleeping())
+    while (!queue.isEmpty())
     {
       for (ThreadRunnable thread : threads)
       {
