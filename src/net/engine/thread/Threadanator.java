@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Threadanator
 {
-  private final Thread mainThread;
   private WorkQueue queue;
   private List<ThreadRunnable> threads;
-  private Join join;
+  private JoinWork joinWork;
+  private StopWork stopWork;
 
   private static Threadanator instance = null;
 
@@ -16,21 +16,21 @@ public class Threadanator
   {
     if (instance == null)
     {
-      instance = new Threadanator(Thread.currentThread());
+      instance = new Threadanator();
     }
     return instance;
   }
 
-  public Threadanator(Thread mainThread)
+  public Threadanator()
   {
-    int availableProcessors = Runtime.getRuntime().availableProcessors();
+    int availableProcessors = Runtime.getRuntime().availableProcessors() - 1;
     this.queue = new WorkQueue();
-    this.mainThread = mainThread;
-    this.join = new Join(availableProcessors, mainThread);
     this.threads = new ArrayList<>(availableProcessors);
+    this.joinWork = new JoinWork();
+    this.stopWork = new StopWork();
     for (int i = 0; i < availableProcessors; i++)
     {
-      ThreadRunnable threadRunnable = new ThreadRunnable(queue, join);
+      ThreadRunnable threadRunnable = new ThreadRunnable(queue);
       Thread thread = new Thread(threadRunnable);
       thread.setName("Worker " + (i + 1));
       threadRunnable.setThread(thread);
@@ -45,7 +45,7 @@ public class Threadanator
       thread.start();
     }
 
-    for (;;)
+    for (; ; )
     {
       if (areAllRunning())
       {
@@ -53,15 +53,31 @@ public class Threadanator
       }
     }
 
-    for (;;)
+    for (; ; )
     {
       if (areAllSleeping())
       {
         break;
       }
     }
-    System.out.println("All Sleeping");
   }
+
+  private void work()
+  {
+    for (; ; )
+    {
+      Work work = queue.take();
+      if (work != null)
+      {
+        int result = work.work();
+        if (result == Work.STOP || result == Work.WAIT)
+        {
+          break;
+        }
+      }
+    }
+  }
+
 
   private boolean areAllRunning()
   {
@@ -127,29 +143,41 @@ public class Threadanator
     {
       thread.interrupt();
     }
-
-    for (ThreadRunnable thread : threads)
+    while (!areAllAwake())
     {
-      thread.stopSleeping();
     }
 
-    for (;;)
+    work();
+
+    while (!areAllSleeping())
     {
-      if (areAllAwake())
+      for (ThreadRunnable thread : threads)
       {
-        break;
+        if (!thread.isRunning())
+        {
+          threads.remove(thread);
+          break;
+        }
       }
     }
 
-    try
-    {
-      mainThread.join();
-    }
-    catch (InterruptedException ignored)
-    {
-      System.out.println("Interrupted");
-    }
     queue.clear();
+  }
+
+  public void addWait()
+  {
+    for (int i = 0; i <= threads.size(); i++)
+    {
+      queue.add(joinWork);
+    }
+  }
+
+  public void addStop()
+  {
+    for (int i = 0; i <= threads.size(); i++)
+    {
+      queue.add(stopWork);
+    }
   }
 }
 

@@ -19,9 +19,10 @@ public class FluidProject2 extends FluidWork
   }
 
   @Override
-  public void work()
+  public int work()
   {
     fluidField.project2(params, index);
+    return SUCCESS;
   }
 }
 

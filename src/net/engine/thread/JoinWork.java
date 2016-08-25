@@ -1,11 +1,11 @@
 package net.engine.thread;
 
-public class StopWork extends Work
+public class JoinWork extends Work
 {
   @Override
   public int work()
   {
-    return STOP;
+    return WAIT;
   }
 }
 

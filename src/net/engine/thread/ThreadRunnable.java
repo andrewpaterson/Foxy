@@ -3,59 +3,61 @@ package net.engine.thread;
 public class ThreadRunnable implements Runnable
 {
   private WorkQueue queue;
-  private Join join;
   private Thread thread;
   private boolean running;
   private boolean sleeping;
 
-  public ThreadRunnable(WorkQueue queue, Join join)
+  public ThreadRunnable(WorkQueue queue)
   {
     this.queue = queue;
-    this.join = join;
     this.running = true;
-    sleeping = false;
+    this.sleeping = false;
   }
 
   @Override
   public void run()
   {
+    sleep();
+
     while (running)
     {
-      Work work = queue.take();
-      if (work == null)
+      if (!sleeping)
       {
-        sleeping = true;
-        boolean allDone = join.done(thread);
-        if (!allDone)
-        {
-          try
-          {
-            thread.join();
-          }
-          catch (InterruptedException ignored)
-          {
-          }
-        }
-        else
-        {
-          join.interruptMainThread();
-          try
-          {
-            thread.join();
-          }
-          catch (InterruptedException ignored)
-          {
-          }
-        }
+        work();
+      }
+    }
+  }
 
-        while (sleeping)
-        {
-        }
-      }
-      else
+  private void work()
+  {
+    Work work = queue.take();
+    if (work != null)
+    {
+      int result = work.work();
+      if (result == Work.STOP)
       {
-        work.work();
+        running = false;
       }
+      else if (result == Work.WAIT)
+      {
+        sleep();
+      }
+    }
+  }
+
+  private void sleep()
+  {
+    sleeping = true;
+    try
+    {
+      while (sleeping)
+      {
+        Thread.sleep(10);
+      }
+    }
+    catch (InterruptedException e)
+    {
+      sleeping = false;
     }
   }
 
@@ -83,6 +85,7 @@ public class ThreadRunnable implements Runnable
   {
     return sleeping;
   }
+
   public void stopSleeping()
   {
     sleeping = false;

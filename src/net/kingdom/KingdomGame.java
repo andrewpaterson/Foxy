@@ -42,7 +42,7 @@ public class KingdomGame extends Game
       Work work = new Work()
       {
         @Override
-        public void work()
+        public int work()
         {
           int x = 0;
           for (int i = 0; i < 1000; i++)
@@ -53,13 +53,40 @@ public class KingdomGame extends Game
             }
           }
           System.out.println((x + finalK));
+          return SUCCESS;
         }
       };
       threadanator.add(work);
     }
-    System.out.println("Start!");
+    threadanator.addWait();
+
     threadanator.process();
-    System.out.println("Done!");
+
+    for (int k = 0; k < 100; k++)
+    {
+      int finalK = k;
+      Work work = new Work()
+      {
+        @Override
+        public int work()
+        {
+          int x = 0;
+          for (int i = 0; i < 1000; i++)
+          {
+            for (int j = 0; j < 1000; j++)
+            {
+              x += i - j;
+            }
+          }
+          System.out.println((x + finalK));
+          return SUCCESS;
+        }
+      };
+      threadanator.add(work);
+    }
+    threadanator.addStop();
+
+    threadanator.process();
   }
 }
 

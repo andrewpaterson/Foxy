@@ -1,7 +1,7 @@
 package net.kingdom.fluid.project;
 
-import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
+import net.kingdom.fluid.FluidField;
 
 /**
  * Created by andrew on 2016/08/23.
@@ -21,9 +21,10 @@ public class FluidProject1 extends FluidWork
   }
 
   @Override
-  public void work()
+  public int work()
   {
     fluidField.project1(params, halfHNegative, index);
+    return SUCCESS;
   }
 }
 
