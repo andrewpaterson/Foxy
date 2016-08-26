@@ -390,7 +390,7 @@ public class FluidField
     }
   }
 
-  void addTimeScaled(TimeScaledParams params)
+  private void addTimeScaled(TimeScaledParams params)
   {
     Threadanator threadanator = Threadanator.getInstance().prepare();
     for (int y = 0; y < height + 2; y++)
