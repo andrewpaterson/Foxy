@@ -1,27 +1,31 @@
 package net.kingdom.fluid.work;
 
-import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
+import net.kingdom.fluid.FluidField;
 
-/**
- * Created by andrew on 2016/08/23.
- */
 public class FluidProject2 extends FluidWork
 {
-  private FluidProjectParams params;
+  private float[] sourceVelocityX;
+  private float[] sourceVelocityY;
   private int index;
 
-  public FluidProject2(FluidField fluidField, FluidProjectParams params, int index)
+  public FluidProject2(FluidField fluidField, float[] sourceVelocityX, float[] sourceVelocityY, int y)
   {
     super(fluidField);
-    this.params = params;
-    this.index = index;
+    this.sourceVelocityX = sourceVelocityX;
+    this.sourceVelocityY = sourceVelocityY;
+    this.index = fluidField.IX(1, y);
   }
 
   @Override
   public void work()
   {
-    fluidField.project2(params, index);
+    int offset = index;
+    int width = fluidField.getWidth();
+    for (int x = 1; x <= width; x++, offset++)
+    {
+      sourceVelocityX[offset] = 0.25f * (sourceVelocityY[offset] + fluidField.sumAdjacentValues(offset, sourceVelocityX));
+    }
   }
 }
 

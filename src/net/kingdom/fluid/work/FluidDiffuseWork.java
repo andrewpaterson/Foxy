@@ -11,14 +11,14 @@ public class FluidDiffuseWork extends FluidWork
   private float constant;
   private int index;
 
-  public FluidDiffuseWork(FluidField fluidField, float[] destination, float[] source, float a, float constant, int index)
+  public FluidDiffuseWork(FluidField fluidField, float[] destination, float[] source, float a, float constant, int y)
   {
     super(fluidField);
     this.destination = destination;
     this.source = source;
     this.a = a;
     this.constant = constant;
-    this.index = index;
+    this.index = fluidField.IX(1, y);;
   }
 
   @Override

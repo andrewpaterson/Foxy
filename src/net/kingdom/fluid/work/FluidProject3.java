@@ -1,26 +1,37 @@
 package net.kingdom.fluid.work;
 
-import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
+import net.kingdom.fluid.FluidField;
 
 public class FluidProject3 extends FluidWork
 {
-  private FluidProjectParams params;
+  private float[] destinationVelocityX;
+  private float[] destinationVelocityY;
+  private float[] sourceVelocityX;
   private float halfNNegative;
   private int index;
 
-  public FluidProject3(FluidField fluidField, FluidProjectParams params, float halfNNegative, int index)
+  public FluidProject3(FluidField fluidField, float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX, float halfNNegative, int y)
   {
     super(fluidField);
-    this.params = params;
+    this.destinationVelocityX = destinationVelocityX;
+    this.destinationVelocityY = destinationVelocityY;
+    this.sourceVelocityX = sourceVelocityX;
     this.halfNNegative = halfNNegative;
-    this.index = index;
+    this.index = fluidField.IX(1, y);
   }
 
   @Override
   public void work()
   {
-    fluidField.project3(params, halfNNegative, index);
+    int offset = index;
+    int width = fluidField.getWidth();
+    int stride = fluidField.getStride();
+    for (int x = 1; x <= width; x++, offset++)
+    {
+      destinationVelocityX[offset] += halfNNegative * (sourceVelocityX[offset + 1] - sourceVelocityX[offset - 1]);
+      destinationVelocityY[offset] += halfNNegative * (sourceVelocityX[offset + stride] - sourceVelocityX[offset - stride]);
+    }
   }
 }
 
