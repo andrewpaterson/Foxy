@@ -31,5 +31,10 @@ public abstract class FluidWork extends Work
   {
     return fluidField.getWidth();
   }
+
+  protected float getTimeStep()
+  {
+    return fluidField.getTimeStep();
+  }
 }
 

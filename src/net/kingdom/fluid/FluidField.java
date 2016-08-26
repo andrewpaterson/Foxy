@@ -131,6 +131,17 @@ public class FluidField
     return job;
   }
 
+  private Job createAddTimeScaledJob(float[] destination, float[] source)
+  {
+    Job job = new Job(16);
+    for (int y = 0; y < height + 2; y++)
+    {
+      job.add(new TimeScaledWork(this, destination, source, y));
+    }
+
+    return job;
+  }
+
   void calculateDensity()
   {
     Threadanator.getInstance().processJob(timeScaleDensityJob);
@@ -217,16 +228,6 @@ public class FluidField
     return values[index - 1] + values[index + 1] + values[index - stride] + values[index + stride];
   }
 
-  public int getWidth()
-  {
-    return width;
-  }
-
-  public int getHeight()
-  {
-    return height;
-  }
-
   public float getDensity(int x, int y)
   {
     return density[IX(x, y)];
@@ -255,19 +256,6 @@ public class FluidField
     }
   }
 
-  private Job createAddTimeScaledJob(float[] destination, float[] source)
-  {
-    Job job = new Job(16);
-    for (int y = 0; y < height + 2; y++)
-    {
-      int index = y * stride;
-      job.add(new TimeScaledWork(this, destination, source, timeStep, index));
-    }
-
-    return job;
-  }
-
-
   public void tick()
   {
     long startTime = System.nanoTime();
@@ -280,9 +268,24 @@ public class FluidField
     System.out.println(String.format("%.3f", timeInSeconds));
   }
 
+  public int getWidth()
+  {
+    return width;
+  }
+
+  public int getHeight()
+  {
+    return height;
+  }
+
   public int getStride()
   {
     return stride;
+  }
+
+  public float getTimeStep()
+  {
+    return timeStep;
   }
 }
 

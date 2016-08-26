@@ -18,7 +18,7 @@ public class FluidDiffuseWork extends FluidWork
     this.source = source;
     this.a = a;
     this.constant = constant;
-    this.index = fluidField.IX(1, y);;
+    this.index = fluidField.IX(1, y);
   }
 
   @Override
