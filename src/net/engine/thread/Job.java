@@ -1,7 +1,5 @@
 package net.engine.thread;
 
-import net.kingdom.fluid.work.FluidAdvectWork;
-
 import java.util.ArrayList;
 import java.util.List;
 

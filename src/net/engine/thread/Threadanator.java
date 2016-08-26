@@ -203,5 +203,10 @@ public class Threadanator
     queue.clear();
     return this;
   }
+
+  public int getThreadCount()
+  {
+    return threads.size() + 1;
+  }
 }
 

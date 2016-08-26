@@ -2,6 +2,7 @@ package net.kingdom.fluid;
 
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
+import net.engine.thread.util.CopyJob;
 import net.kingdom.fluid.work.*;
 
 import java.util.Arrays;
@@ -68,7 +69,7 @@ public class FluidField
 
     diffuseDensityJob = createDiffuseJob(densityPrevious, density, diffusionRate);
     diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, diffusionRate);
-    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityPreviousY, diffusionRate);
+    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, diffusionRate);
 
     clearData();
   }
@@ -92,53 +93,7 @@ public class FluidField
    * Sets boundary for diffusion. It is bound vertically and horizontally in a box.
    **/
 
-  void setBnd(int width, int height, int boundaryHack, float[] destination)
-  {
-//    int i;
-//
-//    if (boundaryHack == 0)
-//    {
-//      for (i = 0; i <= width; i++)
-//      {
-//        destination[IX(0, i)] = destination[IX(1, i)];
-//        destination[IX(width + 1, i)] = destination[IX(width, i)];
-//        destination[IX(i, 0)] = destination[IX(i, 1)];
-//        destination[IX(i, width + 1)] = destination[IX(i, width)];
-//      }
-//    }
-//
-//    if (boundaryHack == 1)
-//    {
-//      for (i = 0; i <= width; i++)
-//      {
-//        destination[IX(0, i)] = -destination[IX(1, i)];
-//        destination[IX(width + 1, i)] = -destination[IX(width, i)];
-//        destination[IX(i, 0)] = destination[IX(i, 1)];
-//        destination[IX(i, width + 1)] = destination[IX(i, width)];
-//      }
-//    }
-//
-//    if (boundaryHack == 2)
-//    {
-//      for (i = 0; i <= width; i++)
-//      {
-//        destination[IX(0, i)] = destination[IX(1, i)];
-//        destination[IX(width + 1, i)] = destination[IX(width, i)];
-//        destination[IX(i, 0)] = -destination[IX(i, 1)];
-//        destination[IX(i, width + 1)] = -destination[IX(i, width)];
-//      }
-//    }
-//
-//    destination[IX(0, 0)] = 0.5f * (destination[IX(1, 0)] + destination[IX(0, 1)]);
-//    destination[IX(0, width + 1)] = 0.5f * (destination[IX(1, width + 1)] + destination[IX(0, width)]);
-//    destination[IX(width + 1, 0)] = 0.5f * (destination[IX(width, 0)] + destination[IX(width + 1, 1)]);
-//    destination[IX(width + 1, width + 1)] = 0.5f * (destination[IX(width, width + 1)] + destination[IX(width + 1, width)]);
-  }
-
   void diffuse(Job diffuseJob,
-               int boundaryHack,
-               float[] destination,
-               float[] source,
                float diffusionRate,
                int iterations)
   {
@@ -147,37 +102,33 @@ public class FluidField
       for (int i = 0; i < iterations; i++)
       {
         Threadanator.getInstance().processJob(diffuseJob);
-
-        setBnd(width, height, boundaryHack, destination);
       }
     }
     else
     {
-      copy(boundaryHack, destination, source);
+      Threadanator.getInstance().processJob(diffuseJob);
     }
   }
 
   private Job createDiffuseJob(float[] destination, float[] source, float diffusionRate)
   {
-    float a = timeStep * diffusionRate * width * height;
-    float constant = 1.0f / (1.0f + (4 * a));
-
-    Job diffuseJob = new Job(16);
-    for (int y = 1; y <= height; y++)
+    if (diffusionRate != 0)
     {
-      int index = IX(1, y);
-      diffuseJob.add(new FluidDiffuseWork(this, destination, source, a, constant, index));
+      float a = timeStep * diffusionRate * width * height;
+      float constant = 1.0f / (1.0f + (4 * a));
+
+      Job diffuseJob = new Job(16);
+      for (int y = 1; y <= height; y++)
+      {
+        int index = IX(1, y);
+        diffuseJob.add(new FluidDiffuseWork(this, destination, source, a, constant, index));
+      }
+      return diffuseJob;
     }
-    return diffuseJob;
-  }
-
-  private void copy(int boundaryHack,
-                    float[] destination,
-                    float[] source)
-  {
-    System.arraycopy(source, 0, destination, 0, (stride) * (height + 2));
-
-    setBnd(width, height, boundaryHack, destination);
+    else
+    {
+      return CopyJob.copy(destination, source);
+    }
   }
 
   private Job createAdvectJob(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float timeStep)
@@ -198,11 +149,9 @@ public class FluidField
   {
     addTimeScaled(density, densityPrevious, stride, timeStep);
 
-    diffuse(diffuseDensityJob, 0, densityPrevious, density, diffusionRate, densityIterations);
+    diffuse(diffuseDensityJob, diffusionRate, densityIterations);
 
     Threadanator.getInstance().processJob(advectDensityJob);
-
-    setBnd(width, height, 0, density);
   }
 
   /**
@@ -213,17 +162,14 @@ public class FluidField
     addTimeScaled(velocityX, velocityPreviousX, stride, timeStep);
     addTimeScaled(velocityY, velocityPreviousY, stride, timeStep);
 
-    diffuse(diffuseVelocityXJob, 1, velocityPreviousX, velocityX, viscosity, velocityIterations);
-    diffuse(diffuseVelocityYJob, 2, velocityPreviousY, velocityY, viscosity, velocityIterations);
+    diffuse(diffuseVelocityXJob, viscosity, velocityIterations);
+    diffuse(diffuseVelocityYJob, viscosity, velocityIterations);
 
     project(new FluidProjectParams(velocityPreviousX, velocityPreviousY, velocityX, velocityY), velocityIterations);
 
     Threadanator.getInstance().processJob(advectVelocityXJob);
 
-    setBnd(width, height, 1, velocityX);
     Threadanator.getInstance().processJob(advectVelocityYJob);
-
-    setBnd(width, height, 2, velocityY);
 
     project(new FluidProjectParams(velocityX, velocityY, velocityPreviousX, velocityPreviousY), velocityIterations);
   }
@@ -245,9 +191,6 @@ public class FluidField
 
     Arrays.fill(params.sourceVelocityX, 0);
 
-    setBnd(width, height, 0, params.sourceVelocityY);
-    setBnd(width, height, 0, params.sourceVelocityX);
-
     for (int i = 0; i < iterations; i++)
     {
       threadanator.prepare();
@@ -257,8 +200,6 @@ public class FluidField
         threadanator.add(new FluidProject2(this, params, index));
       }
       threadanator.process(16);
-
-      setBnd(width, height, 0, params.sourceVelocityX);
     }
 
     threadanator.prepare();
@@ -268,9 +209,6 @@ public class FluidField
       threadanator.add(new FluidProject3(this, params, halfNNegative, index));
     }
     threadanator.process(16);
-
-    setBnd(width, height, 1, params.destinationVelocityX);
-    setBnd(width, height, 2, params.destinationVelocityY);
   }
 
   public void project1(FluidProjectParams params, float halfHNegative, int index)
