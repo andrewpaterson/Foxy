@@ -40,6 +40,13 @@ public class FluidField
   private Job timeScaleVelocityXJob;
   private Job timeScaleVelocityYJob;
 
+  private Job projectJob1A;
+  private Job projectJob2A;
+  private Job projectJob3A;
+  private Job projectJob1B;
+  private Job projectJob2B;
+  private Job projectJob3B;
+
   public FluidField(int width,
                     int height,
                     float timeStep,
@@ -78,6 +85,13 @@ public class FluidField
     timeScaleDensityJob = createAddTimeScaledJob(density, densityPrevious);
     timeScaleVelocityXJob = createAddTimeScaledJob(velocityX, velocityPreviousX);
     timeScaleVelocityYJob = createAddTimeScaledJob(velocityY, velocityPreviousY);
+
+    projectJob1A = createProjectJob1(velocityPreviousX, velocityPreviousY, velocityY);
+    projectJob2A = createProjectJob2(velocityX, velocityY);
+    projectJob3A = createProjectJob3(velocityPreviousX, velocityPreviousY, velocityX);
+    projectJob1B = createProjectJob1(velocityX, velocityY, velocityPreviousY);
+    projectJob2B = createProjectJob2(velocityPreviousX, velocityPreviousY);
+    projectJob3B = createProjectJob3(velocityX, velocityY, velocityPreviousX);
 
     clearData();
   }
@@ -131,6 +145,39 @@ public class FluidField
     return job;
   }
 
+  private Job createProjectJob1(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityY)
+  {
+    Job projectJob1A = new Job(16);
+    float h = 1.0f / width;
+    float halfHNegative = -0.5f * h;
+    for (int y = 1; y <= height; y++)
+    {
+      projectJob1A.add(new FluidProject1(this, destinationVelocityX, destinationVelocityY, sourceVelocityY, halfHNegative, y));
+    }
+    return projectJob1A;
+  }
+
+  private Job createProjectJob2(float[] sourceVelocityX, float[] sourceVelocityY)
+  {
+    Job projectJob2A = new Job(16);
+    for (int y = 1; y <= height; y++)
+    {
+      projectJob2A.add(new FluidProject2(this, sourceVelocityX, sourceVelocityY, y));
+    }
+    return projectJob2A;
+  }
+
+  private Job createProjectJob3(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX)
+  {
+    Job projectJob3A = new Job(16);
+    float halfNNegative = -0.5f * width;
+    for (int y = 1; y <= height; y++)
+    {
+      projectJob3A.add(new FluidProject3(this, destinationVelocityX, destinationVelocityY, sourceVelocityX, halfNNegative, y));
+    }
+    return projectJob3A;
+  }
+
   private Job createAddTimeScaledJob(float[] destination, float[] source)
   {
     Job job = new Job(16);
@@ -164,12 +211,12 @@ public class FluidField
     diffuse(diffuseVelocityXJob, viscosity, velocityIterations);
     diffuse(diffuseVelocityYJob, viscosity, velocityIterations);
 
-    project(velocityPreviousX, velocityPreviousY, velocityX, velocityY, velocityIterations);
+    project(projectJob1A, projectJob2A, projectJob3A, velocityX);
 
     Threadanator.getInstance().processJob(advectVelocityXJob);
     Threadanator.getInstance().processJob(advectVelocityYJob);
 
-    project(velocityX, velocityY, velocityPreviousX, velocityPreviousY, velocityIterations);
+    project(projectJob1B, projectJob2B, projectJob3B, velocityPreviousX);
   }
 
   void diffuse(Job diffuseJob,
@@ -189,38 +236,18 @@ public class FluidField
     }
   }
 
-  void project(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX, float[] sourceVelocityY, int iterations)
+  void project(Job job1, Job job2, Job job3, float[] sourceVelocityX)
   {
-    float h = 1.0f / width;
-    float halfHNegative = -0.5f * h;
-    float halfNNegative = -0.5f * width;
-
-    Threadanator threadanator = Threadanator.getInstance().prepare();
-
-    for (int y = 1; y <= height; y++)
-    {
-      threadanator.add(new FluidProject1(this, destinationVelocityX, destinationVelocityY, sourceVelocityY, halfHNegative, y));
-    }
-    threadanator.process(16);
+    Threadanator.getInstance().processJob(job1);
 
     Arrays.fill(sourceVelocityX, 0);
 
-    for (int i = 0; i < iterations; i++)
+    for (int i = 0; i < velocityIterations; i++)
     {
-      threadanator.prepare();
-      for (int y = 1; y <= height; y++)
-      {
-        threadanator.add(new FluidProject2(this, sourceVelocityX, sourceVelocityY, y));
-      }
-      threadanator.process(16);
+      Threadanator.getInstance().processJob(job2);
     }
 
-    threadanator.prepare();
-    for (int y = 1; y <= height; y++)
-    {
-      threadanator.add(new FluidProject3(this, destinationVelocityX, destinationVelocityY, sourceVelocityX, halfNNegative, y));
-    }
-    threadanator.process(16);
+    Threadanator.getInstance().processJob(job3);
   }
 
   public float sumAdjacentValues(int index, float[] values)

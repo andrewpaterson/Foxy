@@ -6,9 +6,9 @@ import net.engine.thread.Threadanator;
 
 public class KingdomGame extends Game
 {
-  public static int scale = 2;
-  public static int width = 853;
-  public static int height = 480;
+  public static int scale = 1;
+  public static int width = 1280;
+  public static int height = 720;
 
   public KingdomGame()
   {
@@ -19,7 +19,7 @@ public class KingdomGame extends Game
   {
     Threadanator.getInstance().start();
 
-    stageManager.addStage("Fluid", new FluidStage(2.0f, 100.0f, width, height, 10, 0.02f));
+    stageManager.addStage("Fluid", new FluidStage(2.0f, 100.0f, width, height, 5, 0.02f));
     stageManager.setStage("Fluid");
 
     run();
