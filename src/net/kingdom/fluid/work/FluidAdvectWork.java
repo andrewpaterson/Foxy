@@ -5,7 +5,6 @@ import net.kingdom.fluid.FluidField;
 
 public class FluidAdvectWork extends FluidWork
 {
-  private final FluidField fluidField;
   private int y;
   private int index;
   private float timeStepScaledByWidth;
@@ -21,18 +20,16 @@ public class FluidAdvectWork extends FluidWork
                          float[] velocityX,
                          float[] velocityY,
                          int y,
-
                          float timeStepScaledByWidth,
                          float timeStepScaledByHeight)
   {
     super(fluidField);
-    this.fluidField = fluidField;
     this.density = density;
     this.densityPrevious = densityPrevious;
     this.velocityX = velocityX;
     this.velocityY = velocityY;
     this.y = y;
-    this.index = fluidField.IX(1, y);
+    this.index = IX(1, y);
     this.timeStepScaledByWidth = timeStepScaledByWidth;
     this.timeStepScaledByHeight = timeStepScaledByHeight;
   }
@@ -44,8 +41,8 @@ public class FluidAdvectWork extends FluidWork
     int xIndex, yIndex, xIndex1, yIndex1;
     float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal;
 
-    int width = fluidField.getWidth();
-    int height = fluidField.getHeight();
+    int width = getWidth();
+    int height = getHeight();
 
     for (int x = 1; x <= width; x++, index1++)
     {

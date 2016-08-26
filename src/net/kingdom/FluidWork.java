@@ -16,5 +16,20 @@ public abstract class FluidWork extends Work
   {
     return fluidField.IX(x, y);
   }
+
+  protected int getStride()
+  {
+    return fluidField.getStride();
+  }
+
+  protected int getHeight()
+  {
+    return fluidField.getHeight();
+  }
+
+  protected int getWidth()
+  {
+    return fluidField.getWidth();
+  }
 }
 

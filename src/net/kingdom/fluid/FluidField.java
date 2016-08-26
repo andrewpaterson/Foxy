@@ -361,7 +361,7 @@ public class FluidField
     for (int y = 0; y < height + 2; y++)
     {
       int index = y * stride;
-      threadanator.add(new TimeScaledWork(this, destination, source, stride, timeStep, index));
+      threadanator.add(new TimeScaledWork(this, destination, source, timeStep, index));
     }
 
     threadanator.process(16);
@@ -378,6 +378,11 @@ public class FluidField
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;
     System.out.println(String.format("%.3f", timeInSeconds));
+  }
+
+  public int getStride()
+  {
+    return stride;
   }
 }
 
