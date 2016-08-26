@@ -1,4 +1,4 @@
-package net.kingdom.fluid.project;
+package net.kingdom.fluid.work;
 
 import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;

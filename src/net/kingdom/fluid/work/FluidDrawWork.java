@@ -1,15 +1,15 @@
-package net.kingdom.fluid.draw;
+package net.kingdom.fluid.work;
 
 import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;
 
-public class DrawWork extends FluidWork
+public class FluidDrawWork extends FluidWork
 {
   public int fieldWidth;
   public int y;
   public int[] pixels;
 
-  public DrawWork(FluidField fluidField, int fieldWidth, int y, int[] pixels)
+  public FluidDrawWork(FluidField fluidField, int fieldWidth, int y, int[] pixels)
   {
     super(fluidField);
     this.fieldWidth = fieldWidth;

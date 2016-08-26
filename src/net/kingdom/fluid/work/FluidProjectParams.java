@@ -1,4 +1,4 @@
-package net.kingdom.fluid.project;
+package net.kingdom.fluid.work;
 
 /**
  * Created by andrew on 2016/08/23.

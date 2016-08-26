@@ -5,7 +5,7 @@ import net.engine.game.StageManager;
 import net.engine.input.GameInput;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
-import net.kingdom.fluid.draw.DrawWork;
+import net.kingdom.fluid.work.FluidDrawWork;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -59,7 +59,7 @@ public class FluidStage extends Stage
 
     for (int y = 0; y <= fieldHeight; y++)
     {
-      threadanator.add(new DrawWork(fluidField, fieldWidth, y, pixels));
+      threadanator.add(new FluidDrawWork(fluidField, fieldWidth, y, pixels));
     }
     threadanator.process();
   }

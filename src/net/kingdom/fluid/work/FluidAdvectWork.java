@@ -1,9 +1,9 @@
-package net.kingdom.fluid.advect;
+package net.kingdom.fluid.work;
 
 import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
 
-public class FluidAdvect1 extends FluidWork
+public class FluidAdvectWork extends FluidWork
 {
   private final FluidField fluidField;
   private FluidAdvectParams params;
@@ -12,7 +12,7 @@ public class FluidAdvect1 extends FluidWork
   private final float timeStepScaledByWidth;
   private final float timeStepScaledByHeight;
 
-  public FluidAdvect1(FluidField fluidField, FluidAdvectParams params, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
+  public FluidAdvectWork(FluidField fluidField, FluidAdvectParams params, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
   {
     super(fluidField);
     this.fluidField = fluidField;
