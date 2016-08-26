@@ -12,14 +12,14 @@ public class KingdomGame extends Game
 
   public KingdomGame()
   {
-    super(new FrameConfig("Simulation Window", width * scale, height * scale));
+    super(new FrameConfig("Simulation Window"/*, width * scale, height * scale*/));
   }
 
   private void start()
   {
     Threadanator.getInstance().start();
 
-    stageManager.addStage("Fluid", new FluidStage(10.0f, 100.0f, width, height, 5, 0.02f));
+    stageManager.addStage("Fluid", new FluidStage(10.0f, 500.0f, width, height, 20, 0.02f));
     stageManager.setStage("Fluid");
 
     run();

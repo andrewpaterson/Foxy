@@ -82,8 +82,8 @@ public class FluidField
     advectVelocityYJob = createAdvectJob(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
 
     diffuseDensityJob = createDiffuseJob(densityPrevious, density, diffusionRate);
-    diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, diffusionRate);
-    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, diffusionRate);
+    diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, viscosity);
+    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, viscosity);
 
     timeScaleDensityJob = createAddTimeScaledJob(density, densityPrevious);
     timeScaleVelocityXJob = createAddTimeScaledJob(velocityX, velocityPreviousX);
@@ -198,7 +198,6 @@ public class FluidField
   {
     Threadanator.getInstance().processJob(timeScaleDensityJob);
 
-
     diffuse(diffuseDensityJob, diffusionRate, densityIterations);
 
     Threadanator.getInstance().processJob(advectDensityJob);
@@ -212,7 +211,6 @@ public class FluidField
     Threadanator.getInstance().processJob(timeScaleVelocityXJob);
     Threadanator.getInstance().processJob(timeScaleVelocityYJob);
 
-
     diffuse(diffuseVelocityXJob, viscosity, velocityIterations);
     diffuse(diffuseVelocityYJob, viscosity, velocityIterations);
 
@@ -225,10 +223,10 @@ public class FluidField
   }
 
   void diffuse(Job diffuseJob,
-               float diffusionRate,
+               float rate,
                int iterations)
   {
-    if (diffusionRate != 0)
+    if (rate != 0)
     {
       for (int i = 0; i < iterations; i++)
       {

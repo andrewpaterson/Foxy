@@ -3,6 +3,7 @@ package net.kingdom;
 import net.engine.game.Stage;
 import net.engine.game.StageManager;
 import net.engine.input.GameInput;
+import net.engine.picture.ColourGradient;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
@@ -41,8 +42,8 @@ public class FluidStage extends Stage
     this.clickDensity = clickDensity;
     this.width = width;
     this.height = height;
-    this.fluidField = new FluidField(width, height, timeStep, 0, 0, iterations, iterations);
-    this.fluidFieldJob = createColourJob(fluidField, width, height);
+    this.fluidField = new FluidField(width, height, timeStep, 0.00005f, 0.00001f, iterations, iterations);
+    this.fluidFieldJob = createColourJob(fluidField, height);
   }
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
@@ -58,12 +59,23 @@ public class FluidStage extends Stage
     Threadanator.getInstance().processJob(fluidFieldJob);
   }
 
-  private Job createColourJob(FluidField fluidField, int fieldWidth, int fieldHeight)
+  private Job createColourJob(FluidField fluidField, int fieldHeight)
   {
+    Color[] palette = new Color[256];
+    ColourGradient.generate(palette,
+            new Color(0, 0, 0), 0,
+            new Color(99, 44, 255), 50,
+            new Color(237, 0, 56), 100,
+            new Color(237, 0, 201), 150,
+            new Color(237, 100, 201), 200,
+            new Color(255, 253, 75), 240,
+            new Color(255, 255, 255), 255);
+
+
     Job job = new Job(16);
     for (int y = 0; y <= fieldHeight; y++)
     {
-      job.add(new FluidDrawWork(this, fluidField, y));
+      job.add(new FluidDrawWork(this, fluidField, y, palette));
     }
     return job;
   }
