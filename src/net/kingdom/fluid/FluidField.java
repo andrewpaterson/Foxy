@@ -36,6 +36,10 @@ public class FluidField
   private Job diffuseVelocityXJob;
   private Job diffuseVelocityYJob;
 
+  private Job timeScaleDensityJob;
+  private Job timeScaleVelocityXJob;
+  private Job timeScaleVelocityYJob;
+
   public FluidField(int width,
                     int height,
                     float timeStep,
@@ -71,6 +75,10 @@ public class FluidField
     diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, diffusionRate);
     diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, diffusionRate);
 
+    timeScaleDensityJob = createAddTimeScaledJob(density, densityPrevious);
+    timeScaleVelocityXJob = createAddTimeScaledJob(velocityX, velocityPreviousX);
+    timeScaleVelocityYJob = createAddTimeScaledJob(velocityY, velocityPreviousY);
+
     clearData();
   }
 
@@ -87,27 +95,6 @@ public class FluidField
   public int IX(int x, int y)
   {
     return x + stride * y;
-  }
-
-  /**
-   * Sets boundary for diffusion. It is bound vertically and horizontally in a box.
-   **/
-
-  void diffuse(Job diffuseJob,
-               float diffusionRate,
-               int iterations)
-  {
-    if (diffusionRate != 0)
-    {
-      for (int i = 0; i < iterations; i++)
-      {
-        Threadanator.getInstance().processJob(diffuseJob);
-      }
-    }
-    else
-    {
-      Threadanator.getInstance().processJob(diffuseJob);
-    }
   }
 
   private Job createDiffuseJob(float[] destination, float[] source, float diffusionRate)
@@ -146,7 +133,8 @@ public class FluidField
 
   void calculateDensity()
   {
-    addTimeScaled(density, densityPrevious, stride, timeStep);
+    Threadanator.getInstance().processJob(timeScaleDensityJob);
+
 
     diffuse(diffuseDensityJob, diffusionRate, densityIterations);
 
@@ -158,8 +146,9 @@ public class FluidField
    */
   void calculateVelocity()
   {
-    addTimeScaled(velocityX, velocityPreviousX, stride, timeStep);
-    addTimeScaled(velocityY, velocityPreviousY, stride, timeStep);
+    Threadanator.getInstance().processJob(timeScaleVelocityXJob);
+    Threadanator.getInstance().processJob(timeScaleVelocityYJob);
+
 
     diffuse(diffuseVelocityXJob, viscosity, velocityIterations);
     diffuse(diffuseVelocityYJob, viscosity, velocityIterations);
@@ -167,10 +156,26 @@ public class FluidField
     project(velocityPreviousX, velocityPreviousY, velocityX, velocityY, velocityIterations);
 
     Threadanator.getInstance().processJob(advectVelocityXJob);
-
     Threadanator.getInstance().processJob(advectVelocityYJob);
 
     project(velocityX, velocityY, velocityPreviousX, velocityPreviousY, velocityIterations);
+  }
+
+  void diffuse(Job diffuseJob,
+               float diffusionRate,
+               int iterations)
+  {
+    if (diffusionRate != 0)
+    {
+      for (int i = 0; i < iterations; i++)
+      {
+        Threadanator.getInstance().processJob(diffuseJob);
+      }
+    }
+    else
+    {
+      Threadanator.getInstance().processJob(diffuseJob);
+    }
   }
 
   void project(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX, float[] sourceVelocityY, int iterations)
@@ -250,16 +255,16 @@ public class FluidField
     }
   }
 
-  private void addTimeScaled(float[] destination, float[] source, int stride, float timeStep)
+  private Job createAddTimeScaledJob(float[] destination, float[] source)
   {
-    Threadanator threadanator = Threadanator.getInstance().prepare();
+    Job job = new Job(16);
     for (int y = 0; y < height + 2; y++)
     {
       int index = y * stride;
-      threadanator.add(new TimeScaledWork(this, destination, source, timeStep, index));
+      job.add(new TimeScaledWork(this, destination, source, timeStep, index));
     }
 
-    threadanator.process(16);
+    return job;
   }
 
 
