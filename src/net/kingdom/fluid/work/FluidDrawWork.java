@@ -1,29 +1,30 @@
 package net.kingdom.fluid.work;
 
+import net.kingdom.FluidStage;
 import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;
 
 public class FluidDrawWork extends FluidWork
 {
-  public int fieldWidth;
-  public int y;
-  public int[] pixels;
+  private FluidStage fluidStage;
+  private int y;
 
-  public FluidDrawWork(FluidField fluidField, int fieldWidth, int y, int[] pixels)
+  public FluidDrawWork(FluidStage fluidStage, FluidField fluidField, int y)
   {
     super(fluidField);
-    this.fieldWidth = fieldWidth;
+    this.fluidStage = fluidStage;
     this.y = y;
-    this.pixels = pixels;
   }
 
   @Override
   public void work()
   {
-    for (int x = 0; x <= fieldWidth; x++)
+    int width = fluidField.getWidth();
+    int[] pixels = fluidStage.getPixels();
+    for (int x = 0; x <= width; x++)
     {
       float density = fluidField.getDensity(x, y);
-      pixels[(x + (fieldWidth + 2) * y)] = getColour(density);
+      pixels[(x + (width + 2) * y)] = getColour(density);
     }
   }
 

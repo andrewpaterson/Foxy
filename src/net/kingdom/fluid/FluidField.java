@@ -288,7 +288,7 @@ public class FluidField
     }
   }
 
-  public void tick()
+  public double tick()
   {
     long startTime = System.nanoTime();
 
@@ -296,8 +296,7 @@ public class FluidField
     calculateDensity();
 
     long endTime = System.nanoTime();
-    double timeInSeconds = (double) (endTime - startTime) / 1000000000;
-    System.out.println(String.format("%.3f", timeInSeconds));
+    return (double) (endTime - startTime) / 1000000000;
   }
 
   public int getWidth()
