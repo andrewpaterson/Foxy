@@ -120,6 +120,15 @@ public class Threadanator
 
   public void process()
   {
+    processMultiThreaded();
+  }
+
+  private void processMultiThreaded()
+  {
+    while (!areAllSleeping())
+    {
+    }
+
     for (ThreadRunnable thread : threads)
     {
       thread.interrupt();
@@ -131,19 +140,25 @@ public class Threadanator
     {
     }
 
-    queue.swap();
+    queue.clear();
   }
 
   public void process(boolean singleThreaded)
   {
-    if (!singleThreaded)
+    if (singleThreaded)
     {
-      process();
+      processSingleThreaded();
     }
     else
     {
-      work();
+      processMultiThreaded();
     }
+  }
+
+  private void processSingleThreaded()
+  {
+    work();
+    queue.clear();
   }
 }
 
