@@ -3,27 +3,30 @@ package net.kingdom.fluid.work;
 import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;
 
-/**
- * Created by andrew on 2016/08/26.
- */
 public class TimeScaledWork extends FluidWork
 {
-  private TimeScaledParams params;
+  private float[] destination;
+  private float[] source;
+  private float timeStep;
+  private int stride;
   private int index;
 
-  public TimeScaledWork(FluidField fluidField, TimeScaledParams params, int index)
+  public TimeScaledWork(FluidField fluidField, float[] destination, float[] source, int stride, float timeStep, int index)
   {
     super(fluidField);
-    this.params = params;
     this.index = index;
+    this.destination = destination;
+    this.source = source;
+    this.stride = stride;
+    this.timeStep = timeStep;
   }
 
   @Override
   public void work()
   {
-    for (int x = 0; x < params.stride; x++)
+    for (int x = 0; x < stride; x++)
     {
-      params.destination[index + x] += params.timeStep * params.source[index + x];
+      destination[index + x] += timeStep * source[index + x];
     }
   }
 }

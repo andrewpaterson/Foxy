@@ -30,7 +30,7 @@ public class Worker
       {
         Work work = workTaken[i];
         workTaken[i] = null;
-        
+
         work.work();
       }
       return true;

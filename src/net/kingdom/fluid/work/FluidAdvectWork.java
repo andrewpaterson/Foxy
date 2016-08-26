@@ -6,17 +6,25 @@ import net.kingdom.FluidWork;
 public class FluidAdvectWork extends FluidWork
 {
   private final FluidField fluidField;
-  private FluidAdvectParams params;
-  private final int y;
-  private final int index;
-  private final float timeStepScaledByWidth;
-  private final float timeStepScaledByHeight;
+  private int y;
+  private int index;
+  private float timeStepScaledByWidth;
+  private float timeStepScaledByHeight;
+  private float[] density;
+  private float[] densityPrevious;
+  private float[] velocityX;
+  private float[] velocityY;
+  private float timeStep;
 
-  public FluidAdvectWork(FluidField fluidField, FluidAdvectParams params, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
+  public FluidAdvectWork(FluidField fluidField, float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float timeStep, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
   {
     super(fluidField);
     this.fluidField = fluidField;
-    this.params = params;
+    this.density = density;
+    this.densityPrevious = densityPrevious;
+    this.velocityX = velocityX;
+    this.velocityY = velocityY;
+    this.timeStep = timeStep;
     this.y = y;
     this.index = index;
     this.timeStepScaledByWidth = timeStepScaledByWidth;
@@ -26,7 +34,7 @@ public class FluidAdvectWork extends FluidWork
   @Override
   public void work()
   {
-    fluidField.advect1(params, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
+    fluidField.advect1(density, densityPrevious, velocityX, velocityY, timeStep, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
   }
 }
 

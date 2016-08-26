@@ -1,5 +1,6 @@
 package net.kingdom.fluid;
 
+import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.work.*;
 
@@ -25,6 +26,10 @@ public class FluidField
   private float diffusionRate;
   private int velocityIterations;
   private int densityIterations;
+
+  private Job advectDensityJob;
+  private Job advectVelocityXJob;
+  private Job advectVelocityYJob;
 
   public FluidField(int width,
                     int height,
@@ -52,6 +57,10 @@ public class FluidField
 
     density = new float[size];
     densityPrevious = new float[size];
+
+    advectDensityJob = createAdvectJob(density, densityPrevious, velocityX, velocityY, timeStep);
+    advectVelocityXJob = createAdvectJob(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
+    advectVelocityYJob = createAdvectJob(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
 
     clearData();
   }
@@ -175,33 +184,30 @@ public class FluidField
     setBnd(width, height, boundaryHack, destination);
   }
 
-  void advect(FluidAdvectParams params, int boundaryHack)
+  private Job createAdvectJob(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float timeStep)
   {
-    Threadanator threadanator = Threadanator.getInstance().prepare();
-
-    float timeStepScaledByWidth = params.dt * width;
-    float timeStepScaledByHeight = params.dt * height;
+    Job job = new Job(16);
+    float timeStepScaledByWidth = timeStep * width;
+    float timeStepScaledByHeight = timeStep * height;
 
     for (int y = 1; y <= height; y++)
     {
       int index = IX(1, y);
-
-      threadanator.add(new FluidAdvectWork(this, params, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
+      job.add(new FluidAdvectWork(this, density, densityPrevious, velocityX, velocityY, timeStep, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
     }
-    threadanator.process(16);
 
-    setBnd(width, height, boundaryHack, density);
+    return job;
   }
 
-  public void advect1(FluidAdvectParams params, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
+  public void advect1(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float dt, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
   {
     int xIndex, yIndex, xIndex1, yIndex1;
     float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal;
 
     for (int x = 1; x <= width; x++, index++)
     {
-      newX = x - timeStepScaledByWidth * params.velocityX[index];
-      newY = y - timeStepScaledByHeight * params.velocityY[index];
+      newX = x - timeStepScaledByWidth * velocityX[index];
+      newY = y - timeStepScaledByHeight * velocityY[index];
 
       if (newX < 0.5f)
       {
@@ -232,24 +238,24 @@ public class FluidField
       yVelocityDecimal = newY - yIndex;
       oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
 
-      params.density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * params.densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * params.densityPrevious[IX(xIndex, yIndex1)]) +
-              xVelocityDecimal * (oneMinusYVelocityDecimal * params.densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * params.densityPrevious[IX(xIndex1, yIndex1)]);
+      density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
+              xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
     }
   }
 
   void calculateDensity(float[] density,
                         float[] densityPrevious,
-                        float[] velocityX,
-                        float[] velocityY,
                         float diffusionRate,
                         float timeStep,
                         int iterations)
   {
-    addTimeScaled(new TimeScaledParams(density, densityPrevious, stride, timeStep));
+    addTimeScaled(density, densityPrevious, stride, timeStep);
 
     diffuse(width, height, 0, densityPrevious, density, diffusionRate, timeStep, iterations);
 
-    advect(new FluidAdvectParams(density, densityPrevious, velocityX, velocityY, timeStep), 0);
+    Threadanator.getInstance().processJob(advectDensityJob);
+
+    setBnd(width, height, 0, density);
   }
 
   /**
@@ -263,16 +269,20 @@ public class FluidField
                          float timeStep,
                          int iterations)
   {
-    addTimeScaled(new TimeScaledParams(velocityX, velocityPreviousX, stride, timeStep));
-    addTimeScaled(new TimeScaledParams(velocityY, velocityPreviousY, stride, timeStep));
+    addTimeScaled(velocityX, velocityPreviousX, stride, timeStep);
+    addTimeScaled(velocityY, velocityPreviousY, stride, timeStep);
 
     diffuse(width, height, 1, velocityPreviousX, velocityX, viscosity, timeStep, 10);
     diffuse(width, height, 2, velocityPreviousY, velocityY, viscosity, timeStep, 10);
 
     project(new FluidProjectParams(velocityPreviousX, velocityPreviousY, velocityX, velocityY), iterations);
 
-    advect(new FluidAdvectParams(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep), 1);
-    advect(new FluidAdvectParams(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep), 2);
+    Threadanator.getInstance().processJob(advectVelocityXJob);
+
+    setBnd(width, height, 1, velocityX);
+    Threadanator.getInstance().processJob(advectVelocityYJob);
+
+    setBnd(width, height, 2, velocityY);
 
     project(new FluidProjectParams(velocityX, velocityY, velocityPreviousX, velocityPreviousY), iterations);
   }
@@ -390,13 +400,13 @@ public class FluidField
     }
   }
 
-  private void addTimeScaled(TimeScaledParams params)
+  private void addTimeScaled(float[] destination, float[] source, int stride, float timeStep)
   {
     Threadanator threadanator = Threadanator.getInstance().prepare();
     for (int y = 0; y < height + 2; y++)
     {
       int index = y * stride;
-      threadanator.add(new TimeScaledWork(this, params, index));
+      threadanator.add(new TimeScaledWork(this, destination, source, stride, timeStep, index));
     }
 
     threadanator.process(16);
@@ -408,7 +418,7 @@ public class FluidField
     long startTime = System.nanoTime();
 
     calculateVelocity(velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, velocityIterations);
-    calculateDensity(density, densityPrevious, velocityX, velocityY, diffusionRate, timeStep, densityIterations);
+    calculateDensity(density, densityPrevious, diffusionRate, timeStep, densityIterations);
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;

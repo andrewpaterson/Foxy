@@ -103,7 +103,25 @@ public class Threadanator
 
   public void add(Work work)
   {
+    if (!prepared)
+    {
+      throw new NotPreparedException();
+    }
     queue.add(work);
+  }
+
+  public void add(Job job)
+  {
+    if (!prepared)
+    {
+      throw new NotPreparedException();
+    }
+
+    List<Work> workList = job.getWorkList();
+    for (Work work : workList)
+    {
+      queue.add(work);
+    }
   }
 
   public void stop()
@@ -122,6 +140,13 @@ public class Threadanator
   public void process(int takeSize)
   {
     processMultiThreaded(takeSize);
+  }
+
+  public void processJob(Job job)
+  {
+    prepare();
+    add(job);
+    process(job.getTakeSize());
   }
 
   private void processMultiThreaded(int takeSize)
@@ -167,6 +192,11 @@ public class Threadanator
   {
     while (!areAllSleeping())
     {
+    }
+
+    if (prepared)
+    {
+      throw new AlreadyPreparedException();
     }
 
     prepared = true;
