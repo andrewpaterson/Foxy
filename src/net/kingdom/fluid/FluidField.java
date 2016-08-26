@@ -31,6 +31,10 @@ public class FluidField
   private Job advectVelocityXJob;
   private Job advectVelocityYJob;
 
+  private Job diffuseDensityJob;
+  private Job diffuseVelocityXJob;
+  private Job diffuseVelocityYJob;
+
   public FluidField(int width,
                     int height,
                     float timeStep,
@@ -61,6 +65,10 @@ public class FluidField
     advectDensityJob = createAdvectJob(density, densityPrevious, velocityX, velocityY, timeStep);
     advectVelocityXJob = createAdvectJob(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
     advectVelocityYJob = createAdvectJob(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
+
+    diffuseDensityJob = createDiffuseJob(densityPrevious, density, diffusionRate);
+    diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, diffusionRate);
+    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityPreviousY, diffusionRate);
 
     clearData();
   }
@@ -127,19 +135,21 @@ public class FluidField
 //    destination[IX(width + 1, width + 1)] = 0.5f * (destination[IX(width, width + 1)] + destination[IX(width + 1, width)]);
   }
 
-  void diffuse(int width,
-               int height,
+  void diffuse(Job diffuseJob,
                int boundaryHack,
                float[] destination,
                float[] source,
                float diffusionRate,
-               float timeStep,
                int iterations)
   {
     if (diffusionRate != 0)
     {
-      float a = timeStep * diffusionRate * width * height;
-      diffuse(new FluidDiffuseParams(destination, source, a), boundaryHack, iterations);
+      for (int i = 0; i < iterations; i++)
+      {
+        Threadanator.getInstance().processJob(diffuseJob);
+
+        setBnd(width, height, boundaryHack, destination);
+      }
     }
     else
     {
@@ -147,33 +157,18 @@ public class FluidField
     }
   }
 
-  private void diffuse(FluidDiffuseParams params,
-                       int boundaryHack,
-                       int iterations)
+  private Job createDiffuseJob(float[] destination, float[] source, float diffusionRate)
   {
-    float constant = 1.0f / (1.0f + (4 * params.a));
-    Threadanator threadanator = Threadanator.getInstance().prepare();
+    float a = timeStep * diffusionRate * width * height;
+    float constant = 1.0f / (1.0f + (4 * a));
 
-    for (int i = 0; i < iterations; i++)
+    Job diffuseJob = new Job(16);
+    for (int y = 1; y <= height; y++)
     {
-      for (int y = 1; y <= height; y++)
-      {
-        int index = IX(1, y);
-        threadanator.add(new FluidDiffuseWork(this, params, constant, index));
-      }
-      threadanator.process(16);
-
-      setBnd(width, height, boundaryHack, params.destination);
+      int index = IX(1, y);
+      diffuseJob.add(new FluidDiffuseWork(this, destination, source, a, constant, index));
     }
-  }
-
-  public void diffuse1(FluidDiffuseParams params, float constant, int index)
-  {
-    for (int x = 1; x <= width; x++, index++)
-    {
-      float adjacentValueSum = sumAdjacentValues(index, params.destination);
-      params.destination[index] = constant * (params.source[index] + params.a * adjacentValueSum);
-    }
+    return diffuseJob;
   }
 
   private void copy(int boundaryHack,
@@ -181,6 +176,7 @@ public class FluidField
                     float[] source)
   {
     System.arraycopy(source, 0, destination, 0, (stride) * (height + 2));
+
     setBnd(width, height, boundaryHack, destination);
   }
 
@@ -198,15 +194,11 @@ public class FluidField
     return job;
   }
 
-  void calculateDensity(float[] density,
-                        float[] densityPrevious,
-                        float diffusionRate,
-                        float timeStep,
-                        int iterations)
+  void calculateDensity()
   {
     addTimeScaled(density, densityPrevious, stride, timeStep);
 
-    diffuse(width, height, 0, densityPrevious, density, diffusionRate, timeStep, iterations);
+    diffuse(diffuseDensityJob, 0, densityPrevious, density, diffusionRate, densityIterations);
 
     Threadanator.getInstance().processJob(advectDensityJob);
 
@@ -216,21 +208,15 @@ public class FluidField
   /**
    * 1 step of the velocity solver.
    */
-  void calculateVelocity(float[] velocityX,
-                         float[] velocityY,
-                         float[] velocityPreviousX,
-                         float[] velocityPreviousY,
-                         float viscosity,
-                         float timeStep,
-                         int iterations)
+  void calculateVelocity()
   {
     addTimeScaled(velocityX, velocityPreviousX, stride, timeStep);
     addTimeScaled(velocityY, velocityPreviousY, stride, timeStep);
 
-    diffuse(width, height, 1, velocityPreviousX, velocityX, viscosity, timeStep, 10);
-    diffuse(width, height, 2, velocityPreviousY, velocityY, viscosity, timeStep, 10);
+    diffuse(diffuseVelocityXJob, 1, velocityPreviousX, velocityX, viscosity, velocityIterations);
+    diffuse(diffuseVelocityYJob, 2, velocityPreviousY, velocityY, viscosity, velocityIterations);
 
-    project(new FluidProjectParams(velocityPreviousX, velocityPreviousY, velocityX, velocityY), iterations);
+    project(new FluidProjectParams(velocityPreviousX, velocityPreviousY, velocityX, velocityY), velocityIterations);
 
     Threadanator.getInstance().processJob(advectVelocityXJob);
 
@@ -239,7 +225,7 @@ public class FluidField
 
     setBnd(width, height, 2, velocityY);
 
-    project(new FluidProjectParams(velocityX, velocityY, velocityPreviousX, velocityPreviousY), iterations);
+    project(new FluidProjectParams(velocityX, velocityY, velocityPreviousX, velocityPreviousY), velocityIterations);
   }
 
   void project(FluidProjectParams params, int iterations)
@@ -312,7 +298,7 @@ public class FluidField
     }
   }
 
-  private float sumAdjacentValues(int index, float[] values)
+  public float sumAdjacentValues(int index, float[] values)
   {
     return values[index - 1] + values[index + 1] + values[index - stride] + values[index + stride];
   }
@@ -372,8 +358,8 @@ public class FluidField
   {
     long startTime = System.nanoTime();
 
-    calculateVelocity(velocityX, velocityY, velocityPreviousX, velocityPreviousY, viscosity, timeStep, velocityIterations);
-    calculateDensity(density, densityPrevious, diffusionRate, timeStep, densityIterations);
+    calculateVelocity();
+    calculateDensity();
 
     long endTime = System.nanoTime();
     double timeInSeconds = (double) (endTime - startTime) / 1000000000;

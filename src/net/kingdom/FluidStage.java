@@ -38,7 +38,7 @@ public class FluidStage extends Stage
     this.clickDensity = clickDensity;
     this.width = width;
     this.height = height;
-    this.fluidField = new FluidField(width, height, timeStep, 0, 0, iterations, iterations);
+    this.fluidField = new FluidField(width, height, timeStep, 0, 0.000001f, iterations, iterations);
 
   }
 

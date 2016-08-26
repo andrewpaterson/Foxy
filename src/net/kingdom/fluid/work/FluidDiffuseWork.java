@@ -1,21 +1,22 @@
 package net.kingdom.fluid.work;
 
-import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
+import net.kingdom.fluid.FluidField;
 
-/**
- * Created by andrew on 2016/08/23.
- */
 public class FluidDiffuseWork extends FluidWork
 {
-  private FluidDiffuseParams params;
+  private float[] destination;
+  private float[] source;
+  private float a;
   private float constant;
   private int index;
 
-  public FluidDiffuseWork(FluidField fluidField, FluidDiffuseParams params, float constant, int index)
+  public FluidDiffuseWork(FluidField fluidField, float[] destination, float[] source, float a, float constant, int index)
   {
     super(fluidField);
-    this.params = params;
+    this.destination = destination;
+    this.source = source;
+    this.a = a;
     this.constant = constant;
     this.index = index;
   }
@@ -23,7 +24,14 @@ public class FluidDiffuseWork extends FluidWork
   @Override
   public void work()
   {
-    fluidField.diffuse1(params, constant, index);
+    int offset = index;
+    int width = getWidth();
+
+    for (int x = 1; x <= width; x++, offset++)
+    {
+      float adjacentValueSum = fluidField.sumAdjacentValues(offset, destination);
+      destination[offset] = constant * (source[offset] + a * adjacentValueSum);
+    }
   }
 }
 
