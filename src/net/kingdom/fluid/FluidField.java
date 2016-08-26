@@ -3,6 +3,7 @@ package net.kingdom.fluid;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.engine.thread.util.CopyJob;
+import net.engine.thread.util.FillJob;
 import net.kingdom.fluid.work.*;
 
 import java.util.Arrays;
@@ -46,6 +47,8 @@ public class FluidField
   private Job projectJob1B;
   private Job projectJob2B;
   private Job projectJob3B;
+  private Job projectJobFillA;
+  private Job projectJobFillB;
 
   public FluidField(int width,
                     int height,
@@ -87,9 +90,11 @@ public class FluidField
     timeScaleVelocityYJob = createAddTimeScaledJob(velocityY, velocityPreviousY);
 
     projectJob1A = createProjectJob1(velocityPreviousX, velocityPreviousY, velocityY);
+    projectJobFillA = FillJob.fill(velocityX, 0);
     projectJob2A = createProjectJob2(velocityX, velocityY);
     projectJob3A = createProjectJob3(velocityPreviousX, velocityPreviousY, velocityX);
     projectJob1B = createProjectJob1(velocityX, velocityY, velocityPreviousY);
+    projectJobFillB = FillJob.fill(velocityPreviousX, 0);
     projectJob2B = createProjectJob2(velocityPreviousX, velocityPreviousY);
     projectJob3B = createProjectJob3(velocityX, velocityY, velocityPreviousX);
 
@@ -211,12 +216,12 @@ public class FluidField
     diffuse(diffuseVelocityXJob, viscosity, velocityIterations);
     diffuse(diffuseVelocityYJob, viscosity, velocityIterations);
 
-    project(projectJob1A, projectJob2A, projectJob3A, velocityX);
+    project(projectJob1A, projectJobFillA, projectJob2A, projectJob3A);
 
     Threadanator.getInstance().processJob(advectVelocityXJob);
     Threadanator.getInstance().processJob(advectVelocityYJob);
 
-    project(projectJob1B, projectJob2B, projectJob3B, velocityPreviousX);
+    project(projectJob1B, projectJobFillB, projectJob2B, projectJob3B);
   }
 
   void diffuse(Job diffuseJob,
@@ -236,11 +241,11 @@ public class FluidField
     }
   }
 
-  void project(Job job1, Job job2, Job job3, float[] sourceVelocityX)
+  void project(Job job1, Job jobFill, Job job2, Job job3)
   {
     Threadanator.getInstance().processJob(job1);
 
-    Arrays.fill(sourceVelocityX, 0);
+    Threadanator.getInstance().processJob(jobFill);
 
     for (int i = 0; i < velocityIterations; i++)
     {
