@@ -44,24 +44,23 @@ public class FluidStage extends Stage
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
   {
-    Threadanator threadanator = Threadanator.getInstance();
-
-    calculateDensity(fluidField, threadanator);
+    calculateDensity(fluidField);
 
     convertIntsToImageRaster(fluidField.getWidth() + 2, fluidField.getHeight() + 2, pixels, bufferedImage);
     graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fluidField.getWidth() + 1, fluidField.getHeight() + 1, null);
   }
 
-  private void calculateDensity(FluidField fluidField, Threadanator threadanator)
+  private void calculateDensity(FluidField fluidField)
   {
     int fieldWidth = fluidField.getWidth();
     int fieldHeight = fluidField.getHeight();
 
+    Threadanator threadanator = Threadanator.getInstance().prepare();
     for (int y = 0; y <= fieldHeight; y++)
     {
       threadanator.add(new FluidDrawWork(fluidField, fieldWidth, y, pixels));
     }
-    threadanator.process();
+    threadanator.process(16);
   }
 
   void setForces(int bufferWidth, int bufferHeight, FluidField fluidField)

@@ -4,14 +4,18 @@ public class ThreadRunnable implements Runnable
 {
   private WorkQueue queue;
   private Thread thread;
+  private Worker worker;
   private boolean running;
   private boolean sleeping;
+  private int takeSize;
 
   public ThreadRunnable(WorkQueue queue)
   {
     this.queue = queue;
     this.running = true;
     this.sleeping = false;
+    this.worker = new Worker(queue);
+    this.takeSize = 1;
   }
 
   @Override
@@ -23,12 +27,7 @@ public class ThreadRunnable implements Runnable
     {
       if (!sleeping)
       {
-        Work work = queue.take();
-        if (work != null)
-        {
-          work.work();
-        }
-        else
+        if (!worker.work(takeSize))
         {
           sleep();
         }
@@ -85,6 +84,11 @@ public class ThreadRunnable implements Runnable
   public void stopRunning()
   {
     running = false;
+  }
+
+  public void setTakeSize(int takeSize)
+  {
+    this.takeSize = takeSize;
   }
 }
 

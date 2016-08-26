@@ -13,20 +13,35 @@ public class WorkQueue
   {
     workList = new ArrayList<>();
     index = -1;
+    length = 0;
   }
 
-  public synchronized Work take()
+  public synchronized int take(int takeSize, Work[] returnList)
   {
-    if (index < length - 1)
+    for (int i = 0; i < takeSize; i++)
     {
-      index++;
-      return workList.get(index);
+      if (index < length - 1)
+      {
+        index++;
+        Work work = workList.get(index);
+        returnList[i] = work;
+        workList.set(index, null);
+      }
+      else
+      {
+        return i;
+      }
     }
-    return null;
+    return takeSize;
   }
 
   public void add(Work work)
   {
+    if (work == null)
+    {
+      return;
+    }
+
     if (length < workList.size())
     {
       this.workList.set(length, work);
@@ -43,6 +58,11 @@ public class WorkQueue
     return length - (index + 1);
   }
 
+  public boolean isCleared()
+  {
+    return length == 0 && index == -1;
+  }
+
   public synchronized boolean isEmpty()
   {
     return size() == 0;
@@ -50,11 +70,6 @@ public class WorkQueue
 
   public synchronized void clear()
   {
-    for (int i = 0; i < workList.size(); i++)
-    {
-      workList.set(i, null);
-    }
-
     length = 0;
     index = -1;
   }

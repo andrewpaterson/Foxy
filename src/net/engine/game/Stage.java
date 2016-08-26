@@ -22,7 +22,7 @@ public abstract class Stage
 
   public BufferedImage convertIntsToImageRaster(int width, int height, int[] data, BufferedImage image)
   {
-    Threadanator threadanator = Threadanator.getInstance();
+    Threadanator threadanator = Threadanator.getInstance().prepare();
 
     WritableRaster raster = image.getWritableTile(0, 0);
     for (int y = 0; y < height; y++)
@@ -32,7 +32,7 @@ public abstract class Stage
       threadanator.add(new RasterWork(rasterParams, y, index));
     }
 
-    threadanator.process();
+    threadanator.process(16);
 
     image.releaseWritableTile(0, 0);
     return image;

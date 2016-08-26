@@ -143,7 +143,7 @@ public class FluidField
                        int iterations)
   {
     float constant = 1.0f / (1.0f + (4 * params.a));
-    Threadanator threadanator = Threadanator.getInstance();
+    Threadanator threadanator = Threadanator.getInstance().prepare();
 
     for (int i = 0; i < iterations; i++)
     {
@@ -152,7 +152,7 @@ public class FluidField
         int index = IX(1, y);
         threadanator.add(new FluidDiffuseWork(this, params, constant, index));
       }
-      threadanator.process();
+      threadanator.process(16);
 
       setBnd(width, height, boundaryHack, params.destination);
     }
@@ -177,7 +177,7 @@ public class FluidField
 
   void advect(FluidAdvectParams params, int boundaryHack)
   {
-    Threadanator threadanator = Threadanator.getInstance();
+    Threadanator threadanator = Threadanator.getInstance().prepare();
 
     float timeStepScaledByWidth = params.dt * width;
     float timeStepScaledByHeight = params.dt * height;
@@ -188,7 +188,7 @@ public class FluidField
 
       threadanator.add(new FluidAdvectWork(this, params, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
     }
-    threadanator.process();
+    threadanator.process(16);
 
     setBnd(width, height, boundaryHack, density);
   }
@@ -283,14 +283,14 @@ public class FluidField
     float halfHNegative = -0.5f * h;
     float halfNNegative = -0.5f * width;
 
-    Threadanator threadanator = Threadanator.getInstance();
+    Threadanator threadanator = Threadanator.getInstance().prepare();
 
     for (int y = 1; y <= height; y++)
     {
       int index = IX(1, y);
       threadanator.add(new FluidProject1(this, params, halfHNegative, index));
     }
-    threadanator.process();
+    threadanator.process(16);
 
     Arrays.fill(params.sourceVelocityX, 0);
 
@@ -299,22 +299,24 @@ public class FluidField
 
     for (int i = 0; i < iterations; i++)
     {
+      threadanator.prepare();
       for (int y = 1; y <= height; y++)
       {
         int index = IX(1, y);
         threadanator.add(new FluidProject2(this, params, index));
       }
-      threadanator.process();
+      threadanator.process(16);
 
       setBnd(width, height, 0, params.sourceVelocityX);
     }
 
+    threadanator.prepare();
     for (int y = 1; y <= height; y++)
     {
       int index = IX(1, y);
       threadanator.add(new FluidProject3(this, params, halfNNegative, index));
     }
-    threadanator.process();
+    threadanator.process(16);
 
     setBnd(width, height, 1, params.destinationVelocityX);
     setBnd(width, height, 2, params.destinationVelocityY);
@@ -390,14 +392,14 @@ public class FluidField
 
   void addTimeScaled(TimeScaledParams params)
   {
-    Threadanator threadanator = Threadanator.getInstance();
+    Threadanator threadanator = Threadanator.getInstance().prepare();
     for (int y = 0; y < height + 2; y++)
     {
       int index = y * stride;
       threadanator.add(new TimeScaledWork(this, params, index));
     }
 
-    threadanator.process();
+    threadanator.process(16);
   }
 
 

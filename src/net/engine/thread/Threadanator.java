@@ -7,6 +7,8 @@ public class Threadanator
 {
   private WorkQueue queue;
   private List<ThreadRunnable> threads;
+  private Worker worker;
+  private boolean prepared;
 
   private static Threadanator instance = null;
 
@@ -24,6 +26,8 @@ public class Threadanator
     int availableProcessors = Runtime.getRuntime().availableProcessors() - 1;
     this.queue = new WorkQueue();
     this.threads = new ArrayList<>(availableProcessors);
+    this.worker = new Worker(queue);
+    this.prepared = false;
     for (int i = 0; i < availableProcessors; i++)
     {
       ThreadRunnable threadRunnable = new ThreadRunnable(queue);
@@ -58,16 +62,12 @@ public class Threadanator
     }
   }
 
-  private void work()
+  private void work(int takeSize)
   {
+
     for (; ; )
     {
-      Work work = queue.take();
-      if (work != null)
-      {
-        work.work();
-      }
-      else
+      if (!worker.work(takeSize))
       {
         break;
       }
@@ -112,38 +112,40 @@ public class Threadanator
     {
       thread.stopRunning();
     }
+
     for (ThreadRunnable thread : threads)
     {
       thread.interrupt();
     }
   }
 
-  public void process()
+  public void process(int takeSize)
   {
-    processMultiThreaded();
+    processMultiThreaded(takeSize);
   }
 
-  private void processMultiThreaded()
+  private void processMultiThreaded(int takeSize)
   {
-    while (!areAllSleeping())
+    if (!prepared)
     {
+      throw new NotPreparedException();
     }
+    prepared = false;
 
     for (ThreadRunnable thread : threads)
     {
+      thread.setTakeSize(takeSize);
       thread.interrupt();
     }
 
-    work();
+    work(takeSize);
 
     while (!queue.isEmpty())
     {
     }
-
-    queue.clear();
   }
 
-  public void process(boolean singleThreaded)
+  public void process(boolean singleThreaded, int takeSize)
   {
     if (singleThreaded)
     {
@@ -151,14 +153,25 @@ public class Threadanator
     }
     else
     {
-      processMultiThreaded();
+      processMultiThreaded(takeSize);
     }
   }
 
   private void processSingleThreaded()
   {
-    work();
+    work(1);
     queue.clear();
+  }
+
+  public Threadanator prepare()
+  {
+    while (!areAllSleeping())
+    {
+    }
+
+    prepared = true;
+    queue.clear();
+    return this;
   }
 }
 
