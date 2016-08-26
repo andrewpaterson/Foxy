@@ -75,7 +75,7 @@ public class FluidField
     Arrays.fill(densityPrevious, 0.0f);
   }
 
-  int IX(int x, int y)
+  public int IX(int x, int y)
   {
     return x + stride * y;
   }
@@ -192,55 +192,10 @@ public class FluidField
 
     for (int y = 1; y <= height; y++)
     {
-      int index = IX(1, y);
-      job.add(new FluidAdvectWork(this, density, densityPrevious, velocityX, velocityY, timeStep, y, index, timeStepScaledByWidth, timeStepScaledByHeight));
+      job.add(new FluidAdvectWork(this, density, densityPrevious, velocityX, velocityY, y, timeStepScaledByWidth, timeStepScaledByHeight));
     }
 
     return job;
-  }
-
-  public void advect1(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float dt, int y, int index, float timeStepScaledByWidth, float timeStepScaledByHeight)
-  {
-    int xIndex, yIndex, xIndex1, yIndex1;
-    float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal;
-
-    for (int x = 1; x <= width; x++, index++)
-    {
-      newX = x - timeStepScaledByWidth * velocityX[index];
-      newY = y - timeStepScaledByHeight * velocityY[index];
-
-      if (newX < 0.5f)
-      {
-        newX = 0.5f;
-      }
-      if (newX > (width + 0.5f))
-      {
-        newX = width + 0.5f;
-      }
-      if (newY < 0.5f)
-      {
-        newY = 0.5f;
-      }
-      if (newY > (height + 0.5f))
-      {
-        newY = height + 0.5f;
-      }
-
-      xIndex = (int) newX;
-      xIndex1 = xIndex + 1;
-
-      yIndex = (int) newY;
-      yIndex1 = yIndex + 1;
-
-      xVelocityDecimal = newX - xIndex;
-      oneMinusXVelocityDecimal = 1 - xVelocityDecimal;
-
-      yVelocityDecimal = newY - yIndex;
-      oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
-
-      density[index] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
-              xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
-    }
   }
 
   void calculateDensity(float[] density,

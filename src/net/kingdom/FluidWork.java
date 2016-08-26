@@ -11,4 +11,10 @@ public abstract class FluidWork extends Work
   {
     this.fluidField = fluidField;
   }
+
+  public int IX(int x, int y)
+  {
+    return fluidField.IX(x, y);
+  }
 }
+
