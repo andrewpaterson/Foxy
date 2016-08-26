@@ -7,8 +7,6 @@ public class Threadanator
 {
   private WorkQueue queue;
   private List<ThreadRunnable> threads;
-  private JoinWork joinWork;
-  private StopWork stopWork;
 
   private static Threadanator instance = null;
 
@@ -26,8 +24,6 @@ public class Threadanator
     int availableProcessors = Runtime.getRuntime().availableProcessors() - 1;
     this.queue = new WorkQueue();
     this.threads = new ArrayList<>(availableProcessors);
-    this.joinWork = new JoinWork();
-    this.stopWork = new StopWork();
     for (int i = 0; i < availableProcessors; i++)
     {
       ThreadRunnable threadRunnable = new ThreadRunnable(queue);
@@ -69,11 +65,11 @@ public class Threadanator
       Work work = queue.take();
       if (work != null)
       {
-        int result = work.work();
-        if (result == Work.STOP || result == Work.WAIT)
-        {
-          break;
-        }
+        work.work();
+      }
+      else
+      {
+        break;
       }
     }
   }
@@ -105,19 +101,6 @@ public class Threadanator
     return allSleeping;
   }
 
-  private boolean areAllAwake()
-  {
-    boolean allAwake = true;
-    for (ThreadRunnable threadRunnable : threads)
-    {
-      if (threadRunnable.isSleeping())
-      {
-        allAwake = false;
-      }
-    }
-    return allAwake;
-  }
-
   public void add(Work work)
   {
     queue.add(work);
@@ -125,10 +108,13 @@ public class Threadanator
 
   public void stop()
   {
-    StopWork stopWork = new StopWork();
-    for (int i = 0; i < threads.size(); i++)
+    for (ThreadRunnable thread : threads)
     {
-      queue.add(stopWork);
+      thread.stopRunning();
+    }
+    for (ThreadRunnable thread : threads)
+    {
+      thread.interrupt();
     }
   }
 
@@ -143,32 +129,20 @@ public class Threadanator
 
     while (!queue.isEmpty())
     {
-      for (ThreadRunnable thread : threads)
-      {
-        if (!thread.isRunning())
-        {
-          threads.remove(thread);
-          break;
-        }
-      }
     }
 
-    queue.clear();
+    queue.swap();
   }
 
-  public void addWait()
+  public void process(boolean singleThreaded)
   {
-    for (int i = 0; i <= threads.size(); i++)
+    if (!singleThreaded)
     {
-      queue.add(joinWork);
+      process();
     }
-  }
-
-  public void addStop()
-  {
-    for (int i = 0; i <= threads.size(); i++)
+    else
     {
-      queue.add(stopWork);
+      work();
     }
   }
 }

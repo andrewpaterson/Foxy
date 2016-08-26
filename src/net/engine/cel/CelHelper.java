@@ -121,11 +121,6 @@ public class CelHelper
     return image;
   }
 
-  private BufferedImage convertFromIntArray(int width, int height, int[] data)
-  {
-    return GlobalGraphics.convertFromIntArray(width, height, data, new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
-  }
-
   private BufferedImage convertFromFont(Font font, Color color, String text)
   {
     GraphicsConfiguration graphicsConfiguration = GlobalGraphics.getGraphicsConfiguration();

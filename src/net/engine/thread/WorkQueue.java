@@ -5,13 +5,15 @@ import java.util.List;
 
 public class WorkQueue
 {
-  private List<Work> work;
+  private List<Work> currentWork;
+  private List<Work> previousWork;
   private int index;
   private int length;
 
   public WorkQueue()
   {
-    work = new ArrayList<>();
+    currentWork = new ArrayList<>();
+    previousWork = new ArrayList<>();
     index = -1;
   }
 
@@ -20,35 +22,44 @@ public class WorkQueue
     if (index < length - 1)
     {
       index++;
-      return work.get(index);
+      return currentWork.get(index);
     }
     return null;
+  }
+
+  public synchronized void swap()
+  {
+    clear();
+
+    List<Work> temp = currentWork;
+    currentWork = previousWork;
+    previousWork = temp;
   }
 
   public void clear()
   {
     length = 0;
     index = -1;
-    for (int i = 0; i < work.size(); i++)
+    for (int i = 0; i < currentWork.size(); i++)
     {
-      work.set(i, null);
+      currentWork.set(i, null);
     }
   }
 
   public void add(Work work)
   {
-    if (length < this.work.size())
+    if (length < this.currentWork.size())
     {
-      this.work.set(length, work);
+      this.currentWork.set(length, work);
     }
     else
     {
-      this.work.add(work);
+      this.currentWork.add(work);
     }
     length++;
   }
 
-  public synchronized int size()
+  public int size()
   {
     return length - (index + 1);
   }

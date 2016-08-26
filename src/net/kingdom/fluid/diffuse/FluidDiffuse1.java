@@ -21,10 +21,9 @@ public class FluidDiffuse1 extends FluidWork
   }
 
   @Override
-  public int work()
+  public void work()
   {
     fluidField.diffuse1(params, constant, index);
-    return SUCCESS;
   }
 }
 

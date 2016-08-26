@@ -24,10 +24,9 @@ public class FluidAdvect1 extends FluidWork
   }
 
   @Override
-  public int work()
+  public void work()
   {
     fluidField.advect1(params, y, index, timeStepScaledByWidth, timeStepScaledByHeight);
-    return SUCCESS;
   }
 }
 

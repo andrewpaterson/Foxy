@@ -23,24 +23,15 @@ public class ThreadRunnable implements Runnable
     {
       if (!sleeping)
       {
-        work();
-      }
-    }
-  }
-
-  private void work()
-  {
-    Work work = queue.take();
-    if (work != null)
-    {
-      int result = work.work();
-      if (result == Work.STOP)
-      {
-        running = false;
-      }
-      else if (result == Work.WAIT)
-      {
-        sleep();
+        Work work = queue.take();
+        if (work != null)
+        {
+          work.work();
+        }
+        else
+        {
+          sleep();
+        }
       }
     }
   }
@@ -89,6 +80,11 @@ public class ThreadRunnable implements Runnable
   public void stopSleeping()
   {
     sleeping = false;
+  }
+
+  public void stopRunning()
+  {
+    running = false;
   }
 }
 

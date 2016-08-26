@@ -3,9 +3,6 @@ package net.kingdom.fluid.project;
 import net.kingdom.fluid.FluidField;
 import net.kingdom.FluidWork;
 
-/**
- * Created by andrew on 2016/08/23.
- */
 public class FluidProject3 extends FluidWork
 {
   private FluidProjectParams params;
@@ -21,10 +18,9 @@ public class FluidProject3 extends FluidWork
   }
 
   @Override
-  public int work()
+  public void work()
   {
     fluidField.project3(params, halfNNegative, index);
-    return SUCCESS;
   }
 }
 

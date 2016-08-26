@@ -2,7 +2,6 @@ package net.kingdom;
 
 import net.engine.game.Stage;
 import net.engine.game.StageManager;
-import net.engine.global.GlobalGraphics;
 import net.engine.input.GameInput;
 import net.kingdom.fluid.FluidField;
 
@@ -31,12 +30,14 @@ public class FluidStage extends Stage
   protected BufferedImage bufferedImage = null;
   protected int[] pixels = null;
 
-  public FluidStage(float force, float clickDensity, int width, int height)
+  public FluidStage(float force, float clickDensity, int width, int height, int iterations, float timeStep)
   {
     this.force = force;
     this.clickDensity = clickDensity;
     this.width = width;
     this.height = height;
+    this.fluidField = new FluidField(width, height, timeStep, 0, 0, iterations, iterations);
+
   }
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
@@ -47,14 +48,15 @@ public class FluidStage extends Stage
     int fieldHeight = fluidField.getHeight();
     for (y = 0; y <= fieldHeight; y++)
     {
+      int index = (fieldWidth + 2) * y;
       for (x = 0; x <= fieldWidth; x++)
       {
         float density = fluidField.getDensity(x, y);
 
-        pixels[(x + ((fieldWidth + 2) * y))] = getColour(density);
+        pixels[(x + index)] = getColour(density);
       }
     }
-    GlobalGraphics.convertFromIntArray(fieldWidth + 2, fieldHeight + 2, pixels, bufferedImage);
+    convertIntsToImageRaster(fieldWidth + 2, fieldHeight + 2, pixels, bufferedImage);
     graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fieldWidth + 1, fieldHeight + 1, null);
   }
 
@@ -143,7 +145,6 @@ public class FluidStage extends Stage
   public void stageStarting(StageManager stageManager)
   {
     super.stageStarting(stageManager);
-    fluidField = new FluidField(width, height, 0.02f, 0, 0, 50, 5);
     bufferedImage = new BufferedImage(width + 2, height + 2, BufferedImage.TYPE_INT_ARGB);
     pixels = new int[(width + 2) * (height + 2)];
   }
