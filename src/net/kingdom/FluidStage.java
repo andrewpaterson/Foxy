@@ -3,7 +3,9 @@ package net.kingdom;
 import net.engine.game.Stage;
 import net.engine.game.StageManager;
 import net.engine.input.GameInput;
+import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
+import net.kingdom.fluid.draw.DrawWork;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -42,36 +44,24 @@ public class FluidStage extends Stage
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
   {
-    int x, y;
+    Threadanator threadanator = Threadanator.getInstance();
 
-    int fieldWidth = fluidField.getWidth();
-    int fieldHeight = fluidField.getHeight();
-    for (y = 0; y <= fieldHeight; y++)
-    {
-      int index = (fieldWidth + 2) * y;
-      for (x = 0; x <= fieldWidth; x++)
-      {
-        float density = fluidField.getDensity(x, y);
+    calculateDensity(fluidField, threadanator);
 
-        pixels[(x + index)] = getColour(density);
-      }
-    }
-    convertIntsToImageRaster(fieldWidth + 2, fieldHeight + 2, pixels, bufferedImage);
-    graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fieldWidth + 1, fieldHeight + 1, null);
+    convertIntsToImageRaster(fluidField.getWidth() + 2, fluidField.getHeight() + 2, pixels, bufferedImage);
+    graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fluidField.getWidth() + 1, fluidField.getHeight() + 1, null);
   }
 
-  private int getColour(float colour)
+  private void calculateDensity(FluidField fluidField, Threadanator threadanator)
   {
-    if (colour < 0)
+    int fieldWidth = fluidField.getWidth();
+    int fieldHeight = fluidField.getHeight();
+
+    for (int y = 0; y <= fieldHeight; y++)
     {
-      colour = 0;
+      threadanator.add(new DrawWork(fluidField, fieldWidth, y, pixels));
     }
-    if (colour > 1)
-    {
-      colour = 1;
-    }
-    int bits = (int) (colour * 255);
-    return bits | bits << 8 | bits << 16 | 0xff << 24;
+    threadanator.process();
   }
 
   void setForces(int bufferWidth, int bufferHeight, FluidField fluidField)
@@ -134,9 +124,6 @@ public class FluidStage extends Stage
   void draw(Graphics graphics, int width, int height)
   {
     setForces(width, height, fluidField);
-
-    graphics.setColor(Color.BLACK);
-    graphics.fillRect(0, 0, width, height);
 
     drawDensity(graphics, width, height, fluidField);
   }
