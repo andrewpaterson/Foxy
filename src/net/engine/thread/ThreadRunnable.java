@@ -74,11 +74,6 @@ public class ThreadRunnable implements Runnable
     return sleeping;
   }
 
-  public void stopSleeping()
-  {
-    sleeping = false;
-  }
-
   public void stopRunning()
   {
     running = false;

@@ -56,13 +56,7 @@ public class Threadanator
       }
     }
 
-    for (; ; )
-    {
-      if (areAllSleeping())
-      {
-        break;
-      }
-    }
+    join();
   }
 
   private void work(int takeSize)
@@ -140,7 +134,7 @@ public class Threadanator
     }
   }
 
-  public Threadanator prepare()
+  private void join()
   {
     while (!areAllSleeping())
     {
@@ -151,9 +145,6 @@ public class Threadanator
       throw new AlreadyPreparedException();
     }
     prepared = true;
-
-    queue.clear();
-    return this;
   }
 
   public void process(int takeSize)
@@ -163,7 +154,6 @@ public class Threadanator
 
   public void process(Job job)
   {
-    prepare();
     add(job);
     process(!job.isMultiThreaded(), job.getTakeSize());
   }
@@ -187,6 +177,9 @@ public class Threadanator
     while (!queue.isEmpty())
     {
     }
+    queue.clear();
+
+    join();
   }
 
   private void singleThreaded()

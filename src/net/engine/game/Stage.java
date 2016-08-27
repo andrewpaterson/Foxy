@@ -22,7 +22,7 @@ public abstract class Stage implements InputHandler
 
   public BufferedImage convertImageRaster(int width, int height, int[] data, BufferedImage image)
   {
-    Threadanator threadanator = Threadanator.getInstance().prepare();
+    Threadanator threadanator = Threadanator.getInstance();
 
     WritableRaster raster = image.getWritableTile(0, 0);
     for (int y = 0; y < height; y++)
