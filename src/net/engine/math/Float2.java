@@ -99,3 +99,4 @@ public class Float2 extends Point2D.Float
     return (x == 0.0f) && (y == 0.0f);
   }
 }
+

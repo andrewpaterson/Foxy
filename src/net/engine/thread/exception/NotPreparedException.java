@@ -1,4 +1,4 @@
-package net.engine.thread;
+package net.engine.thread.exception;
 
 /**
  * Created by andrew on 2016/08/26.
