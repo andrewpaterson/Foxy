@@ -2,8 +2,6 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-import java.util.Arrays;
-
 public class FillWork extends Work
 {
   private float[] destination;
@@ -22,7 +20,11 @@ public class FillWork extends Work
   @Override
   public void work()
   {
-    Arrays.fill(destination, destinationOffset, destinationOffset + size, value);
+    int end = destinationOffset + size;
+    for (int i = destinationOffset; i < end; i++)
+    {
+      destination[i] = value;
+    }
   }
 }
 

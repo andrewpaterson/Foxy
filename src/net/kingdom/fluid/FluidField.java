@@ -77,26 +77,27 @@ public class FluidField
     density = new float[size];
     densityPrevious = new float[size];
 
-    advectDensityJob = createAdvectJob(density, densityPrevious, velocityX, velocityY, timeStep);
-    advectVelocityXJob = createAdvectJob(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, timeStep);
-    advectVelocityYJob = createAdvectJob(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, timeStep);
+    boolean multiThreaded = true;
+    advectDensityJob = createAdvectJob(density, densityPrevious, velocityX, velocityY, multiThreaded);
+    advectVelocityXJob = createAdvectJob(velocityX, velocityPreviousX, velocityPreviousX, velocityPreviousY, multiThreaded);
+    advectVelocityYJob = createAdvectJob(velocityY, velocityPreviousY, velocityPreviousX, velocityPreviousY, multiThreaded);
 
-    diffuseDensityJob = createDiffuseJob(densityPrevious, density, diffusionRate);
-    diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, viscosity);
-    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, viscosity);
+    diffuseDensityJob = createDiffuseJob(densityPrevious, density, diffusionRate, multiThreaded);
+    diffuseVelocityXJob = createDiffuseJob(velocityPreviousX, velocityX, viscosity, multiThreaded);
+    diffuseVelocityYJob = createDiffuseJob(velocityPreviousY, velocityY, viscosity, multiThreaded);
 
-    timeScaleDensityJob = createAddTimeScaledJob(density, densityPrevious);
-    timeScaleVelocityXJob = createAddTimeScaledJob(velocityX, velocityPreviousX);
-    timeScaleVelocityYJob = createAddTimeScaledJob(velocityY, velocityPreviousY);
+    timeScaleDensityJob = createAddTimeScaledJob(density, densityPrevious, multiThreaded);
+    timeScaleVelocityXJob = createAddTimeScaledJob(velocityX, velocityPreviousX, multiThreaded);
+    timeScaleVelocityYJob = createAddTimeScaledJob(velocityY, velocityPreviousY, multiThreaded);
 
-    projectJob1A = createProjectJob1(velocityPreviousX, velocityPreviousY, velocityY);
-    projectJobFillA = FillJob.fill(velocityX, 0);
-    projectJob2A = createProjectJob2(velocityX, velocityY);
-    projectJob3A = createProjectJob3(velocityPreviousX, velocityPreviousY, velocityX);
-    projectJob1B = createProjectJob1(velocityX, velocityY, velocityPreviousY);
-    projectJobFillB = FillJob.fill(velocityPreviousX, 0);
-    projectJob2B = createProjectJob2(velocityPreviousX, velocityPreviousY);
-    projectJob3B = createProjectJob3(velocityX, velocityY, velocityPreviousX);
+    projectJob1A = createProjectJob1(velocityPreviousX, velocityPreviousY, velocityY, multiThreaded);
+    projectJobFillA = FillJob.fill(velocityX, 0).setMultiThreaded(multiThreaded);
+    projectJob2A = createProjectJob2(velocityX, velocityY, multiThreaded);
+    projectJob3A = createProjectJob3(velocityPreviousX, velocityPreviousY, velocityX, multiThreaded);
+    projectJob1B = createProjectJob1(velocityX, velocityY, velocityPreviousY, multiThreaded);
+    projectJobFillB = FillJob.fill(velocityPreviousX, 0).setMultiThreaded(multiThreaded);
+    projectJob2B = createProjectJob2(velocityPreviousX, velocityPreviousY, multiThreaded);
+    projectJob3B = createProjectJob3(velocityX, velocityY, velocityPreviousX, multiThreaded);
 
     clearData();
   }
@@ -107,7 +108,7 @@ public class FluidField
     Arrays.fill(velocityY, 0.0f);
     Arrays.fill(velocityPreviousX, 0.0f);
     Arrays.fill(velocityPreviousY, 0.0f);
-    Arrays.fill(density, 0.0f);
+    Arrays.fill(density, 0.01f);
     Arrays.fill(densityPrevious, 0.0f);
   }
 
@@ -116,14 +117,14 @@ public class FluidField
     return x + stride * y;
   }
 
-  private Job createDiffuseJob(float[] destination, float[] source, float diffusionRate)
+  private Job createDiffuseJob(float[] destination, float[] source, float diffusionRate, boolean multiThreaded)
   {
     if (diffusionRate != 0)
     {
       float a = timeStep * diffusionRate * width * height;
       float constant = 1.0f / (1.0f + (4 * a));
 
-      Job diffuseJob = new Job(16);
+      Job diffuseJob = new Job(multiThreaded, 16);
       for (int y = 1; y <= height; y++)
       {
         diffuseJob.add(new FluidDiffuseWork(this, destination, source, a, constant, y));
@@ -132,13 +133,15 @@ public class FluidField
     }
     else
     {
-      return CopyJob.copy(destination, source);
+      Job job = CopyJob.copy(destination, source);
+      job.setMultiThreaded(multiThreaded);
+      return job;
     }
   }
 
-  private Job createAdvectJob(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, float timeStep)
+  private Job createAdvectJob(float[] density, float[] densityPrevious, float[] velocityX, float[] velocityY, boolean multiThreaded)
   {
-    Job job = new Job(16);
+    Job job = new Job(multiThreaded, 16);
     float timeStepScaledByWidth = timeStep * width;
     float timeStepScaledByHeight = timeStep * height;
 
@@ -150,9 +153,9 @@ public class FluidField
     return job;
   }
 
-  private Job createProjectJob1(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityY)
+  private Job createProjectJob1(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityY, boolean multiThreaded)
   {
-    Job projectJob1A = new Job(16);
+    Job projectJob1A = new Job(multiThreaded, 16);
     float h = 1.0f / width;
     float halfHNegative = -0.5f * h;
     for (int y = 1; y <= height; y++)
@@ -162,9 +165,9 @@ public class FluidField
     return projectJob1A;
   }
 
-  private Job createProjectJob2(float[] sourceVelocityX, float[] sourceVelocityY)
+  private Job createProjectJob2(float[] sourceVelocityX, float[] sourceVelocityY, boolean multiThreaded)
   {
-    Job projectJob2A = new Job(16);
+    Job projectJob2A = new Job(multiThreaded, 16);
     for (int y = 1; y <= height; y++)
     {
       projectJob2A.add(new FluidProject2(this, sourceVelocityX, sourceVelocityY, y));
@@ -172,9 +175,9 @@ public class FluidField
     return projectJob2A;
   }
 
-  private Job createProjectJob3(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX)
+  private Job createProjectJob3(float[] destinationVelocityX, float[] destinationVelocityY, float[] sourceVelocityX, boolean multiThreaded)
   {
-    Job projectJob3A = new Job(16);
+    Job projectJob3A = new Job(multiThreaded, 16);
     float halfNNegative = -0.5f * width;
     for (int y = 1; y <= height; y++)
     {
@@ -183,9 +186,9 @@ public class FluidField
     return projectJob3A;
   }
 
-  private Job createAddTimeScaledJob(float[] destination, float[] source)
+  private Job createAddTimeScaledJob(float[] destination, float[] source, boolean multiThreaded)
   {
-    Job job = new Job(16);
+    Job job = new Job(multiThreaded, 16);
     for (int y = 0; y < height + 2; y++)
     {
       job.add(new TimeScaledWork(this, destination, source, y));

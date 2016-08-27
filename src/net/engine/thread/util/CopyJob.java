@@ -27,7 +27,7 @@ public class CopyJob
       {
         size = arraySize - start;
       }
-      CopyWork copyWork = new CopyWork(destination, start, source, start, size);
+      CopyWork copyWork = new CopyWork(destination, source, start, size);
       job.add(copyWork);
     }
 

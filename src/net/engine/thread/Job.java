@@ -40,5 +40,11 @@ public class Job
   {
     return multiThreaded;
   }
+
+  public Job setMultiThreaded(boolean multiThreaded)
+  {
+    this.multiThreaded = multiThreaded;
+    return this;
+  }
 }
 

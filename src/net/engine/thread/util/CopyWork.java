@@ -5,23 +5,26 @@ import net.engine.thread.Work;
 public class CopyWork extends Work
 {
   private float[] destination;
-  private final int destinationOffset;
   private float[] source;
-  private final int sourceOffset;
-  private final int size;
+  private int offset;
+  private int size;
 
-  public CopyWork(float[] destination, int destinationOffset, float[] source, int sourceOffset, int size)
+  public CopyWork(float[] destination, float[] source, int offset, int size)
   {
     this.destination = destination;
-    this.destinationOffset = destinationOffset;
     this.source = source;
-    this.sourceOffset = sourceOffset;
+    this.offset = offset;
     this.size = size;
   }
 
   @Override
   public void work()
   {
-    System.arraycopy(source, sourceOffset, destination, destinationOffset, size);
+    int end = offset + size;
+    for (int i = offset; i < end; i++)
+    {
+      destination[i] = source[i];
+    }
   }
 }
+
