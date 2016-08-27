@@ -2,20 +2,16 @@ package net.foxy.title;
 
 import net.engine.cel.CelStore;
 import net.engine.game.StageManager;
-import net.engine.input.GameInput;
-import net.engine.scene.Camera;
+import net.engine.input.*;
 import net.engine.scene.Scene;
 import net.engine.scene.Sprite;
 import net.foxy.FoxyStage;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 
-import static java.awt.event.InputEvent.BUTTON1_DOWN_MASK;
 import static net.engine.global.GlobalRandom.random;
 
-public class TitleScreen extends FoxyStage
+public class TitleScreen extends FoxyStage implements InputHandler
 {
   protected Scene scene = new Scene();
   protected Sprite startText;
@@ -109,7 +105,7 @@ public class TitleScreen extends FoxyStage
   @Override
   public void tick(double time, GameInput input)
   {
-    input.processEvents(null);
+    input.processEvents(this);
   }
 }
 

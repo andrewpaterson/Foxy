@@ -1,8 +1,13 @@
 package net.engine.input;
 
-/**
- * Created by andrew on 2016/08/27.
- */
-public class InputHandler
+public interface InputHandler
 {
+  void mouseInput(MouseInput input);
+
+  void keyInput(KeyInput input);
+
+  void pointerInput(PointerInput input);
+
+  void wheelInput(WheelInput input);
 }
+

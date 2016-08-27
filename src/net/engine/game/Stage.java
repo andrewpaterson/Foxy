@@ -1,13 +1,13 @@
 package net.engine.game;
 
-import net.engine.input.GameInput;
+import net.engine.input.*;
 import net.engine.thread.Threadanator;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
-public abstract class Stage
+public abstract class Stage implements InputHandler
 {
   protected StageManager stageManager;
 
@@ -35,6 +35,26 @@ public abstract class Stage
 
     image.releaseWritableTile(0, 0);
     return image;
+  }
+
+  @Override
+  public void mouseInput(MouseInput input)
+  {
+  }
+
+  @Override
+  public void keyInput(KeyInput input)
+  {
+  }
+
+  @Override
+  public void pointerInput(PointerInput input)
+  {
+  }
+
+  @Override
+  public void wheelInput(WheelInput input)
+  {
   }
 
   public abstract void render(Graphics graphics, int width, int height);

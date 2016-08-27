@@ -2,7 +2,6 @@ package net.engine.input;
 
 import net.engine.collections.ArrayExtended;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,10 +67,33 @@ public class GameInput
     List<BaseInput> events = popEvents();
     if (inputHandler != null)
     {
-//    for (InputEvent event : events)
-//    {
-//
-//    }
+      for (BaseInput input : events)
+      {
+        if (input instanceof MouseInput)
+        {
+          inputHandler.mouseInput((MouseInput) input);
+        }
+        else if (input instanceof KeyInput)
+        {
+          inputHandler.keyInput((KeyInput) input);
+        }
+        else if (input instanceof PointerInput)
+        {
+          inputHandler.pointerInput((PointerInput) input);
+        }
+        else if (input instanceof WheelInput)
+        {
+          inputHandler.wheelInput((WheelInput) input);
+        }
+      }
+    }
+  }
+
+  public void clearEvents()
+  {
+    if (events.size() != 0)
+    {
+      events.clear();
     }
   }
 }

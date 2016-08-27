@@ -12,14 +12,46 @@ public class ButtonInput extends BaseInput
     this.button = button;
   }
 
-  public boolean pressed()
+  public boolean isPressed()
   {
     return pressed;
   }
 
-  public boolean released()
+  public boolean isReleased()
   {
     return !pressed;
+  }
+
+  public int getLocation()
+  {
+    return button.getLocation();
+  }
+
+  public String getDescription()
+  {
+    return button.getDescription();
+  }
+
+  public boolean isSymbol()
+  {
+    return button.isSymbol();
+  }
+
+  public char getDisplay()
+  {
+    return button.getDisplay();
+  }
+
+  public String getState()
+  {
+    if (pressed)
+    {
+      return "Pressed";
+    }
+    else
+    {
+      return "Released";
+    }
   }
 }
 

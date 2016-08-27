@@ -150,25 +150,36 @@ public class InputAdapter
   @Override
   public void keyPressed(KeyEvent e)
   {
-    KeyInput keyInput = new KeyInput(System.nanoTime(), true, getKeyButton(e));
+    int keyCode = e.getKeyCode();
+    boolean keyPressed = input.getKeyState(keyCode);
+    if (!keyPressed)
+    {
+      KeyInput keyInput = new KeyInput(System.nanoTime(), true, getKeyButton(e));
 
-    input.addInput(keyInput);
-    input.setKeyState(keyInput.getKey(), true);
+      input.addInput(keyInput);
+      input.setKeyState(keyCode, true);
+    }
   }
 
   @Override
   public void keyReleased(KeyEvent e)
   {
-    KeyInput keyInput = new KeyInput(System.nanoTime(), false, getKeyButton(e));
+    int keyCode = e.getKeyCode();
+    boolean keyPressed = input.getKeyState(keyCode);
+    if (keyPressed)
+    {
+      KeyInput keyInput = new KeyInput(System.nanoTime(), false, getKeyButton(e));
 
-    input.addInput(keyInput);
-    input.setKeyState(e.getKeyCode(), false);
+      input.addInput(keyInput);
+      input.setKeyState(e.getKeyCode(), false);
+    }
   }
 
   @Override
   public void mousePressed(MouseEvent e)
   {
-    MouseInput mouseInput = new MouseInput(System.nanoTime(), true, getMouseButton(e));
+    PointerLocation location = getPointerLocation(e);
+    MouseInput mouseInput = new MouseInput(System.nanoTime(), true, getMouseButton(e), location);
 
     input.addInput(mouseInput);
     input.setMouseButtonState(mouseInput.getButton(), true);
@@ -177,7 +188,8 @@ public class InputAdapter
   @Override
   public void mouseReleased(MouseEvent e)
   {
-    MouseInput mouseInput = new MouseInput(System.nanoTime(), false, getMouseButton(e));
+    PointerLocation location = getPointerLocation(e);
+    MouseInput mouseInput = new MouseInput(System.nanoTime(), false, getMouseButton(e), location);
 
     input.addInput(mouseInput);
     input.setMouseButtonState(mouseInput.getButton(), false);

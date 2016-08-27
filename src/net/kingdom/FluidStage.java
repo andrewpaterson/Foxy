@@ -12,7 +12,6 @@ import net.kingdom.fluid.work.FluidDrawWork;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 public class FluidStage extends Stage
 {
@@ -110,24 +109,6 @@ public class FluidStage extends Stage
     }
   }
 
-  void mousePressed(GameInput input)
-  {
-    PointerLocation mouseLocation = input.getPointerLocation();
-    if (mouseLocation != null)
-    {
-      mLeftPressed = input.getMouseButtonState(0);
-      mRightPressed = input.getMouseButtonState(1);
-    }
-  }
-
-  void keyPressed(GameInput input, FluidField fluidField)
-  {
-    if (input.getKeyState(KeyEvent.VK_C))
-    {
-      fluidField.clearData();
-    }
-  }
-
   @Override
   public void stageStarting(StageManager stageManager)
   {
@@ -152,18 +133,7 @@ public class FluidStage extends Stage
   {
     tickTime = fluidField.tick();
 
-    List<BaseInput> inputs = gameInput.popEvents();
-    for (BaseInput input : inputs)
-    {
-      if (input instanceof MouseInput)
-      {
-        mousePressed(gameInput);
-      }
-      if (input instanceof KeyInput)
-      {
-        keyPressed(gameInput, fluidField);
-      }
-    }
+    gameInput.processEvents(this);
 
     PointerLocation mouseLocation = gameInput.getPointerLocation();
     if (mouseLocation != null)
@@ -178,6 +148,28 @@ public class FluidStage extends Stage
   public int[] getPixels()
   {
     return pixels;
+  }
+
+  @Override
+  public void mouseInput(MouseInput input)
+  {
+    if (input.getButton() == 0)
+    {
+      mLeftPressed = input.isPressed();
+    }
+    if (input.getButton() == 1)
+    {
+      mRightPressed = input.isPressed();
+    }
+  }
+
+  @Override
+  public void keyInput(KeyInput input)
+  {
+    if (input.getKey() == KeyEvent.VK_C)
+    {
+      fluidField.clearData();
+    }
   }
 }
 

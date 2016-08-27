@@ -33,7 +33,7 @@ public class Game
       gameCanvas.endFrame();
 
       long currentTime = System.nanoTime();
-      tickStage(currentTime - startTime, gameFrame.processInput());
+      tickStage(currentTime - startTime, gameFrame.getInput());
       startTime = currentTime;
     }
   }
@@ -55,6 +55,7 @@ public class Game
     {
       double time = (double) nanoDelta / (double) 1000000000;
       currentStage.tick(time, input);
+      input.clearEvents();
     }
   }
 

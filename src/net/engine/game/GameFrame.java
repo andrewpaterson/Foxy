@@ -56,7 +56,7 @@ public class GameFrame
     canvas.start();
   }
 
-  public GameInput processInput()
+  public GameInput getInput()
   {
     return input;
   }
