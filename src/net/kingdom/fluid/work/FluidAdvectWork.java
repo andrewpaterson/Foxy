@@ -37,17 +37,17 @@ public class FluidAdvectWork extends FluidWork
   @Override
   public void work()
   {
-    int index1 = index;
+    int offset = index;
     int xIndex, yIndex, xIndex1, yIndex1;
     float newX, newY, oneMinusXVelocityDecimal, oneMinusYVelocityDecimal, xVelocityDecimal, yVelocityDecimal;
 
     int width = getWidth();
     int height = getHeight();
 
-    for (int x = 1; x <= width; x++, index1++)
+    for (int x = 1; x <= width; x++, offset++)
     {
-      newX = x - timeStepScaledByWidth * velocityX[index1];
-      newY = y - timeStepScaledByHeight * velocityY[index1];
+      newX = x - timeStepScaledByWidth * velocityX[offset];
+      newY = y - timeStepScaledByHeight * velocityY[offset];
 
       if (newX < 0.5f)
       {
@@ -78,7 +78,7 @@ public class FluidAdvectWork extends FluidWork
       yVelocityDecimal = newY - yIndex;
       oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
 
-      density[index1] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
+      density[offset] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
               xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
     }
   }

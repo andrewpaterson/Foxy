@@ -203,9 +203,6 @@ public class FluidField
     Threadanator.getInstance().processJob(advectDensityJob);
   }
 
-  /**
-   * 1 step of the velocity solver.
-   */
   void calculateVelocity()
   {
     Threadanator.getInstance().processJob(timeScaleVelocityXJob);
@@ -261,6 +258,16 @@ public class FluidField
   public float getDensity(int x, int y)
   {
     return density[IX(x, y)];
+  }
+
+  public float getVelocityX(int x, int y)
+  {
+    return velocityX[IX(x, y)];
+  }
+
+  public float getVelocityY(int x, int y)
+  {
+    return velocityY[IX(x, y)];
   }
 
   public void setForce(int i, int j, float u, float v)

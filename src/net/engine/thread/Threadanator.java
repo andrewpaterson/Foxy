@@ -149,7 +149,7 @@ public class Threadanator
   {
     prepare();
     add(job);
-    process(job.getTakeSize());
+    process(!job.isMultiThreaded(), job.getTakeSize());
   }
 
   private void processMultiThreaded(int takeSize)
@@ -187,6 +187,12 @@ public class Threadanator
 
   private void processSingleThreaded()
   {
+    if (!prepared)
+    {
+      throw new NotPreparedException();
+    }
+    prepared = false;
+
     work(1);
     queue.clear();
   }
