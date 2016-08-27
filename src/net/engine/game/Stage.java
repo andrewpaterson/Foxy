@@ -20,7 +20,7 @@ public abstract class Stage
   {
   }
 
-  public BufferedImage convertIntsToImageRaster(int width, int height, int[] data, BufferedImage image)
+  public BufferedImage convertImageRaster(int width, int height, int[] data, BufferedImage image)
   {
     Threadanator threadanator = Threadanator.getInstance().prepare();
 
@@ -28,8 +28,7 @@ public abstract class Stage
     for (int y = 0; y < height; y++)
     {
       int index = y * width;
-      RasterParams rasterParams = new RasterParams(width, data, raster);
-      threadanator.add(new RasterWork(rasterParams, y, index));
+      threadanator.add(new RasterWork(width, data, raster, y, index));
     }
 
     threadanator.process(16);
