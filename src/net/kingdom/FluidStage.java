@@ -2,7 +2,7 @@ package net.kingdom;
 
 import net.engine.game.Stage;
 import net.engine.game.StageManager;
-import net.engine.input.GameInput;
+import net.engine.input.*;
 import net.engine.picture.ColourGradient;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
@@ -10,9 +10,7 @@ import net.kingdom.fluid.FluidField;
 import net.kingdom.fluid.work.FluidDrawWork;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class FluidStage extends Stage
   protected FluidField fluidField;
 
   protected boolean mLeftPressed = false;
-  protected boolean mRightPressed = true;
+  protected boolean mRightPressed = false;
   protected int mouseX;
   protected int mouseY;
   protected int oldMouseX;
@@ -110,20 +108,13 @@ public class FluidStage extends Stage
     {
       fluidField.setDensity(i, j, clickDensity);
     }
-
-    oldMouseX = mouseX;
-    oldMouseY = mouseY;
   }
 
   void mousePressed(GameInput input)
   {
-    Point mouseLocation = input.getMouseLocation();
+    PointerLocation mouseLocation = input.getPointerLocation();
     if (mouseLocation != null)
     {
-      oldMouseX = mouseLocation.x;
-      mouseX = oldMouseX;
-      oldMouseY = mouseLocation.y;
-      mouseY = oldMouseY;
       mLeftPressed = input.getMouseButtonState(0);
       mRightPressed = input.getMouseButtonState(1);
     }
@@ -157,28 +148,30 @@ public class FluidStage extends Stage
   }
 
   @Override
-  public void tick(double time, GameInput input)
+  public void tick(double time, GameInput gameInput)
   {
     tickTime = fluidField.tick();
 
-    List<InputEvent> inputEvents = input.popEvents();
-    for (InputEvent inputEvent : inputEvents)
+    List<BaseInput> inputs = gameInput.popEvents();
+    for (BaseInput input : inputs)
     {
-      if (inputEvent instanceof MouseEvent)
+      if (input instanceof MouseInput)
       {
-        mousePressed(input);
+        mousePressed(gameInput);
       }
-      if (inputEvent instanceof KeyEvent)
+      if (input instanceof KeyInput)
       {
-        keyPressed(input, fluidField);
+        keyPressed(gameInput, fluidField);
       }
     }
 
-    Point mouseLocation = input.getMouseLocation();
+    PointerLocation mouseLocation = gameInput.getPointerLocation();
     if (mouseLocation != null)
     {
-      mouseX = mouseLocation.x;
-      mouseY = mouseLocation.y;
+      oldMouseX = mouseX;
+      oldMouseY = mouseY;
+      mouseX = mouseLocation.getX();
+      mouseY = mouseLocation.getY();
     }
   }
 

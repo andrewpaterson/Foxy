@@ -11,6 +11,7 @@ public class GameCanvas extends Canvas
   public GameCanvas()
   {
     setIgnoreRepaint(true);
+    setFocusTraversalKeysEnabled(false);
   }
 
   public void start()

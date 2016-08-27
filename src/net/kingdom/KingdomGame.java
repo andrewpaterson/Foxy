@@ -12,7 +12,7 @@ public class KingdomGame extends Game
 
   public KingdomGame()
   {
-    super(new FrameConfig("Simulation Window"/*, width * scale, height * scale*/));
+    super(new FrameConfig("Simulation Window", width * scale, height * scale));
   }
 
   private void start()

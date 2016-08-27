@@ -3,31 +3,27 @@ package net.engine.input;
 import net.engine.collections.ArrayExtended;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameInput
 {
-  protected List<InputEvent> events;
+  protected List<BaseInput> events;
   protected ArrayExtended<Boolean> keyboardState;
-  protected Point mouseLocation;
+  protected PointerLocation pointerLocation;
   protected ArrayExtended<Boolean> mouseState;
 
   public GameInput()
   {
     events = new ArrayList<>();
     keyboardState = new ArrayExtended<>(Boolean.FALSE);
-    mouseLocation = null;
+    pointerLocation = null;
     mouseState = new ArrayExtended<>(Boolean.FALSE);
   }
 
-  public void setMouseLocation(Point mousePosition)
+  public void setPointerLocation(PointerLocation pointerLocation)
   {
-    mouseLocation = mousePosition;
+    this.pointerLocation = pointerLocation;
   }
 
   public boolean getKeyState(int key)
@@ -45,50 +41,38 @@ public class GameInput
     return mouseState.safeGet(button);
   }
 
-  public Point getMouseLocation()
+  public PointerLocation getPointerLocation()
   {
-    return mouseLocation;
+    return pointerLocation;
   }
 
   public void setMouseButtonState(int button, boolean state)
   {
-    int realButton = button;
-    if (button == 1)
-    {
-      realButton = 0;
-    }
-    else if (button == 3)
-    {
-      realButton = 1;
-    }
-    mouseState.set(realButton, state);
+    mouseState.set(button, state);
   }
 
-  public void addKeyEvent(KeyEvent keyEvent)
+  public void addInput(BaseInput input)
   {
-    events.add(keyEvent);
+    events.add(input);
   }
 
-  public void addMouseWheelEvent(MouseWheelEvent mouseWheelEvent)
+  public List<BaseInput> popEvents()
   {
-    events.add(mouseWheelEvent);
-  }
-
-  public void addMouseMovedEvent(MouseEvent mouseEvent)
-  {
-    events.add(mouseEvent);
-  }
-
-  public void addMouseEvent(MouseEvent mouseEvent)
-  {
-    events.add(mouseEvent);
-  }
-
-  public List<InputEvent> popEvents()
-  {
-    List<InputEvent> local = events;
+    List<BaseInput> local = events;
     events = new ArrayList<>();
     return local;
+  }
+
+  public void processEvents(InputHandler inputHandler)
+  {
+    List<BaseInput> events = popEvents();
+    if (inputHandler != null)
+    {
+//    for (InputEvent event : events)
+//    {
+//
+//    }
+    }
   }
 }
 

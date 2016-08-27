@@ -2,6 +2,7 @@ package net.engine.game;
 
 import net.engine.global.GlobalGraphics;
 import net.engine.input.GameInput;
+import net.engine.input.InputAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,8 +58,6 @@ public class GameFrame
 
   public GameInput processInput()
   {
-    Point mousePosition = canvas.getMousePosition();
-    input.setMouseLocation(mousePosition);
     return input;
   }
 }

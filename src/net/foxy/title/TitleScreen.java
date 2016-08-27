@@ -109,28 +109,7 @@ public class TitleScreen extends FoxyStage
   @Override
   public void tick(double time, GameInput input)
   {
-    java.util.List<InputEvent> inputEvents = input.popEvents();
-    for (InputEvent inputEvent : inputEvents)
-    {
-      if (inputEvent instanceof MouseEvent)
-      {
-        MouseEvent mouseEvent = (MouseEvent) inputEvent;
-        if ((mouseEvent.getButton() == 1))
-        {
-          int modifiersEx = mouseEvent.getModifiersEx();
-          if ((modifiersEx & BUTTON1_DOWN_MASK) != 0)
-          {
-            Point point = mouseEvent.getPoint();
-            Camera camera = scene.getCamera();
-            Rectangle rectangle = startText.toRectangle(camera);
-            if (rectangle.contains(point))
-            {
-              stageManager.setStage("Night One");
-            }
-          }
-        }
-      }
-    }
+    input.processEvents(null);
   }
 }
 

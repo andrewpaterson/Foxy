@@ -32,7 +32,6 @@ public class Game
       gameCanvas.render();
       gameCanvas.endFrame();
 
-
       long currentTime = System.nanoTime();
       tickStage(currentTime - startTime, gameFrame.processInput());
       startTime = currentTime;
