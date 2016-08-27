@@ -29,7 +29,7 @@ public class FluidDiffuseWork extends FluidWork
 
     for (int x = 1; x <= width; x++, offset++)
     {
-      float adjacentValueSum = fluidField.sumAdjacentValues(offset, destination);
+      float adjacentValueSum = fluidField.sumAdjacentValues(offset, source);
       destination[offset] = constant * (source[offset] + a * adjacentValueSum);
     }
   }
