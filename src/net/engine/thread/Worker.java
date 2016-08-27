@@ -7,16 +7,11 @@ public class Worker
 
   public Worker(WorkQueue queue)
   {
-    this(queue, 16);
+    this(queue, 32);
   }
 
   public Worker(WorkQueue queue, int maxWork)
   {
-    if (maxWork < 16)
-    {
-      maxWork = 16;
-    }
-
     this.queue = queue;
     this.workTaken = new Work[maxWork];
   }

@@ -140,19 +140,35 @@ public class Threadanator
     }
   }
 
-  public void process(int takeSize)
+  public Threadanator prepare()
   {
-    processMultiThreaded(takeSize);
+    while (!areAllSleeping())
+    {
+    }
+
+    if (prepared)
+    {
+      throw new AlreadyPreparedException();
+    }
+    prepared = true;
+
+    queue.clear();
+    return this;
   }
 
-  public void processJob(Job job)
+  public void process(int takeSize)
+  {
+    multiThreaded(takeSize);
+  }
+
+  public void process(Job job)
   {
     prepare();
     add(job);
     process(!job.isMultiThreaded(), job.getTakeSize());
   }
 
-  private void processMultiThreaded(int takeSize)
+  private void multiThreaded(int takeSize)
   {
     if (!prepared)
     {
@@ -173,19 +189,7 @@ public class Threadanator
     }
   }
 
-  public void process(boolean singleThreaded, int takeSize)
-  {
-    if (singleThreaded)
-    {
-      processSingleThreaded();
-    }
-    else
-    {
-      processMultiThreaded(takeSize);
-    }
-  }
-
-  private void processSingleThreaded()
+  private void singleThreaded()
   {
     if (!prepared)
     {
@@ -197,20 +201,16 @@ public class Threadanator
     queue.clear();
   }
 
-  public Threadanator prepare()
+  public void process(boolean singleThreaded, int takeSize)
   {
-    while (!areAllSleeping())
+    if (singleThreaded)
     {
+      singleThreaded();
     }
-
-    if (prepared)
+    else
     {
-      throw new AlreadyPreparedException();
+      multiThreaded(takeSize);
     }
-
-    prepared = true;
-    queue.clear();
-    return this;
   }
 
   public int getThreadCount()

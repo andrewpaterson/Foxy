@@ -54,7 +54,7 @@ public class FluidStage extends Stage
 
   private void calculateDensity()
   {
-    Threadanator.getInstance().processJob(fluidFieldJob);
+    Threadanator.getInstance().process(fluidFieldJob);
   }
 
   private Job createColourJob(FluidField fluidField, int fieldHeight)
@@ -70,7 +70,7 @@ public class FluidStage extends Stage
             new Color(255, 255, 255), 255);
 
 
-    Job job = new Job(16);
+    Job job = new Job(8);
     for (int y = 0; y <= fieldHeight; y++)
     {
       job.add(new FluidDrawWork(this, fluidField, y, palette));

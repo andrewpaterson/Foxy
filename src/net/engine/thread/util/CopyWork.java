@@ -17,6 +17,7 @@ public class CopyWork extends Work
     this.size = size;
   }
 
+  @SuppressWarnings("ManualArrayCopy")
   @Override
   public void work()
   {

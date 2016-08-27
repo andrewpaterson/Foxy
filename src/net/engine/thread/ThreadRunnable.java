@@ -2,7 +2,6 @@ package net.engine.thread;
 
 public class ThreadRunnable implements Runnable
 {
-  private WorkQueue queue;
   private Thread thread;
   private Worker worker;
   private boolean running;
@@ -11,7 +10,6 @@ public class ThreadRunnable implements Runnable
 
   public ThreadRunnable(WorkQueue queue)
   {
-    this.queue = queue;
     this.running = true;
     this.sleeping = false;
     this.worker = new Worker(queue);
