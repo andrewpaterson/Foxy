@@ -5,7 +5,6 @@ import net.engine.game.PictureStage;
 import net.engine.input.GameInput;
 import net.engine.input.MouseInput;
 import net.engine.math.Float2;
-import net.engine.shape.Capsule;
 import net.kingdom.plant.Tree;
 
 import java.awt.*;
@@ -31,17 +30,16 @@ public class PlantStage extends PictureStage
 
     frameBuffer.setPaletteColor(0, new Color(0, 0, 0));
     frameBuffer.setPaletteFromColourGradient(
-            new Color(140, 190, 255), 10,
-            new Color(100, 150, 255), 50,
-            new Color(50, 100, 255), 160,
-            new Color(50, 255, 50), 162,
-            new Color(30, 200, 30), 180,
-            new Color(130, 200, 60), 200,
-            new Color(105, 72, 7, 255), 220,
-            new Color(72, 42, 14, 255), 240,
-            new Color(198, 183, 42, 255), 255);
+            new Color(140, 190, 255), 200,
+            new Color(100, 150, 255), 220,
+            new Color(50, 100, 255), 230,
+            new Color(50, 255, 50), 232,
+            new Color(30, 200, 30), 240,
+            new Color(130, 200, 60), 245,
+            new Color(105, 72, 7, 255), 250,
+            new Color(72, 42, 14, 255), 255);
 
-    float scale = (float) (255 - 10) / (float) renderHeight;
+    float scale = (float) (255 - 200) / (float) renderHeight;
 
     for (Tree tree : trees)
     {
@@ -59,11 +57,10 @@ public class PlantStage extends PictureStage
         }
         else
         {
-          frameBuffer.setPixel(x, y, (int) (y * scale) + 10);
+          frameBuffer.setPixel(x, y, (int) (y * scale) + 200);
         }
       }
     }
-    frameBuffer.speckle(2);
     double rayTraceTime = timer.stop();
     renderPictureToWindow(graphics, windowWidth, windowHeight);
 
@@ -79,13 +76,7 @@ public class PlantStage extends PictureStage
     {
       if (tree.contains(position))
       {
-        for (Capsule branch : tree.branches)
-        {
-          if (branch.contains(position))
-          {
-            return true;
-          }
-        }
+        return true;
       }
     }
     return false;

@@ -168,13 +168,14 @@ public class Picture
 
   public void plasma(int indexToIgnore)
   {
-    byte data2[][] = new byte[height][width];
+    int size = height * stride;
+    byte data2[] = new byte[size];
 
     for (int y = 0; y < height; y++)
     {
       for (int x = 0; x < width; x++)
       {
-        data2[y][x] = toByte(getSmooth(x, y, indexToIgnore));
+        data2[IX(x, y)]  = toByte(getSmooth(x, y, indexToIgnore));
       }
     }
 

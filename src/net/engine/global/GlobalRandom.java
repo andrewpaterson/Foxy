@@ -4,6 +4,6 @@ import java.util.Random;
 
 public class GlobalRandom
 {
-  public static Random random = new Random(8567);
+  public static Random random = new Random(723354);
 }
 

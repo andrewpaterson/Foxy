@@ -55,7 +55,17 @@ public class Tree
 
   public boolean contains(Float2 position)
   {
-    return bounding.contains(position);
+    if (bounding.contains(position))
+    {
+      for (Capsule branch : branches)
+      {
+        if (branch.contains(position))
+        {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
 
