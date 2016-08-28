@@ -8,6 +8,7 @@ import net.engine.math.Float2;
 import net.engine.picture.Colour;
 import net.engine.picture.ColourGradient;
 import net.engine.picture.ComponentPicture;
+import net.kingdom.plant.RayScene;
 import net.kingdom.plant.Tree;
 
 import java.awt.*;
@@ -18,11 +19,13 @@ import java.util.List;
 public class PlantStage extends PictureStage
 {
   protected List<Tree> trees;
+  protected RayScene rayScene;
 
   public PlantStage(int renderWidth, int renderHeight)
   {
     super(new ComponentPicture(renderWidth, renderHeight));
     trees = new ArrayList<>();
+    rayScene = new RayScene(renderWidth, renderHeight, 32, 32);
   }
 
   @Override

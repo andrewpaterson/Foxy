@@ -3,26 +3,21 @@ package net.kingdom.plant;
 import net.engine.global.GlobalRandom;
 import net.engine.math.Float2;
 import net.engine.shape.Capsule;
-import net.engine.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tree
+public class Tree extends RaycastGroup
 {
-  public Float2 position;
-  public List<Capsule> branches;
-
-  public Rectangle bounding;
+  public List<Branch> branches;
 
   public Tree(Float2 position)
   {
-    this.branches = new ArrayList<>();
-    this.position = position;
+    super();
+    branches = new ArrayList<>();
     Float2 start = position;
     int steps = 10;
     float radius = steps + 1;
-    bounding = new Rectangle(new Float2(), new Float2());
 
     for (int i = 0; i < steps; i++)
     {
@@ -34,22 +29,7 @@ public class Tree
       start = end;
       radius--;
 
-      branches.add(capsule);
-    }
-  }
-
-  public void calculateBoundingBox()
-  {
-    Capsule capsule = branches.get(0);
-    Float2 start = capsule.getStart();
-    bounding.set(start, start);
-
-    for (Capsule branch : branches)
-    {
-      bounding.growToContainX(branch.getLeft());
-      bounding.growToContainX(branch.getRight());
-      bounding.growToContainY(branch.getTop());
-      bounding.growToContainY(branch.getBottom());
+      branches.add(new Branch(capsule));
     }
   }
 
@@ -57,15 +37,22 @@ public class Tree
   {
     if (bounding.contains(position))
     {
-      for (Capsule branch : branches)
+      List<? extends RaycastObject> objects = getObjects();
+      for (RaycastObject raycastObject : objects)
       {
-        if (branch.contains(position))
+        if (raycastObject.contains(position))
         {
           return true;
         }
       }
     }
     return false;
+  }
+
+  @Override
+  public List<? extends RaycastObject> getObjects()
+  {
+    return branches;
   }
 }
 

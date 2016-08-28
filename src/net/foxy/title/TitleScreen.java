@@ -3,7 +3,7 @@ package net.foxy.title;
 import net.engine.cel.CelStore;
 import net.engine.game.StageManager;
 import net.engine.input.*;
-import net.engine.scene.Scene;
+import net.engine.scene.SpriteMap;
 import net.engine.scene.Sprite;
 import net.foxy.FoxyStage;
 
@@ -13,7 +13,7 @@ import static net.engine.global.GlobalRandom.random;
 
 public class TitleScreen extends FoxyStage implements InputHandler
 {
-  protected Scene scene = new Scene();
+  protected SpriteMap spriteMap = new SpriteMap();
   protected Sprite startText;
 
   public TitleScreen(CelStore celStore)
@@ -26,7 +26,7 @@ public class TitleScreen extends FoxyStage implements InputHandler
   {
     super.stageStarting(stageManager);
     startText = new Sprite(celStore.get("Start Text").get(0));
-    scene.addSprite(startText.setPosition(100, 50));
+    spriteMap.addSprite(startText.setPosition(100, 50));
   }
 
   @Override
@@ -34,7 +34,7 @@ public class TitleScreen extends FoxyStage implements InputHandler
   {
     graphics.clearRect(0, 0, width, height);
 
-    scene.render(graphics, width, height);
+    spriteMap.render(graphics, width, height);
 
     renderStatic(graphics, width, height);
   }

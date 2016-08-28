@@ -7,10 +7,16 @@ public class Rectangle extends Shape
   public Float2 topLeft;
   public Float2 bottomRight;
 
+  public Rectangle()
+  {
+    topLeft = new Float2();
+    bottomRight = new Float2();
+  }
+
   public Rectangle(Float2 topLeft, Float2 bottomRight)
   {
-    this.topLeft = topLeft;
-    this.bottomRight = bottomRight;
+    this.topLeft = new Float2(topLeft);
+    this.bottomRight =new Float2(bottomRight);
   }
 
   public void set(Float2 topLeft, Float2 bottomRight)
@@ -67,6 +73,15 @@ public class Rectangle extends Shape
       return false;
     }
     return true;
+  }
+
+  public void set(float left, float top, float right, float bottom)
+  {
+    topLeft.x = left;
+    topLeft.y = top;
+
+    bottomRight.x = right;
+    bottomRight.y = bottom;
   }
 }
 

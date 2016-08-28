@@ -9,18 +9,12 @@ public class Capsule
   protected Circle start;  //Bottom
   protected Circle end;  //Top
 
-  protected Circle bounding;
-
   public Capsule(Float2 start, float startRadius, Float2 end, float endRadius)
   {
     line = new LineSegment(start);
     line.set(start, end);
     this.start = new Circle(start, startRadius);
     this.end = new Circle(end, endRadius);
-
-    float radius = line.length / 2;
-    radius = startRadius > endRadius ? radius + startRadius : radius + endRadius;
-    bounding = new Circle(line.center(), radius);
   }
 
   public Float2 getStart()
@@ -36,11 +30,6 @@ public class Capsule
   @SuppressWarnings("RedundantIfStatement")
   public boolean contains(Float2 point)
   {
-    if (!bounding.contains(point))
-    {
-      return false;
-    }
-
     DistanceResult distance = line.distance(point);
 
     if ((distance.along >= 0) && (distance.along <= line.length))

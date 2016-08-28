@@ -4,12 +4,12 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene
+public class SpriteMap
 {
   protected List<Sprite> sprites;
   protected Camera camera;
 
-  public Scene()
+  public SpriteMap()
   {
     sprites = new ArrayList<>();
     camera = new Camera();
