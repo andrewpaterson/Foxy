@@ -99,17 +99,17 @@ public class Picture
     }
   }
 
-  public Color getColour(int index)
+  public Color getPaletteColour(int index)
   {
     return palette[index];
   }
 
-  public void setColor(int index, Color color)
+  public void setPaletteColor(int index, Color color)
   {
     palette[index] = color;
   }
 
-  public void setColors(Object... o)
+  public void setPaletteFromColourGradient(Object... o)
   {
     ColourGradient.generate(palette, o);
   }

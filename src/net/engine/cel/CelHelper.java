@@ -105,7 +105,7 @@ public class CelHelper
       for (int x = 0; x < picture.getWidth(); x++)
       {
         int index = picture.getPixel(x, y);
-        Color color = picture.getColour(index);
+        Color color = picture.getPaletteColour(index);
 
         if (color != null)
         {

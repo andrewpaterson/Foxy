@@ -4,7 +4,7 @@ import net.engine.thread.Work;
 
 import java.awt.image.WritableRaster;
 
-public class RasterWork extends Work
+public class ComponentRasterWork extends Work
 {
   private int width;
   private int[] data;
@@ -13,7 +13,7 @@ public class RasterWork extends Work
   private int y;
   private int index;
 
-  public RasterWork(int width, int[] data, WritableRaster raster, int y, int index)
+  public ComponentRasterWork(int width, int[] data, WritableRaster raster, int y, int index)
   {
     this.y = y;
     this.index = index;

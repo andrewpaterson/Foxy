@@ -2,7 +2,10 @@ package net.kingdom;
 
 import net.engine.game.Stage;
 import net.engine.game.StageManager;
-import net.engine.input.*;
+import net.engine.input.GameInput;
+import net.engine.input.KeyInput;
+import net.engine.input.MouseInput;
+import net.engine.input.PointerInput;
 import net.engine.picture.ColourGradient;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
@@ -47,7 +50,7 @@ public class FluidStage extends Stage
   {
     calculateDensity();
 
-    convertImageRaster(fluidField.getWidth() + 2, fluidField.getHeight() + 2, pixels, bufferedImage);
+    convertComponentPictureToImageRaster(fluidField.getWidth() + 2, fluidField.getHeight() + 2, pixels, bufferedImage);
     graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fluidField.getWidth() + 1, fluidField.getHeight() + 1, null);
   }
 
@@ -133,16 +136,9 @@ public class FluidStage extends Stage
   {
     tickTime = fluidField.tick();
 
+    oldMouseX = mouseX;
+    oldMouseY = mouseY;
     gameInput.processEvents(this);
-
-    PointerLocation mouseLocation = gameInput.getPointerLocation();
-    if (mouseLocation != null)
-    {
-      oldMouseX = mouseX;
-      oldMouseY = mouseY;
-      mouseX = mouseLocation.getX();
-      mouseY = mouseLocation.getY();
-    }
   }
 
   public int[] getPixels()
@@ -170,6 +166,13 @@ public class FluidStage extends Stage
     {
       fluidField.clearData();
     }
+  }
+
+  @Override
+  public void pointerInput(PointerInput input)
+  {
+    mouseX = input.getX();
+    mouseY = input.getY();
   }
 }
 

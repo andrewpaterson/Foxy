@@ -6,21 +6,22 @@ import net.engine.thread.Threadanator;
 
 public class KingdomGame extends Game
 {
-  public static int scale = 3;
-  public static int width = 640;
-  public static int height = 360;
+  public static int SCALE = 3;
+  public static int WIDTH = 640;
+  public static int HEIGHT = 360;
 
   public KingdomGame()
   {
-    super(new FrameConfig("Simulation Window", width * scale, height * scale));
+    super(new FrameConfig("Simulation Window", WIDTH * SCALE, HEIGHT * SCALE));
   }
 
   private void start()
   {
     Threadanator.getInstance().start();
 
-    stageManager.addStage("Fluid", new FluidStage(10.0f, 500.0f, width, height, 20, 0.02f));
-    stageManager.setStage("Fluid");
+    stageManager.addStage("Fluid", new FluidStage(10.0f, 500.0f, WIDTH, HEIGHT, 20, 0.02f));
+    stageManager.addStage("Plant", new PlantStage(WIDTH, HEIGHT));
+    stageManager.setStage("Plant");
 
     run();
 

@@ -1,6 +1,8 @@
 package net.engine.game;
 
+import net.engine.common.EngineException;
 import net.engine.input.*;
+import net.engine.picture.Picture;
 import net.engine.thread.Threadanator;
 
 import java.awt.*;
@@ -20,7 +22,8 @@ public abstract class Stage implements InputHandler
   {
   }
 
-  public BufferedImage convertImageRaster(int width, int height, int[] data, BufferedImage image)
+  //Does not belong here.
+  public BufferedImage convertComponentPictureToImageRaster(int width, int height, int[] data, BufferedImage image)
   {
     Threadanator threadanator = Threadanator.getInstance();
 
@@ -28,7 +31,31 @@ public abstract class Stage implements InputHandler
     for (int y = 0; y < height; y++)
     {
       int index = y * width;
-      threadanator.add(new RasterWork(width, data, raster, y, index));
+      threadanator.add(new ComponentRasterWork(width, data, raster, y, index));
+    }
+
+    threadanator.process(16);
+
+    image.releaseWritableTile(0, 0);
+    return image;
+  }
+
+  //Does not belong here.
+  public BufferedImage convertPalettePictureToImageRaster(Picture picture, BufferedImage image)
+  {
+    Threadanator threadanator = Threadanator.getInstance();
+
+    WritableRaster raster = image.getWritableTile(0, 0);
+    int pictureHeight = picture.getHeight();
+    int pictureWidth = picture.getWidth();
+    if ((raster.getWidth() != pictureWidth) || (raster.getHeight() != pictureHeight))
+    {
+      throw new EngineException("Raster size [%s, %s] does not match Picture size [%s, %s].", raster.getWidth(), raster.getHeight(), pictureWidth, pictureHeight);
+    }
+
+    for (int y = 0; y < pictureHeight; y++)
+    {
+      threadanator.add(new PaletteRasterWork(pictureWidth, picture, raster, y));
     }
 
     threadanator.process(16);
