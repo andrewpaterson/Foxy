@@ -226,5 +226,10 @@ public class Picture
   {
     return stride;
   }
+
+  public byte[] getPixels()
+  {
+    return data;
+  }
 }
 

@@ -1,12 +1,11 @@
 package net.kingdom;
 
-import net.engine.game.Stage;
+import net.engine.game.PictureStage;
 import net.engine.game.StageManager;
 import net.engine.input.GameInput;
 import net.engine.input.KeyInput;
 import net.engine.input.MouseInput;
 import net.engine.input.PointerInput;
-import net.engine.picture.ColourGradient;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
@@ -14,9 +13,8 @@ import net.kingdom.fluid.work.FluidDrawWork;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 
-public class FluidStage extends Stage
+public class FluidStage extends PictureStage
 {
   protected float force;
   protected float clickDensity;
@@ -24,34 +22,40 @@ public class FluidStage extends Stage
   protected int height;
   protected FluidField fluidField;
 
-  protected boolean mLeftPressed = false;
-  protected boolean mRightPressed = false;
+  protected boolean mLeftPressed;
+  protected boolean mRightPressed;
   protected int mouseX;
   protected int mouseY;
   protected int oldMouseX;
   protected int oldMouseY;
 
-  protected BufferedImage bufferedImage = null;
-  protected int[] pixels = null;
   protected double tickTime;
   protected Job fluidFieldJob;
 
-  public FluidStage(float force, float clickDensity, int width, int height, int iterations, float timeStep)
+  public FluidStage(float force, float clickDensity, int iterations, float timeStep, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
   {
+    super(renderWidth + 2, renderHeight + 2, windowWidth, windowHeight);
     this.force = force;
     this.clickDensity = clickDensity;
-    this.width = width;
-    this.height = height;
+    this.width = renderWidth;
+    this.height = renderHeight;
     this.fluidField = new FluidField(width, height, timeStep, 0.00005f, 0.00001f, iterations, iterations);
     this.fluidFieldJob = createColourJob(fluidField, height);
+    frameBuffer.setPaletteFromColourGradient(
+            new Color(0, 0, 0), 0,
+            new Color(99, 44, 255), 50,
+            new Color(237, 0, 56), 100,
+            new Color(237, 0, 201), 150,
+            new Color(237, 100, 201), 200,
+            new Color(255, 253, 75), 240,
+            new Color(255, 255, 255), 255);
   }
 
-  void drawDensity(Graphics graphics, int windowWidth, int windowHeight, FluidField fluidField)
+  void drawDensity(Graphics graphics, int windowWidth, int windowHeight)
   {
     calculateDensity();
 
-    convertComponentPictureToImageRaster(fluidField.getWidth() + 2, fluidField.getHeight() + 2, pixels, bufferedImage);
-    graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, fluidField.getWidth() + 1, fluidField.getHeight() + 1, null);
+    renderPictureToWindow(graphics, windowWidth, windowHeight);
   }
 
   private void calculateDensity()
@@ -61,21 +65,10 @@ public class FluidStage extends Stage
 
   private Job createColourJob(FluidField fluidField, int fieldHeight)
   {
-    Color[] palette = new Color[256];
-    ColourGradient.generate(palette,
-            new Color(0, 0, 0), 0,
-            new Color(99, 44, 255), 50,
-            new Color(237, 0, 56), 100,
-            new Color(237, 0, 201), 150,
-            new Color(237, 100, 201), 200,
-            new Color(255, 253, 75), 240,
-            new Color(255, 255, 255), 255);
-
-
     Job job = new Job(8);
     for (int y = 0; y <= fieldHeight; y++)
     {
-      job.add(new FluidDrawWork(this, fluidField, y, palette));
+      job.add(new FluidDrawWork(this, fluidField, y));
     }
     return job;
   }
@@ -113,19 +106,11 @@ public class FluidStage extends Stage
   }
 
   @Override
-  public void stageStarting(StageManager stageManager)
-  {
-    super.stageStarting(stageManager);
-    bufferedImage = new BufferedImage(width + 2, height + 2, BufferedImage.TYPE_INT_ARGB);
-    pixels = new int[(width + 2) * (height + 2)];
-  }
-
-  @Override
   public void render(Graphics graphics, int width, int height)
   {
     setForces(width, height, fluidField);
 
-    drawDensity(graphics, width, height, fluidField);
+    drawDensity(graphics, width, height);
 
     String s = String.format("%.3fms", tickTime);
     graphics.drawChars(s.toCharArray(), 0, s.length(), 15, 15);
@@ -141,9 +126,9 @@ public class FluidStage extends Stage
     gameInput.processEvents(this);
   }
 
-  public int[] getPixels()
+  public byte[] getPixels()
   {
-    return pixels;
+    return frameBuffer.getPixels();
   }
 
   @Override

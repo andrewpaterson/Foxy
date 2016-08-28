@@ -3,27 +3,23 @@ package net.kingdom.fluid.work;
 import net.kingdom.FluidStage;
 import net.kingdom.fluid.FluidField;
 
-import java.awt.*;
-
 public class FluidDrawWork extends FluidWork
 {
   private FluidStage fluidStage;
   private int y;
-  private Color[] palette;
 
-  public FluidDrawWork(FluidStage fluidStage, FluidField fluidField, int y, Color[] palette)
+  public FluidDrawWork(FluidStage fluidStage, FluidField fluidField, int y)
   {
     super(fluidField);
     this.fluidStage = fluidStage;
     this.y = y;
-    this.palette = palette;
   }
 
   @Override
   public void work()
   {
     int width = fluidField.getWidth();
-    int[] pixels = fluidStage.getPixels();
+    byte[] pixels = fluidStage.getPixels();
     for (int x = 0; x <= width; x++)
     {
       float density = fluidField.getDensity(x, y);
@@ -31,7 +27,7 @@ public class FluidDrawWork extends FluidWork
     }
   }
 
-  private int getColour(float colour)
+  private byte getColour(float colour)
   {
     if (colour < 0)
     {
@@ -42,11 +38,7 @@ public class FluidDrawWork extends FluidWork
       colour = 1;
     }
 
-
-    int bits = (int) (colour * 255);
-    Color color = palette[bits];
-
-    return color.getRed() | color.getGreen() << 8 | color.getBlue() << 16 | 0xff << 24;
+    return (byte) (colour * 255 - 128);
   }
 }
 
