@@ -62,7 +62,7 @@ public class GameInput
     return local;
   }
 
-  public void processEvents(InputHandler inputHandler)
+  public void processEvents(InputHandler inputHandler, int width, int height)
   {
     List<BaseInput> events = popEvents();
     if (inputHandler != null)
@@ -71,19 +71,19 @@ public class GameInput
       {
         if (input instanceof MouseInput)
         {
-          inputHandler.mouseInput((MouseInput) input);
+          inputHandler.mouseInput((MouseInput) input, this, width, height);
         }
         else if (input instanceof KeyInput)
         {
-          inputHandler.keyInput((KeyInput) input);
+          inputHandler.keyInput((KeyInput) input, this, width, height);
         }
         else if (input instanceof PointerInput)
         {
-          inputHandler.pointerInput((PointerInput) input);
+          inputHandler.pointerInput((PointerInput) input, this, width, height);
         }
         else if (input instanceof WheelInput)
         {
-          inputHandler.wheelInput((WheelInput) input);
+          inputHandler.wheelInput((WheelInput) input, this, width, height);
         }
       }
     }

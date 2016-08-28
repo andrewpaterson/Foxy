@@ -103,9 +103,9 @@ public class TitleScreen extends FoxyStage implements InputHandler
   }
 
   @Override
-  public void tick(double time, GameInput input)
+  public void tick(double time, GameInput input, int width, int height)
   {
-    input.processEvents(this);
+    input.processEvents(this, width, height);
   }
 }
 

@@ -65,27 +65,27 @@ public abstract class Stage implements InputHandler
   }
 
   @Override
-  public void mouseInput(MouseInput input)
+  public void mouseInput(MouseInput input, GameInput gameInput, int width, int height)
   {
   }
 
   @Override
-  public void keyInput(KeyInput input)
+  public void keyInput(KeyInput input, GameInput gameInput, int width, int height)
   {
   }
 
   @Override
-  public void pointerInput(PointerInput input)
+  public void pointerInput(PointerInput input, GameInput gameInput, int width, int height)
   {
   }
 
   @Override
-  public void wheelInput(WheelInput input)
+  public void wheelInput(WheelInput input, GameInput gameInput, int width, int height)
   {
   }
 
   public abstract void render(Graphics graphics, int width, int height);
 
-  public abstract void tick(double time, GameInput input);
+  public abstract void tick(double time, GameInput input, int width, int height);
 }
 

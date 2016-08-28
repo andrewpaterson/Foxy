@@ -28,12 +28,15 @@ public class Game
     for (; ; )
     {
       Graphics graphics = gameCanvas.beginFrame();
-      renderStage(graphics, gameCanvas.getWidth(), gameCanvas.getHeight());
+      int canvasWidth = gameCanvas.getWidth();
+      int canvasHeight = gameCanvas.getHeight();
+
+      renderStage(graphics, canvasWidth, canvasHeight);
       gameCanvas.render();
       gameCanvas.endFrame();
 
       long currentTime = System.nanoTime();
-      tickStage(currentTime - startTime, gameFrame.getInput());
+      tickStage(currentTime - startTime, gameFrame.getInput(), canvasWidth, canvasHeight);
       startTime = currentTime;
     }
   }
@@ -47,14 +50,14 @@ public class Game
     }
   }
 
-  private void tickStage(long nanoDelta, GameInput input)
+  private void tickStage(long nanoDelta, GameInput input, int width, int height)
   {
     Stage currentStage = stageManager.tickStage();
 
     if (currentStage != null)
     {
       double time = (double) nanoDelta / (double) 1000000000;
-      currentStage.tick(time, input);
+      currentStage.tick(time, input, width, height);
       input.clearEvents();
     }
   }

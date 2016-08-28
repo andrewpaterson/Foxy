@@ -18,7 +18,7 @@ public class PlantStage extends PictureStage
 
   public PlantStage(int renderWidth, int renderHeight, int windowWidth, int windowHeight)
   {
-    super(renderWidth, renderHeight, windowWidth, windowHeight);
+    super(renderWidth, renderHeight);
     trees = new ArrayList<>();
   }
 
@@ -83,18 +83,17 @@ public class PlantStage extends PictureStage
   }
 
   @Override
-  public void tick(double time, GameInput gameInput)
+  public void tick(double time, GameInput gameInput, int width, int height)
   {
-    gameInput.processEvents(this);
+    gameInput.processEvents(this, width, height);
   }
 
   @Override
-  public void mouseInput(MouseInput input)
+  public void mouseInput(MouseInput input, GameInput gameInput, int width, int height)
   {
-    super.mouseInput(input);
     if ((input.getButton() == 0) && (input.isPressed()))
     {
-      trees.add(new Tree(new Float2(input.getX() * widthScale, input.getY() * heightScale)));
+      trees.add(new Tree(new Float2(input.getX() * widthScale(width), input.getY() * heightScale(height))));
     }
   }
 }

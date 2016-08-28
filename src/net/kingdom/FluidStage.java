@@ -1,10 +1,8 @@
 package net.kingdom;
 
 import net.engine.game.PictureStage;
-import net.engine.game.StageManager;
 import net.engine.input.GameInput;
 import net.engine.input.KeyInput;
-import net.engine.input.MouseInput;
 import net.engine.input.PointerInput;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
@@ -22,8 +20,6 @@ public class FluidStage extends PictureStage
   protected int height;
   protected FluidField fluidField;
 
-  protected boolean mLeftPressed;
-  protected boolean mRightPressed;
   protected int mouseX;
   protected int mouseY;
   protected int oldMouseX;
@@ -34,14 +30,14 @@ public class FluidStage extends PictureStage
 
   public FluidStage(float force, float clickDensity, int iterations, float timeStep, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
   {
-    super(renderWidth + 2, renderHeight + 2, windowWidth, windowHeight);
+    super(renderWidth + 2, renderHeight + 2);
     this.force = force;
     this.clickDensity = clickDensity;
     this.width = renderWidth;
     this.height = renderHeight;
     this.fluidField = new FluidField(width, height, timeStep, 0.00005f, 0.00001f, iterations, iterations);
     this.fluidFieldJob = createColourJob(fluidField, height);
-    frameBuffer.setPaletteFromColourGradient(
+    this.frameBuffer.setPaletteFromColourGradient(
             new Color(0, 0, 0), 0,
             new Color(99, 44, 255), 50,
             new Color(237, 0, 56), 100,
@@ -73,20 +69,20 @@ public class FluidStage extends PictureStage
     return job;
   }
 
-  void setForces(int bufferWidth, int bufferHeight, FluidField fluidField)
+  void setForces(GameInput gameInput, int width, int height)
   {
     int fieldWidth = fluidField.getWidth();
     int fieldHeight = fluidField.getHeight();
 
     fluidField.clearPrevious();
 
-    if (!(mLeftPressed || mRightPressed))
+    if (!(gameInput.getMouseButtonState(0) || gameInput.getMouseButtonState(1)))
     {
       return;
     }
 
-    int i = (int) ((mouseX / (float) bufferWidth) * fieldWidth + 1);
-    int j = (int) ((mouseY / (float) bufferHeight) * fieldHeight + 1);
+    int i = (int) (mouseX * widthScale(width));
+    int j = (int) (mouseY * heightScale(height));
 
     if ((i < 1) || (i > fieldWidth)
             || (j < 1) || (j > fieldHeight))
@@ -94,12 +90,12 @@ public class FluidStage extends PictureStage
       return;
     }
 
-    if (mLeftPressed)
+    if (gameInput.getMouseButtonState(0))
     {
       fluidField.setForce(i, j, force * (mouseX - oldMouseX), -force * (oldMouseY - mouseY));
     }
 
-    if (mRightPressed)
+    if (gameInput.getMouseButtonState(1))
     {
       fluidField.setDensity(i, j, clickDensity);
     }
@@ -108,8 +104,6 @@ public class FluidStage extends PictureStage
   @Override
   public void render(Graphics graphics, int width, int height)
   {
-    setForces(width, height, fluidField);
-
     drawDensity(graphics, width, height);
 
     String s = String.format("%.3fms", tickTime);
@@ -117,13 +111,15 @@ public class FluidStage extends PictureStage
   }
 
   @Override
-  public void tick(double time, GameInput gameInput)
+  public void tick(double time, GameInput gameInput, int width, int height)
   {
     tickTime = fluidField.tick();
 
     oldMouseX = mouseX;
     oldMouseY = mouseY;
-    gameInput.processEvents(this);
+    gameInput.processEvents(this, width, height);
+
+    setForces(gameInput, width, height);
   }
 
   public byte[] getPixels()
@@ -132,20 +128,7 @@ public class FluidStage extends PictureStage
   }
 
   @Override
-  public void mouseInput(MouseInput input)
-  {
-    if (input.getButton() == 0)
-    {
-      mLeftPressed = input.isPressed();
-    }
-    if (input.getButton() == 1)
-    {
-      mRightPressed = input.isPressed();
-    }
-  }
-
-  @Override
-  public void keyInput(KeyInput input)
+  public void keyInput(KeyInput input, GameInput gameInput, int width, int height)
   {
     if (input.getKey() == KeyEvent.VK_C)
     {
@@ -154,7 +137,7 @@ public class FluidStage extends PictureStage
   }
 
   @Override
-  public void pointerInput(PointerInput input)
+  public void pointerInput(PointerInput input, GameInput gameInput, int width, int height)
   {
     mouseX = input.getX();
     mouseY = input.getY();

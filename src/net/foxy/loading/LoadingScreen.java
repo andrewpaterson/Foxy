@@ -38,7 +38,7 @@ public class LoadingScreen extends FoxyStage
   }
 
   @Override
-  public void tick(double time, GameInput input)
+  public void tick(double time, GameInput input, int width, int height)
   {
     input.popEvents();
     if (loader.isDone())

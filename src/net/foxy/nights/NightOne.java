@@ -26,7 +26,7 @@ public class NightOne extends FoxyStage
   }
 
   @Override
-  public void tick(double time, GameInput input)
+  public void tick(double time, GameInput input, int width, int height)
   {
     brightness = (float) (brightness + time * direction);
     if (brightness < 0)
