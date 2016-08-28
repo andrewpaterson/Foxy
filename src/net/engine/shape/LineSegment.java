@@ -1,6 +1,7 @@
 package net.engine.shape;
 
 import net.engine.math.Float2;
+import net.engine.shape.result.DistanceResult;
 
 public class LineSegment extends Shape
 {
@@ -53,9 +54,25 @@ public class LineSegment extends Shape
 
   public float distanceFrom(Float2 point)
   {
-    Float2 v = new Float2(start).subtract(point);
-    v.cross(end);
-    return v.magnitude();
+    Float2 v = new Float2(point).subtract(start);
+    return v.cross(direction);
+  }
+
+  public float distanceAlong(Float2 point)
+  {
+    Float2 v = new Float2(point).subtract(start);
+    return v.dot(direction);
+  }
+
+  public DistanceResult distance(Float2 point)
+  {
+    Float2 v = new Float2(point).subtract(start);
+    return new DistanceResult(v.cross(direction), v.dot(direction));
+  }
+
+  public Float2 center()
+  {
+    return new Float2(start).add(end).divide(2);
   }
 }
 

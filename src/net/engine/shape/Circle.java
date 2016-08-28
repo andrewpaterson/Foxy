@@ -22,4 +22,26 @@ public class Circle extends Shape
   {
     return radius;
   }
+
+  public boolean contains(Float2 point)
+  {
+    return circleContains(point.x, point.y, center.x, center.y, radius);
+  }
+
+  @SuppressWarnings("SimplifiableIfStatement")
+  public static boolean circleContains(float px, float py, float cx, float cy, float radius)
+  {
+    float dx = Math.abs(px - cx);
+    float dy = Math.abs(py - cy);
+    if ((dx > radius) || (dy > radius))
+    {
+      return false;
+    }
+    if (dx + dy <= radius)
+    {
+      return true;
+    }
+    return (dx * dx + dy * dy) <= (radius * radius);
+  }
 }
+

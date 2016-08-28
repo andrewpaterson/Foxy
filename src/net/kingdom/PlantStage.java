@@ -1,5 +1,6 @@
 package net.kingdom;
 
+import net.engine.common.Timer;
 import net.engine.game.PictureStage;
 import net.engine.input.GameInput;
 import net.engine.input.MouseInput;
@@ -28,8 +29,9 @@ public class PlantStage extends PictureStage
     int renderHeight = frameBuffer.getHeight();
     int renderWidth = frameBuffer.getWidth();
 
+    frameBuffer.setPaletteColor(0, new Color(0, 0, 0));
     frameBuffer.setPaletteFromColourGradient(
-            new Color(140, 190, 255), 0,
+            new Color(140, 190, 255), 10,
             new Color(100, 150, 255), 50,
             new Color(50, 100, 255), 160,
             new Color(50, 255, 50), 162,
@@ -38,27 +40,55 @@ public class PlantStage extends PictureStage
             new Color(105, 72, 7, 255), 220,
             new Color(72, 42, 14, 255), 240,
             new Color(198, 183, 42, 255), 255);
-    float scale = (float) 255 / (float) renderHeight;
+
+    float scale = (float) (255 - 10) / (float) renderHeight;
+
+    for (Tree tree : trees)
+    {
+      tree.calculateBoundingBox();
+    }
+
+    Timer timer = new Timer();
     for (int y = 0; y < renderHeight; y++)
     {
       for (int x = 0; x < renderWidth; x++)
       {
-        frameBuffer.setPixel(x, y, (int) (y * scale));
+        if (isInTree(x, y))
+        {
+          frameBuffer.setPixel(x, y, 0);
+        }
+        else
+        {
+          frameBuffer.setPixel(x, y, (int) (y * scale) + 10);
+        }
       }
     }
-    frameBuffer.speckle(1);
+    frameBuffer.speckle(2);
+    double rayTraceTime = timer.stop();
+    renderPictureToWindow(graphics, windowWidth, windowHeight);
 
+    String s = String.format("%.3fms", rayTraceTime);
+    graphics.drawChars(s.toCharArray(), 0, s.length(), 15, 15);
+
+  }
+
+  private boolean isInTree(int x, int y)
+  {
+    Float2 position = new Float2((float) x, (float) y);
     for (Tree tree : trees)
     {
-      for (Capsule branch : tree.branches)
+      if (tree.contains(position))
       {
-        Float2 start = branch.getStart();
-        Float2 end = branch.getEnd();
-        frameBuffer.line((int) start.x, (int) start.y, (int) end.x, (int) end.y, 240);
+        for (Capsule branch : tree.branches)
+        {
+          if (branch.contains(position))
+          {
+            return true;
+          }
+        }
       }
     }
-
-    renderPictureToWindow(graphics, windowWidth, windowHeight);
+    return false;
   }
 
   @Override

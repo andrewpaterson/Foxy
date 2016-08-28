@@ -6,13 +6,43 @@ public class Rectangle extends Shape
 {
   public Float2 topLeft;
   public Float2 bottomRight;
-  public Float2 center;
 
-  public Rectangle(Float2 topLeft, Float2 bottomRight, Float2 center)
+  public Rectangle(Float2 topLeft, Float2 bottomRight)
   {
     this.topLeft = topLeft;
     this.bottomRight = bottomRight;
-    this.center = center;
+  }
+
+  public void set(Float2 topLeft, Float2 bottomRight)
+  {
+    this.topLeft.x = topLeft.x;
+    this.topLeft.y = topLeft.y;
+    this.bottomRight.x = bottomRight.x;
+    this.bottomRight.y = bottomRight.y;
+  }
+
+  public void growToContainX(float x)
+  {
+    if (x < topLeft.x)
+    {
+      topLeft.x = x;
+    }
+    else if (x > bottomRight.x)
+    {
+      bottomRight.x = x;
+    }
+  }
+
+  public void growToContainY(float y)
+  {
+    if (y < topLeft.y)
+    {
+      topLeft.y = y;
+    }
+    else if (y > bottomRight.y)
+    {
+      bottomRight.y = y;
+    }
   }
 
   public Float2 getTopLeft()
@@ -25,13 +55,18 @@ public class Rectangle extends Shape
     return bottomRight;
   }
 
-  public Float2 getAbsoluteTopLeft()
+  @SuppressWarnings("RedundantIfStatement")
+  public boolean contains(Float2 position)
   {
-    return new Float2(topLeft).add(center);
-  }
-
-  public Float2 getAbsoluteBottomRight()
-  {
-    return new Float2(bottomRight).add(center);
+    if ((position.x < topLeft.x) || (position.x > bottomRight.x))
+    {
+      return false;
+    }
+    if ((position.y < topLeft.y) || (position.y > bottomRight.y))
+    {
+      return false;
+    }
+    return true;
   }
 }
+

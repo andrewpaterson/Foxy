@@ -1,5 +1,6 @@
 package net.kingdom.fluid;
 
+import net.engine.common.Timer;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.engine.thread.util.CopyJob;
@@ -295,13 +296,12 @@ public class FluidField
 
   public double tick()
   {
-    long startTime = System.nanoTime();
+    Timer timer = new Timer();
 
     calculateVelocity();
     calculateDensity();
 
-    long endTime = System.nanoTime();
-    return (double) (endTime - startTime) / 1000000000;
+    return timer.stop();
   }
 
   public int getWidth()
