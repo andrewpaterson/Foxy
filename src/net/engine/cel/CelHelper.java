@@ -3,7 +3,7 @@ package net.engine.cel;
 import net.engine.global.GlobalGraphics;
 import net.engine.math.Int2;
 import net.engine.math.IntRange;
-import net.engine.picture.Picture;
+import net.engine.picture.PalettePicture;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -44,7 +44,7 @@ public class CelHelper
     breakIntoFrames(image, cellCountX, cellCountY, leftToRightFirst, trim);
   }
 
-  public CelHelper(Picture picture, int cellCountX, int cellCountY, boolean leftToRightFirst, boolean trim)
+  public CelHelper(PalettePicture picture, int cellCountX, int cellCountY, boolean leftToRightFirst, boolean trim)
   {
     this();
     BufferedImage image = convertFromPicture(picture);
@@ -59,7 +59,7 @@ public class CelHelper
     addCel(image, true);
   }
 
-  public CelHelper(Picture picture)
+  public CelHelper(PalettePicture picture)
   {
     this();
     BufferedImage image = convertFromPicture(picture);
@@ -94,7 +94,7 @@ public class CelHelper
     return cels;
   }
 
-  private BufferedImage convertFromPicture(Picture picture)
+  private BufferedImage convertFromPicture(PalettePicture picture)
   {
     BufferedImage image = new BufferedImage(picture.getWidth(), picture.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -104,7 +104,7 @@ public class CelHelper
     {
       for (int x = 0; x < picture.getWidth(); x++)
       {
-        int index = picture.getPixel(x, y);
+        int index = picture.unsafeGetPixel(x, y);
         Color color = picture.getPaletteColour(index);
 
         if (color != null)

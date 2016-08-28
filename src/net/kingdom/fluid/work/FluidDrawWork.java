@@ -1,5 +1,6 @@
 package net.kingdom.fluid.work;
 
+import net.engine.picture.BasePicture;
 import net.kingdom.FluidStage;
 import net.kingdom.fluid.FluidField;
 
@@ -19,15 +20,16 @@ public class FluidDrawWork extends FluidWork
   public void work()
   {
     int width = fluidField.getWidth();
-    byte[] pixels = fluidStage.getPixels();
+    BasePicture picture = fluidStage.getPicture();
     for (int x = 0; x <= width; x++)
     {
       float density = fluidField.getDensity(x, y);
-      pixels[(x + (width + 2) * y)] = getColour(density);
+      int colour = getColour(density);
+      picture.unsafeSetPixel(x, y, colour);
     }
   }
 
-  private byte getColour(float colour)
+  private int getColour(float colour)
   {
     if (colour < 0)
     {
@@ -38,7 +40,7 @@ public class FluidDrawWork extends FluidWork
       colour = 1;
     }
 
-    return (byte) (colour * 255 - 128);
+    return (int) (colour * 255);
   }
 }
 

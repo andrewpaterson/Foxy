@@ -4,6 +4,7 @@ import net.engine.game.PictureStage;
 import net.engine.input.GameInput;
 import net.engine.input.KeyInput;
 import net.engine.input.PointerInput;
+import net.engine.picture.BasePicture;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
@@ -28,7 +29,7 @@ public class FluidStage extends PictureStage
   protected double tickTime;
   protected Job fluidFieldJob;
 
-  public FluidStage(float force, float clickDensity, int iterations, float timeStep, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
+  public FluidStage(float force, float clickDensity, int iterations, float timeStep, int renderWidth, int renderHeight)
   {
     super(renderWidth + 2, renderHeight + 2);
     this.force = force;
@@ -37,7 +38,7 @@ public class FluidStage extends PictureStage
     this.height = renderHeight;
     this.fluidField = new FluidField(width, height, timeStep, 0.00005f, 0.00001f, iterations, iterations);
     this.fluidFieldJob = createColourJob(fluidField, height);
-    this.frameBuffer.setPaletteFromColourGradient(
+    this.picture.setPaletteFromColourGradient(
             new Color(0, 0, 0), 0,
             new Color(99, 44, 255), 50,
             new Color(237, 0, 56), 100,
@@ -49,12 +50,13 @@ public class FluidStage extends PictureStage
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight)
   {
-    calculateDensity();
+    drawDensity();
+    picture.speckle(1);
 
     renderPictureToWindow(graphics, windowWidth, windowHeight);
   }
 
-  private void calculateDensity()
+  private void drawDensity()
   {
     Threadanator.getInstance().process(fluidFieldJob);
   }
@@ -122,9 +124,9 @@ public class FluidStage extends PictureStage
     setForces(gameInput, width, height);
   }
 
-  public byte[] getPixels()
+  public BasePicture getPicture()
   {
-    return frameBuffer.getPixels();
+    return picture;
   }
 
   @Override

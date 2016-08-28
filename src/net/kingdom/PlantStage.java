@@ -25,11 +25,11 @@ public class PlantStage extends PictureStage
   @Override
   public void render(Graphics graphics, int windowWidth, int windowHeight)
   {
-    int renderHeight = frameBuffer.getHeight();
-    int renderWidth = frameBuffer.getWidth();
+    int renderHeight = picture.getHeight();
+    int renderWidth = picture.getWidth();
 
-    frameBuffer.setPaletteColor(0, new Color(0, 0, 0));
-    frameBuffer.setPaletteFromColourGradient(
+    picture.setPaletteColor(0, new Color(0, 0, 0));
+    picture.setPaletteFromColourGradient(
             new Color(140, 190, 255), 200,
             new Color(100, 150, 255), 220,
             new Color(50, 100, 255), 230,
@@ -53,11 +53,11 @@ public class PlantStage extends PictureStage
       {
         if (isInTree(x, y))
         {
-          frameBuffer.setPixel(x, y, 0);
+          picture.unsafeSetPixel(x, y, 0);
         }
         else
         {
-          frameBuffer.setPixel(x, y, (int) (y * scale) + 200);
+          picture.unsafeSetPixel(x, y, (int) (y * scale) + 200);
         }
       }
     }

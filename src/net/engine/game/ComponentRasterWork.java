@@ -1,26 +1,18 @@
 package net.engine.game;
 
-import net.engine.thread.Work;
+import net.engine.picture.Colour;
+import net.engine.picture.ComponentPicture;
 
 import java.awt.image.WritableRaster;
 
-public class ComponentRasterWork extends Work
+public class ComponentRasterWork extends BasePictureRasterWork
 {
-  private int width;
-  private int[] data;
-  private WritableRaster raster;
-  private int[] colour;
-  private int y;
-  private int index;
+  private ComponentPicture picture;
 
-  public ComponentRasterWork(int width, int[] data, WritableRaster raster, int y, int index)
+  public ComponentRasterWork(int width, ComponentPicture picture, WritableRaster raster, int y)
   {
-    this.y = y;
-    this.index = index;
-    this.colour = new int[4];
-    this.width = width;
-    this.data = data;
-    this.raster = raster;
+    super(width, raster, y);
+    this.picture = picture;
   }
 
   @Override
@@ -28,12 +20,12 @@ public class ComponentRasterWork extends Work
   {
     for (int x = 0; x < width; x++)
     {
-      int color = data[index + x];
-      colour[3] = (color & 0xff000000) >>> 24;
-      colour[0] = color & 0xff;
-      colour[1] = (color & 0xff00) >>> 8;
-      colour[2] = (color & 0xff0000) >>> 16;
-      raster.setPixel(x, y, colour);
+      int pixelColour = picture.unsafeGetPixel(x, y);
+      this.calculationColour[3] = Colour.getAlpha(pixelColour);
+      this.calculationColour[0] = Colour.getRed(pixelColour);
+      this.calculationColour[1] = Colour.getGreen(pixelColour);
+      this.calculationColour[2] = Colour.getBlue(pixelColour);
+      raster.setPixel(x, y, this.calculationColour);
     }
   }
 }
