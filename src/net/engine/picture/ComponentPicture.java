@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class ComponentPicture extends BasePicture
 {
-  private int pixels[];
+  protected int pixels[];
 
   public ComponentPicture(int width, int height)
   {
@@ -23,7 +23,7 @@ public class ComponentPicture extends BasePicture
   @Override
   protected Object createData()
   {
-    return new byte[height * stride];
+    return new int[height * stride];
   }
 
   @Override

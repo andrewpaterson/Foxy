@@ -21,11 +21,11 @@ public class FluidDrawWork extends FluidWork
   {
     int width = fluidField.getWidth();
     BasePicture picture = fluidStage.getPicture();
-    for (int x = 0; x <= width; x++)
+    for (int x = 1; x < width; x++)
     {
       float density = fluidField.getDensity(x, y);
       int colour = getColour(density);
-      picture.unsafeSetPixel(x, y, colour);
+      picture.unsafeSetPixel(x - 1, y - 1, colour);
     }
   }
 

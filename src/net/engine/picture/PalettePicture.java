@@ -4,8 +4,8 @@ import java.awt.*;
 
 public class PalettePicture extends BasePicture
 {
-  private byte pixels[];
-  private Color[] palette;
+  protected byte pixels[];
+  protected Color[] palette;
 
   public PalettePicture(int width, int height)
   {

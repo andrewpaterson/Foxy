@@ -15,11 +15,10 @@ public abstract class PictureStage extends Stage
   protected BasePicture picture;
   protected BufferedImage bufferedImage;
 
-  public PictureStage(int renderWidth, int renderHeight)
+  public PictureStage(BasePicture picture)
   {
-    picture = new PalettePicture(renderWidth, renderHeight);
-    bufferedImage = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_INT_ARGB);
-
+    this.picture = picture;
+    this.bufferedImage = new BufferedImage(picture.getWidth(), picture.getHeight(), BufferedImage.TYPE_INT_ARGB);
   }
 
   protected void renderPictureToWindow(Graphics graphics, int windowWidth, int windowHeight)

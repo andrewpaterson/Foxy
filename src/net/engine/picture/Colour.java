@@ -1,5 +1,7 @@
 package net.engine.picture;
 
+import java.awt.*;
+
 public class Colour
 {
   public static int getRed(int argb)
@@ -20,6 +22,14 @@ public class Colour
   public static int getAlpha(int argb)
   {
     return (argb >> 24) & 0xff;
+  }
+
+  public static int getARGB(Color color)
+  {
+    return ((color.getAlpha() & 0xFF) << 24) |
+            ((color.getRed() & 0xFF) << 16) |
+            ((color.getGreen() & 0xFF) << 8) |
+            ((color.getBlue() & 0xFF));
   }
 }
 

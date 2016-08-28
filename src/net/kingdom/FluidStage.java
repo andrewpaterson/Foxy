@@ -5,6 +5,7 @@ import net.engine.input.GameInput;
 import net.engine.input.KeyInput;
 import net.engine.input.PointerInput;
 import net.engine.picture.BasePicture;
+import net.engine.picture.PalettePicture;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
@@ -31,7 +32,7 @@ public class FluidStage extends PictureStage
 
   public FluidStage(float force, float clickDensity, int iterations, float timeStep, int renderWidth, int renderHeight)
   {
-    super(renderWidth + 2, renderHeight + 2);
+    super(new PalettePicture(renderWidth, renderHeight));
     this.force = force;
     this.clickDensity = clickDensity;
     this.width = renderWidth;
@@ -64,7 +65,7 @@ public class FluidStage extends PictureStage
   private Job createColourJob(FluidField fluidField, int fieldHeight)
   {
     Job job = new Job(8);
-    for (int y = 0; y <= fieldHeight; y++)
+    for (int y = 1; y < fieldHeight; y++)
     {
       job.add(new FluidDrawWork(this, fluidField, y));
     }
