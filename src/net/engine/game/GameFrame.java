@@ -21,12 +21,12 @@ public class GameFrame
     input = null;
 
     add(canvas, BorderLayout.CENTER);
-
-    setSize(config.width, config.height);
+    canvas.setPreferredSize(new Dimension(config.width, config.height));
     setLocation(config.left, config.top);
     setAlwaysOnTop(config.onTop);
     setUndecorated(!config.decorated);
     setFullScreen(config.fullScreen);
+    pack();
   }
 
   private void setFullScreen(boolean fullScreen)

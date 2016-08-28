@@ -50,4 +50,12 @@ public class LineSegment extends Shape
       return false;
     }
   }
+
+  public float distanceFrom(Float2 point)
+  {
+    Float2 v = new Float2(start).subtract(point);
+    v.cross(end);
+    return v.magnitude();
+  }
 }
+

@@ -20,7 +20,7 @@ public class KingdomGame extends Game
     Threadanator.getInstance().start();
 
     stageManager.addStage("Fluid", new FluidStage(10.0f, 500.0f, WIDTH, HEIGHT, 20, 0.02f));
-    stageManager.addStage("Plant", new PlantStage(WIDTH, HEIGHT));
+    stageManager.addStage("Plant", new PlantStage(WIDTH, HEIGHT, getWindowWidth(), getWindowHeight()));
     stageManager.setStage("Plant");
 
     run();
