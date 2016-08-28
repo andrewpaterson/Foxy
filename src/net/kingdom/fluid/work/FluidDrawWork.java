@@ -1,7 +1,6 @@
 package net.kingdom.fluid.work;
 
 import net.kingdom.FluidStage;
-import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;
 
 import java.awt.*;

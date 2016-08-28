@@ -1,4 +1,4 @@
-package net.kingdom;
+package net.kingdom.fluid.work;
 
 import net.engine.thread.Work;
 import net.kingdom.fluid.FluidField;

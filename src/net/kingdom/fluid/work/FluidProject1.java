@@ -1,6 +1,5 @@
 package net.kingdom.fluid.work;
 
-import net.kingdom.FluidWork;
 import net.kingdom.fluid.FluidField;
 
 public class FluidProject1 extends FluidWork

@@ -36,13 +36,13 @@ public class Picture
   }
 
 
-  public void setPixel(int x, int y, int colour)
+  public void setPixel(int x, int y, int colourIndex)
   {
     if ((x >= 0) && (x < width))
     {
       if ((y >= 0) && (y < height))
       {
-        data[IX(x, y)] = toByte(colour);
+        data[IX(x, y)] = toByte(colourIndex);
       }
     }
   }
@@ -114,7 +114,7 @@ public class Picture
     ColourGradient.generate(palette, o);
   }
 
-  public void rect(int x0, int y0, int x1, int y1, int colourIndex)
+  public void rectangle(int x0, int y0, int x1, int y1, int colourIndex)
   {
     for (int y = y0; y < y1; y++)
     {
