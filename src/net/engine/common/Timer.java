@@ -18,7 +18,9 @@ public class Timer
   public double stop()
   {
     endTime = System.nanoTime();
-    return getTimeInSeconds();
+    double timeInSeconds = getTimeInSeconds();
+    startTime = endTime;
+    return timeInSeconds;
   }
 
   public double getTimeInSeconds()

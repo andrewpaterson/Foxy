@@ -66,15 +66,5 @@ public class Game
   {
     stageManager.setStage(name);
   }
-
-  public int getWindowWidth()
-  {
-    return config.width;
-  }
-
-  public int getWindowHeight()
-  {
-    return config.height;
-  }
 }
 

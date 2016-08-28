@@ -1,7 +1,8 @@
 package net.engine.game;
 
 import net.engine.common.EngineException;
-import net.engine.picture.BasePicture;
+import net.engine.common.Timer;
+import net.engine.picture.Picture;
 import net.engine.picture.ComponentPicture;
 import net.engine.picture.PalettePicture;
 import net.engine.thread.Threadanator;
@@ -12,13 +13,15 @@ import java.awt.image.WritableRaster;
 
 public abstract class PictureStage extends Stage
 {
-  protected BasePicture picture;
+  protected Picture picture;
   protected BufferedImage bufferedImage;
+  protected Timer timer;
 
-  public PictureStage(BasePicture picture)
+  public PictureStage(Picture picture)
   {
     this.picture = picture;
     this.bufferedImage = new BufferedImage(picture.getWidth(), picture.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    this.timer = new Timer();
   }
 
   protected void renderPictureToWindow(Graphics graphics, int windowWidth, int windowHeight)
@@ -27,7 +30,7 @@ public abstract class PictureStage extends Stage
     graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, picture.getWidth(), picture.getHeight(), null);
   }
 
-  public BufferedImage convertPalettePictureToImageRaster(BasePicture picture, BufferedImage image)
+  public BufferedImage convertPalettePictureToImageRaster(Picture picture, BufferedImage image)
   {
     Threadanator threadanator = Threadanator.getInstance();
 

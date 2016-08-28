@@ -1,6 +1,6 @@
 package net.kingdom.fluid.work;
 
-import net.engine.picture.BasePicture;
+import net.engine.picture.Picture;
 import net.kingdom.FluidStage;
 import net.kingdom.fluid.FluidField;
 
@@ -20,7 +20,7 @@ public class FluidDrawWork extends FluidWork
   public void work()
   {
     int width = fluidField.getWidth();
-    BasePicture picture = fluidStage.getPicture();
+    Picture picture = fluidStage.getPicture();
     for (int x = 1; x < width; x++)
     {
       float density = fluidField.getDensity(x, y);

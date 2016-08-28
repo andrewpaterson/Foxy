@@ -1,16 +1,15 @@
 package net.engine.picture;
 
 import java.awt.*;
-import java.util.Random;
 
-public abstract class BasePicture
+public abstract class Picture
 {
   protected int width;
   protected int stride;
   protected int height;
   protected Object data;
 
-  public BasePicture(int width, int height, int stride)
+  public Picture(int width, int height, int stride)
   {
     this.height = height;
     this.width = width;
@@ -88,8 +87,6 @@ public abstract class BasePicture
     return x + stride * y;
   }
 
-  protected abstract Object createData();
-
   public void setPixel(int x, int y, int colourIndex)
   {
     if ((x >= 0) && (x < width))
@@ -105,8 +102,6 @@ public abstract class BasePicture
   {
     setPixel(data, x, y, colourIndex);
   }
-
-  protected abstract void setPixel(Object data, int x, int y, int colourIndex);
 
   public int getPixel(int x, int y)
   {
@@ -125,28 +120,16 @@ public abstract class BasePicture
     return getPixel(data, x, y);
   }
 
-  protected abstract int getPixel(Object data, int x, int y);
-
-  public void speckle(int amount)
+  public Object getData()
   {
-    Random random = new Random(System.nanoTime());
-    int size = height * stride;
-    Object data2 = createData();
-    System.arraycopy(data, 0, data2, 0, size);
-
-    for (int y = 0; y < height; y++)
-    {
-      for (int x = 0; x < width; x++)
-      {
-        int pixel = getPixel(x + random.nextInt(amount * 2 + 1) - amount, y + random.nextInt(amount * 2 + 1) - amount);
-        if (pixel != -1)
-        {
-          setPixel(data2, x, y, pixel);
-        }
-      }
-    }
-    System.arraycopy(data2, 0, data, 0, size);
+    return data;
   }
+
+  public abstract Object createData();
+
+  public abstract void setPixel(Object data, int x, int y, int colourIndex);
+
+  public abstract int getPixel(Object data, int x, int y);
 
   public abstract void setPaletteColor(int index, Color color);
 

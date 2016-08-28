@@ -2,14 +2,14 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-public class CopyWork extends Work
+public class CopyIntArrayWork extends Work
 {
-  private float[] destination;
-  private float[] source;
+  private int[] destination;
+  private int[] source;
   private int offset;
   private int size;
 
-  public CopyWork(float[] destination, float[] source, int offset, int size)
+  public CopyIntArrayWork(int[] destination, int[] source, int offset, int size)
   {
     this.destination = destination;
     this.source = source;

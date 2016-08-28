@@ -2,7 +2,7 @@ package net.engine.picture;
 
 import java.awt.*;
 
-public class ComponentPicture extends BasePicture
+public class ComponentPicture extends Picture
 {
   protected int pixels[];
 
@@ -15,25 +15,25 @@ public class ComponentPicture extends BasePicture
     {
       for (int x = 0; x < width; x++)
       {
-        pixels[IX(x, y)] = -128;
+        pixels[IX(x, y)] = 0;
       }
     }
   }
 
   @Override
-  protected Object createData()
+  public Object createData()
   {
     return new int[height * stride];
   }
 
   @Override
-  protected void setPixel(Object data, int x, int y, int colour)
+  public void setPixel(Object data, int x, int y, int colour)
   {
     ((int[]) data)[IX(x, y)] = colour;
   }
 
   @Override
-  protected int getPixel(Object data, int x, int y)
+  public int getPixel(Object data, int x, int y)
   {
     return ((int[]) data)[IX(x, y)];
   }

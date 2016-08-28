@@ -2,7 +2,7 @@ package net.engine.picture;
 
 import java.awt.*;
 
-public class PalettePicture extends BasePicture
+public class PalettePicture extends Picture
 {
   protected byte pixels[];
   protected Color[] palette;
@@ -24,19 +24,19 @@ public class PalettePicture extends BasePicture
   }
 
   @Override
-  protected Object createData()
+  public Object createData()
   {
     return new byte[height * stride];
   }
 
   @Override
-  protected void setPixel(Object data, int x, int y, int colourIndex)
+  public void setPixel(Object data, int x, int y, int colourIndex)
   {
     ((byte[]) data)[IX(x, y)] = toByte(colourIndex);
   }
 
   @Override
-  protected int getPixel(Object data, int x, int y)
+  public int getPixel(Object data, int x, int y)
   {
     return fromByte(((byte[]) data)[IX(x, y)]);
   }

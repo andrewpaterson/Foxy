@@ -4,8 +4,9 @@ import net.engine.game.PictureStage;
 import net.engine.input.GameInput;
 import net.engine.input.KeyInput;
 import net.engine.input.PointerInput;
-import net.engine.picture.BasePicture;
 import net.engine.picture.PalettePicture;
+import net.engine.picture.Picture;
+import net.engine.picture.util.Speckle;
 import net.engine.thread.Job;
 import net.engine.thread.Threadanator;
 import net.kingdom.fluid.FluidField;
@@ -37,7 +38,7 @@ public class FluidStage extends PictureStage
     this.clickDensity = clickDensity;
     this.width = renderWidth;
     this.height = renderHeight;
-    this.fluidField = new FluidField(width, height, timeStep, 0.00005f, 0.00001f, iterations, iterations);
+    this.fluidField = new FluidField(width, height, timeStep, 0, 0, iterations, iterations);
     this.fluidFieldJob = createColourJob(fluidField, height);
     this.picture.setPaletteFromColourGradient(
             new Color(0, 0, 0), 0,
@@ -52,7 +53,7 @@ public class FluidStage extends PictureStage
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight)
   {
     drawDensity();
-    picture.speckle(1);
+    Speckle.speckle(picture, 0);
 
     renderPictureToWindow(graphics, windowWidth, windowHeight);
   }
@@ -107,10 +108,14 @@ public class FluidStage extends PictureStage
   @Override
   public void render(Graphics graphics, int width, int height)
   {
+    double frameTime = timer.stop();
+
     drawDensity(graphics, width, height);
 
-    String s = String.format("%.3fms", tickTime);
+    String s = String.format("Sim time:     %.3fms", tickTime);
     graphics.drawChars(s.toCharArray(), 0, s.length(), 15, 15);
+    s = String.format("Frame time: %.3fms", frameTime);
+    graphics.drawChars(s.toCharArray(), 0, s.length(), 15, 30);
   }
 
   @Override
@@ -125,7 +130,7 @@ public class FluidStage extends PictureStage
     setForces(gameInput, width, height);
   }
 
-  public BasePicture getPicture()
+  public Picture getPicture()
   {
     return picture;
   }
