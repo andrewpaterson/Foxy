@@ -5,8 +5,9 @@ import java.util.Random;
 
 public class Picture
 {
-  private byte data[][];
+  private byte data[];
   private int width;
+  private int stride;
   private int height;
 
   public Color[] palette;
@@ -15,18 +16,25 @@ public class Picture
   {
     this.height = height;
     this.width = width;
-    data = new byte[height][width];
+    this.stride = width;
+    data = new byte[height * stride];
 
     for (int y = 0; y < height; y++)
     {
       for (int x = 0; x < width; x++)
       {
-        data[y][x] = -128;
+        data[IX(x, y)] = -128;
       }
     }
 
     palette = new Color[256];
   }
+
+  public int IX(int x, int y)
+  {
+    return x + stride * y;
+  }
+
 
   public void setPixel(int x, int y, int colour)
   {
@@ -34,7 +42,7 @@ public class Picture
     {
       if ((y >= 0) && (y < height))
       {
-        data[y][x] = toByte(colour);
+        data[IX(x, y)] = toByte(colour);
       }
     }
   }
@@ -45,7 +53,7 @@ public class Picture
     {
       if ((y >= 0) && (y < height))
       {
-        return fromByte(data[y][x]);
+        return fromByte(data[IX(x, y)]);
       }
     }
     return -1;
@@ -68,8 +76,8 @@ public class Picture
 
     setPixel(x0, y0, colourIndex);
     if (Math.abs(dx) > Math.abs(dy))
-    {          // slope < 1
-      float m = (float) dy / (float) dx;      // compute slope
+    {
+      float m = (float) dy / (float) dx;
       float b = y0 - m * x0;
       dx = (dx < 0) ? -1 : 1;
       while (x0 != x1)
@@ -79,8 +87,8 @@ public class Picture
       }
     }
     else if (dy != 0)
-    {                              // slope >= 1
-      float m = (float) dx / (float) dy;      // compute slope
+    {
+      float m = (float) dx / (float) dy;
       float b = x0 - m * y0;
       dy = (dy < 0) ? -1 : 1;
       while (y0 != y1)
@@ -176,8 +184,9 @@ public class Picture
   public void speckle(int amount)
   {
     Random random = new Random(System.nanoTime());
-    byte data2[][] = new byte[height][width];
-    System.arraycopy(data, 0, data2, 0, height);
+    int size = height * stride;
+    byte data2[] = new byte[size];
+    System.arraycopy(data, 0, data2, 0, size);
 
     for (int y = 0; y < height; y++)
     {
@@ -186,11 +195,11 @@ public class Picture
         int pixel = getPixel(x + random.nextInt(amount * 2 + 1) - amount, y + random.nextInt(amount * 2 + 1) - amount);
         if (pixel != -1)
         {
-          data2[y][x] = toByte(pixel);
+          data2[IX(x, y)] = toByte(pixel);
         }
       }
     }
-    System.arraycopy(data2, 0, data, 0, height);
+    System.arraycopy(data2, 0, data, 0, size);
   }
 
   public void circle(int xCenter, int yCenter, int radius, int colourIndex)
@@ -210,6 +219,11 @@ public class Picture
   public int getHeight()
   {
     return height;
+  }
+
+  public int getStride()
+  {
+    return stride;
   }
 }
 
