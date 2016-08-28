@@ -3,7 +3,7 @@ package net.engine.picture;
 import java.awt.*;
 import java.util.Random;
 
-public class Picture
+public class PalettePicture
 {
   private byte data[];
   private int width;
@@ -12,7 +12,7 @@ public class Picture
 
   public Color[] palette;
 
-  public Picture(int width, int height)
+  public PalettePicture(int width, int height)
   {
     this.height = height;
     this.width = width;
