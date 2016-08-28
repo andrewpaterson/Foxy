@@ -16,7 +16,7 @@ public class PlantStage extends PictureStage
 {
   protected List<Tree> trees;
 
-  public PlantStage(int renderWidth, int renderHeight, int windowWidth, int windowHeight)
+  public PlantStage(int renderWidth, int renderHeight)
   {
     super(renderWidth, renderHeight);
     trees = new ArrayList<>();
