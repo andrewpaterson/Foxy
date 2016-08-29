@@ -2,13 +2,16 @@ package net.kingdom;
 
 import net.engine.common.Timer;
 import net.engine.game.PictureStage;
+import net.engine.global.GlobalRandom;
 import net.engine.input.GameInput;
 import net.engine.input.MouseInput;
 import net.engine.math.Float2;
 import net.engine.picture.Colour;
 import net.engine.picture.ColourGradient;
 import net.engine.picture.ComponentPicture;
+import net.kingdom.plant.RayBlock;
 import net.kingdom.plant.RayScene;
+import net.kingdom.plant.RaycastObject;
 import net.kingdom.plant.Tree;
 
 import java.awt.*;
@@ -25,7 +28,7 @@ public class PlantStage extends PictureStage
   {
     super(new ComponentPicture(renderWidth, renderHeight));
     trees = new ArrayList<>();
-    rayScene = new RayScene(renderWidth, renderHeight, 32, 32);
+    rayScene = new RayScene(renderWidth, renderHeight, 8, 8);
   }
 
   @Override
@@ -47,27 +50,21 @@ public class PlantStage extends PictureStage
 
     float scale = 55.0f / renderHeight;
 
-    for (Tree tree : trees)
-    {
-      tree.calculateBoundingBox();
-    }
-
     Timer timer = new Timer();
-    for (int y = 0; y < renderHeight; y++)
+
+    rayScene.calculateOverlaps();
+    RayBlock[] blocks = rayScene.getBlocks();
+    for (RayBlock block : blocks)
     {
-      for (int x = 0; x < renderWidth; x++)
+      for (int y = block.top; y < block.bottom; y++)
       {
-        if (isInTree(x, y))
+        for (int x = block.left; x < block.right; x++)
         {
-          picture.unsafeSetPixel(x, y, 0xFF000000);
-        }
-        else
-        {
-          Color color = colors[(int) (y * scale)];
-          picture.unsafeSetPixel(x, y, Colour.getARGB(color));
+          renderBlock(colors, scale, block, x, y);
         }
       }
     }
+
     double rayTraceTime = timer.stop();
     renderPictureToWindow(graphics, windowWidth, windowHeight);
 
@@ -76,18 +73,30 @@ public class PlantStage extends PictureStage
 
   }
 
-  private boolean isInTree(int x, int y)
+  private void renderBlock(Color[] colors, float scale, RayBlock block, int x, int y)
   {
-    Float2 position = new Float2((float) x, (float) y);
-    for (Tree tree : trees)
+    boolean isBackground = true;
+    int objects = block.objectSize();
+    for (int i = 0; i < objects; i++)
     {
-      if (tree.contains(position))
+      RaycastObject raycastObject = block.raycastObjects.get(i);
+      if (raycastObject.contains(x, y))
       {
-        return true;
+        isBackground = false;
       }
     }
-    return false;
+
+    if (isBackground)
+    {
+      Color color = colors[(int) (y * scale)];
+      picture.unsafeSetPixel(x, y, Colour.getARGB(color));
+    }
+    else
+    {
+      picture.unsafeSetPixel(x, y, 0xFF000000);
+    }
   }
+
 
   @Override
   public void tick(double time, GameInput gameInput, int width, int height)
@@ -100,8 +109,16 @@ public class PlantStage extends PictureStage
   {
     if ((input.getButton() == 0) && (input.isPressed()))
     {
-      trees.add(new Tree(new Float2(input.getX() * widthScale(width), input.getY() * heightScale(height))));
+      addTree(input.getX() * widthScale(width), input.getY() * heightScale(height));
     }
+  }
+
+  private void addTree(float x, float y)
+  {
+    Tree tree = new Tree(new Float2(x, y));
+    trees.add(tree);
+
+    rayScene.add(tree);
   }
 }
 

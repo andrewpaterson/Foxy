@@ -28,9 +28,9 @@ public class Capsule
   }
 
   @SuppressWarnings("RedundantIfStatement")
-  public boolean contains(Float2 point)
+  public boolean contains(float x, float y)
   {
-    DistanceResult distance = line.distance(point);
+    DistanceResult distance = line.distance(x, y);
 
     if ((distance.along >= 0) && (distance.along <= line.length))
     {
@@ -43,11 +43,11 @@ public class Capsule
       }
     }
 
-    if (start.contains(point))
+    if (start.contains(x, y))
     {
       return true;
     }
-    if (end.contains(point))
+    if (end.contains(x, y))
     {
       return true;
     }

@@ -16,7 +16,7 @@ public class Rectangle extends Shape
   public Rectangle(Float2 topLeft, Float2 bottomRight)
   {
     this.topLeft = new Float2(topLeft);
-    this.bottomRight =new Float2(bottomRight);
+    this.bottomRight = new Float2(bottomRight);
   }
 
   public void set(Float2 topLeft, Float2 bottomRight)
@@ -61,18 +61,19 @@ public class Rectangle extends Shape
     return bottomRight;
   }
 
-  @SuppressWarnings("RedundantIfStatement")
+
   public boolean contains(Float2 position)
   {
-    if ((position.x < topLeft.x) || (position.x > bottomRight.x))
+    return contains(position.x, position.y);
+  }
+
+  public boolean contains(float x, float y)
+  {
+    if ((x < topLeft.x) || (x > bottomRight.x))
     {
       return false;
     }
-    if ((position.y < topLeft.y) || (position.y > bottomRight.y))
-    {
-      return false;
-    }
-    return true;
+    return !((y < topLeft.y) || (y > bottomRight.y));
   }
 
   public void set(float left, float top, float right, float bottom)

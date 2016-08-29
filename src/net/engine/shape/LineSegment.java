@@ -70,6 +70,12 @@ public class LineSegment extends Shape
     return new DistanceResult(v.cross(direction), v.dot(direction));
   }
 
+  public DistanceResult distance(float x, float y)
+  {
+    Float2 v = new Float2(x - start.x, y - start.y);
+    return new DistanceResult(v.cross(direction), v.dot(direction));
+  }
+
   public Float2 center()
   {
     return new Float2(start).add(end).divide(2);

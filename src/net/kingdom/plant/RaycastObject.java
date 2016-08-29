@@ -37,7 +37,7 @@ public abstract class RaycastObject
     return false;
   }
 
-  public abstract boolean contains(Float2 position);
+  public abstract boolean contains(float x, float y);
 
   public abstract void calculateBoundingBox();
 }

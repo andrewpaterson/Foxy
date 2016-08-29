@@ -23,9 +23,9 @@ public class Circle extends Shape
     return radius;
   }
 
-  public boolean contains(Float2 point)
+  public boolean contains(float x, float y)
   {
-    return circleContains(point.x, point.y, center.x, center.y, radius);
+    return circleContains(x, y, center.x, center.y, radius);
   }
 
   @SuppressWarnings("SimplifiableIfStatement")

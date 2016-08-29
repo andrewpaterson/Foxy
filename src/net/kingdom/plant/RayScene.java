@@ -5,6 +5,8 @@ import java.util.List;
 
 public class RayScene
 {
+  protected int blockWidth;
+  protected int blockHeight;
   protected int width;
   protected int height;
   protected RayBlock[] blocks;
@@ -16,13 +18,20 @@ public class RayScene
   {
     this.width = sceneWidth;
     this.height = sceneHeight;
+    this.blockWidth = blockWidth;
+    this.blockHeight = blockHeight;
 
-    blockColumns = calculateBlockColumns(sceneWidth, blockWidth);
-    blockRows = calculateBlockRows(sceneHeight, blockHeight);
+    blockColumns = ceil(sceneWidth, blockWidth);
+    blockRows = ceil(sceneHeight, blockHeight);
 
     blocks = createBlocks(sceneWidth, sceneHeight, blockWidth, blockHeight);
 
     raycastObjects = new ArrayList<>();
+  }
+
+  public int IX(int x, int y)
+  {
+    return x + blockColumns * y;
   }
 
   private RayBlock[] createBlocks(int sceneWidth, int sceneHeight, int blockWidth, int blockHeight)
@@ -34,7 +43,7 @@ public class RayScene
       {
         int extentWidth = calculateExtent(sceneWidth, blockWidth, x);
         int extentHeight = calculateExtent(sceneHeight, blockHeight, y);
-        blocks[x + y * blockColumns] = new RayBlock(x, y, extentWidth, extentHeight);
+        blocks[x + y * blockColumns] = new RayBlock(x * blockWidth, y * blockHeight, extentWidth, extentHeight);
       }
     }
     return blocks;
@@ -53,25 +62,28 @@ public class RayScene
     }
   }
 
-  private int calculateBlockColumns(int sceneWidth, int blockWidth)
+  private int ceil(int dividend, int divisor)
   {
-    int blockColumns = sceneWidth / blockWidth;
-    if (sceneWidth % blockWidth != 0)
+    int quotient = dividend / divisor;
+    if (dividend % divisor != 0)
     {
-      blockColumns++;
+      quotient++;
     }
-    return blockColumns;
+    return quotient;
   }
 
-  private int calculateBlockRows(int sceneHeight, int blockHeight)
+  private int ceil(float dividend, int divisor)
   {
-    int blockRows = sceneHeight / blockHeight;
-    if (sceneHeight % blockHeight != 0)
+    int intQuotient = (int) (dividend / divisor);
+    float floatQuotient = dividend / divisor;
+
+    if (floatQuotient > (float) intQuotient)
     {
-      blockRows++;
+      intQuotient++;
     }
-    return blockRows;
+    return intQuotient;
   }
+
 
   public void add(RaycastObject object)
   {
@@ -82,8 +94,84 @@ public class RayScene
   {
     for (RaycastObject raycastObject : raycastObjects)
     {
-      xxx // Do division to work this out.
+      raycastObject.calculateBoundingBox();
     }
+
+    clearBlocks();
+
+    List<RaycastObject> raycastObjects = this.raycastObjects;
+    addRaycastObjectsToBlocks(raycastObjects);
+  }
+
+  private void addRaycastObjectsToBlocks(List<RaycastObject> raycastObjects)
+  {
+    for (RaycastObject raycastObject : raycastObjects)
+    {
+      if (raycastObject.isGroup())
+      {
+        RaycastGroup group = (RaycastGroup) raycastObject;
+        List<RaycastObject> groupObjects = (List<RaycastObject>) group.getObjects();
+        addRaycastObjectsToBlocks(groupObjects);
+      }
+      else
+      {
+        addRaycastObjectToBlocks(raycastObject);
+      }
+    }
+  }
+
+  private void clearBlocks()
+  {
+    for (RayBlock block : blocks)
+    {
+      block.clear();
+    }
+  }
+
+  private void addRaycastObjectToBlocks(RaycastObject raycastObject)
+  {
+    int left = (int) (raycastObject.getLeft() / blockWidth);
+    int right = ceil(raycastObject.getRight(), blockWidth);
+
+    int top = (int) (raycastObject.getTop() / blockHeight);
+    int bottom = ceil(raycastObject.getBottom(), blockHeight);
+
+    if ((bottom < 0) || (left > blockColumns - 1) || (top > blockRows - 1) || (right < 0))
+    {
+      return;
+    }
+
+    if (top < 0)
+    {
+      top = 0;
+    }
+    if (bottom > blockRows - 1)
+    {
+      bottom = blockRows - 1;
+    }
+    if (left < 0)
+    {
+      left = 0;
+    }
+    if (right > blockColumns - 1)
+    {
+      right = blockColumns - 1;
+    }
+
+
+    for (int y = top; y <= bottom; y++)
+    {
+      for (int x = left; x <= right; x++)
+      {
+        RayBlock block = blocks[IX(x, y)];
+        block.add(raycastObject);
+      }
+    }
+  }
+
+  public RayBlock[] getBlocks()
+  {
+    return blocks;
   }
 }
 

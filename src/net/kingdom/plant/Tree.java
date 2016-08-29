@@ -33,14 +33,14 @@ public class Tree extends RaycastGroup
     }
   }
 
-  public boolean contains(Float2 position)
+  public boolean contains(float x, float y)
   {
-    if (bounding.contains(position))
+    if (bounding.contains(x, y))
     {
       List<? extends RaycastObject> objects = getObjects();
       for (RaycastObject raycastObject : objects)
       {
-        if (raycastObject.contains(position))
+        if (raycastObject.contains(x, y))
         {
           return true;
         }

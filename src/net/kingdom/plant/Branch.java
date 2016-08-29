@@ -1,6 +1,5 @@
 package net.kingdom.plant;
 
-import net.engine.math.Float2;
 import net.engine.shape.Capsule;
 
 public class Branch extends RaycastObject
@@ -13,9 +12,9 @@ public class Branch extends RaycastObject
   }
 
   @Override
-  public boolean contains(Float2 position)
+  public boolean contains(float x, float y)
   {
-    return capsule.contains(position);
+    return capsule.contains(x, y);
   }
 
   @Override
