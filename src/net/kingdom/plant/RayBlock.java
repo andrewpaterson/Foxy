@@ -16,11 +16,6 @@ public class RayBlock
 
   public RayBlock(int left, int top, int width, int height)
   {
-    if (left < 0)
-    {
-      int xxx =0;
-    }
-
     this.left = left;
     this.top = top;
     this.width = width;
