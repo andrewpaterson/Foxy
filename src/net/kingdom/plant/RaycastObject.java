@@ -1,6 +1,5 @@
 package net.kingdom.plant;
 
-import net.engine.math.Float2;
 import net.engine.shape.Rectangle;
 
 public abstract class RaycastObject
@@ -37,7 +36,12 @@ public abstract class RaycastObject
     return false;
   }
 
-  public abstract boolean contains(float x, float y);
+  public boolean probablyContains(float x, float y)
+  {
+    return bounding.contains(x, y);
+  }
+
+  public abstract RayResult cast(float x, float y);
 
   public abstract void calculateBoundingBox();
 }

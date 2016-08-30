@@ -31,5 +31,13 @@ public class Colour
             ((color.getGreen() & 0xFF) << 8) |
             ((color.getBlue() & 0xFF));
   }
+
+  public static int getARGB(float alpha, float red, float green, float blue)
+  {
+    return (((int)(alpha * 255) & 0xFF) << 24) |
+            (((int)(red * 255) & 0xFF) << 16) |
+            (((int)(green * 255) & 0xFF) << 8) |
+            (((int)(blue * 255) & 0xFF));
+  }
 }
 

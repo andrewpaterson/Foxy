@@ -17,7 +17,7 @@ public class Tree extends RaycastGroup
     branches = new ArrayList<>();
     Float2 start = position;
     int steps = 10;
-    float radius = steps + 1;
+    float radius = steps*2 + 2;
 
     for (int i = 0; i < steps; i++)
     {
@@ -27,26 +27,10 @@ public class Tree extends RaycastGroup
       Float2 end = new Float2(start.x + ax, start.y - 20 + ay);
       Capsule capsule = new Capsule(start, radius, end, radius - 1);
       start = end;
-      radius--;
+      radius-=2;
 
       branches.add(new Branch(capsule));
     }
-  }
-
-  public boolean contains(float x, float y)
-  {
-    if (bounding.contains(x, y))
-    {
-      List<? extends RaycastObject> objects = getObjects();
-      for (RaycastObject raycastObject : objects)
-      {
-        if (raycastObject.contains(x, y))
-        {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   @Override

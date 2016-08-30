@@ -1,5 +1,7 @@
 package net.kingdom.plant;
 
+import net.engine.common.EngineException;
+
 import java.util.List;
 
 public abstract class RaycastGroup extends RaycastObject
@@ -37,6 +39,12 @@ public abstract class RaycastGroup extends RaycastObject
   public boolean isGroup()
   {
     return true;
+  }
+
+  @Override
+  public RayResult cast(float x, float y)
+  {
+    throw new EngineException("Can't call cast on Group objects");
   }
 
   public abstract List<? extends RaycastObject> getObjects();

@@ -17,14 +17,19 @@ public class Capsule
     this.end = new Circle(end, endRadius);
   }
 
-  public Float2 getStart()
+  public Circle getStart()
   {
-    return start.center;
+    return start;
   }
 
-  public Float2 getEnd()
+  public Circle getEnd()
   {
-    return end.center;
+    return end;
+  }
+
+  public LineSegment getLine()
+  {
+    return line;
   }
 
   @SuppressWarnings("RedundantIfStatement")

@@ -5,10 +5,10 @@ import net.engine.shape.result.DistanceResult;
 
 public class LineSegment extends Shape
 {
-  Float2 start;
-  Float2 direction;
-  float length;
-  Float2 end;
+  public Float2 start;
+  public Float2 direction;
+  public float length;
+  public Float2 end;
 
   public LineSegment(Float2 start)
   {

@@ -2,17 +2,14 @@ package net.kingdom;
 
 import net.engine.common.Timer;
 import net.engine.game.PictureStage;
-import net.engine.global.GlobalRandom;
 import net.engine.input.GameInput;
 import net.engine.input.MouseInput;
+import net.engine.input.PointerLocation;
 import net.engine.math.Float2;
 import net.engine.picture.Colour;
 import net.engine.picture.ColourGradient;
 import net.engine.picture.ComponentPicture;
-import net.kingdom.plant.RayBlock;
-import net.kingdom.plant.RayScene;
-import net.kingdom.plant.RaycastObject;
-import net.kingdom.plant.Tree;
+import net.kingdom.plant.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -23,12 +20,14 @@ public class PlantStage extends PictureStage
 {
   protected List<Tree> trees;
   protected RayScene rayScene;
+  protected Float2 light;
 
   public PlantStage(int renderWidth, int renderHeight)
   {
     super(new ComponentPicture(renderWidth, renderHeight));
     trees = new ArrayList<>();
     rayScene = new RayScene(renderWidth, renderHeight, 8, 8);
+    light = new Float2();
   }
 
   @Override
@@ -75,33 +74,53 @@ public class PlantStage extends PictureStage
 
   private void renderBlock(Color[] colors, float scale, RayBlock block, int x, int y)
   {
-    boolean isBackground = true;
+    RayResult closestRayResult = null;
     int objects = block.objectSize();
     for (int i = 0; i < objects; i++)
     {
       RaycastObject raycastObject = block.raycastObjects.get(i);
-      if (raycastObject.contains(x, y))
+      if (raycastObject.probablyContains(x, y))
       {
-        isBackground = false;
+        RayResult rayResult = raycastObject.cast(x, y);
+        if (rayResult != null)
+        {
+          if (closestRayResult == null)
+          {
+            closestRayResult = rayResult;
+          }
+          else
+          {
+            if (closestRayResult.z > rayResult.z)
+            {
+              closestRayResult = rayResult;
+            }
+          }
+        }
       }
     }
 
-    if (isBackground)
+    if (closestRayResult == null)
     {
       Color color = colors[(int) (y * scale)];
       picture.unsafeSetPixel(x, y, Colour.getARGB(color));
     }
     else
     {
-      picture.unsafeSetPixel(x, y, 0xFF000000);
+      float brightness = closestRayResult.normal.z;
+      int colour = Colour.getARGB(1, brightness, brightness, brightness);
+      picture.unsafeSetPixel(x, y, colour);
     }
   }
-
 
   @Override
   public void tick(double time, GameInput gameInput, int width, int height)
   {
     gameInput.processEvents(this, width, height);
+    PointerLocation pointerLocation = gameInput.getPointerLocation();
+    if (pointerLocation != null)
+    {
+      light.set(pointerLocation.getX(), pointerLocation.getY());
+    }
   }
 
   @Override
