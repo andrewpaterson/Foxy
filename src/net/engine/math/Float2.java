@@ -27,10 +27,24 @@ public class Float2 extends Point2D.Float
     return this;
   }
 
+  public Float2 add(float x, float y)
+  {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+
   public Float2 subtract(Float2 float2)
   {
     x -= float2.x;
     y -= float2.y;
+    return this;
+  }
+
+  public Float2 subtract(float x, float y)
+  {
+    this.x -= x;
+    this.y -= y;
     return this;
   }
 
