@@ -7,8 +7,8 @@ import net.engine.thread.Threadanator;
 public class KingdomGame extends Game
 {
   public static int SCALE = 2;
-  public static int RENDER_WIDTH = 640;
-  public static int RENDER_HEIGHT = 360;
+  public static int RENDER_WIDTH = 1280;
+  public static int RENDER_HEIGHT = 720;
 
   public KingdomGame()
   {

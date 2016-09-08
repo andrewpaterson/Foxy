@@ -4,6 +4,6 @@ import java.util.Random;
 
 public class GlobalRandom
 {
-  public static Random random = new Random(723354);
+  public static Random random = new Random(System.nanoTime());
 }
 

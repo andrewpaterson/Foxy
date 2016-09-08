@@ -6,13 +6,17 @@ import net.engine.shape.Circle;
 import net.engine.shape.LineSegment;
 import net.engine.shape.result.DistanceResult;
 
-public class Branch extends RaycastObject
+import java.awt.*;
+
+public class RaycastCapsule extends RaycastObject
 {
   protected Capsule capsule;
+  protected Color colour;
 
-  public Branch(Capsule capsule)
+  public RaycastCapsule(Capsule capsule, Color colour)
   {
     this.capsule = capsule;
+    this.colour = colour;
   }
 
   @Override
@@ -28,7 +32,7 @@ public class Branch extends RaycastObject
       Float3 float3 = surfaceNormal(x, y);
       if (float3 != null)
       {
-        return new RayResult(-float3.z, float3);
+        return new RayResult(-float3.z, float3, colour);
       }
       else
       {

@@ -1,56 +1,104 @@
 package net.kingdom.plant;
 
 import net.engine.math.Float2;
-import net.engine.math.Spline;
 import net.engine.shape.Capsule;
+import net.kingdom.plant.structure.PlantNode;
+import net.kingdom.plant.structure.Seed;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Tree extends RaycastGroup
 {
-  public List<Branch> branches;
+  private List<RaycastCapsule> capsules;
+  private PlantNode start;
+  private Float2 position;
 
   public Tree(Float2 position)
   {
     super();
-    branches = new ArrayList<>();
-    Spline spline = new Spline(
-            new Float2(position),
-            new Float2(position).add(-50, -50),
-            new Float2(position).add(50, -100),
-            new Float2(position).add(0, -150));
-    int steps = 20;
-    float[] xs = new float[steps];
-    float[] ys = new float[steps];
-    spline.generate(steps, xs, ys);
-    for (int i = 0; i < steps - 1; i++)
-    {
-      Capsule capsule = new Capsule(new Float2(xs[i], ys[i]), 5, new Float2(xs[i + 1], ys[i + 1]), 5);
-      branches.add(new Branch(capsule));
-    }
-//    Float2 start = position;
-//    int steps = 10;
-//    float radius = steps*2 + 2;
-//
-//    for (int i = 0; i < steps; i++)
-//    {
-//      int ax = GlobalRandom.random.nextInt(21) - 10;
-//      int ay = GlobalRandom.random.nextInt(21) - 10;
-//
-//      Float2 end = new Float2(start.x + ax, start.y - 20 + ay);
-//      Capsule capsule = new Capsule(start, radius, end, radius - 1);
-//      start = end;
-//      radius-=2;
-//
-//      branches.add(new Branch(capsule));
-//    }
+    this.position = position;
+    capsules = new ArrayList<>();
+
+    start = new Seed(null, 0);
   }
 
   @Override
   public List<? extends RaycastObject> getObjects()
   {
-    return branches;
+    return capsules;
+  }
+
+  public List<PlantNode> collectNodes()
+  {
+    ArrayList<PlantNode> nodes = new ArrayList<>();
+    start.collectNodes(nodes);
+    return nodes;
+  }
+
+  public void grow()
+  {
+    List<PlantNode> nodes = collectNodes();
+    for (PlantNode node : nodes)
+    {
+      node.preDisperse();
+    }
+    for (PlantNode node : nodes)
+    {
+      node.disperse();
+    }
+    for (PlantNode node : nodes)
+    {
+      node.postDisperse();
+    }
+    for (PlantNode node : nodes)
+    {
+      node.grow();
+    }
+
+    capsules = new ArrayList<>();
+
+    addCapsule(this.position, 0, start);
+  }
+
+  private void addCapsule(Float2 startPos, float startAngle, PlantNode plantNode)
+  {
+    float length = plantNode.getLength();
+    float localAngle = plantNode.getAngle();
+    float angle = startAngle + localAngle;
+    Float2 end = rotate(length, angle + 180);
+    end.add(startPos);
+
+    if (length > 0.00001f)
+    {
+      capsules.add(new RaycastCapsule(new Capsule(startPos, plantNode.getMass(), end, plantNode.getMass()), plantNode.getDebugColour()));
+    }
+
+    List<PlantNode> childNodes = plantNode.getChildNodes();
+    for (PlantNode childNode : childNodes)
+    {
+      addCapsule(end, angle, childNode);
+    }
+  }
+
+  private Float2 rotate(float length, float angle)
+  {
+    return new Float2(length * sin(angle), length * cos(angle));
+  }
+
+  private float cos(float angle)
+  {
+    return (float) Math.cos(angle * (Math.PI / 180));
+  }
+
+  private float sin(float angle)
+  {
+    return (float) Math.sin(angle * (Math.PI / 180));
+  }
+
+  public void water(float amount)
+  {
+    start.addWater(amount);
   }
 }
 

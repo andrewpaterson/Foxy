@@ -173,5 +173,10 @@ public class RayScene
   {
     return blocks;
   }
+
+  public void clear()
+  {
+    raycastObjects.clear();
+  }
 }
 
