@@ -31,6 +31,7 @@ public abstract class PlantNode
 
     this.dispersables = new ArrayList<>();
     this.dispersables.add(new Dispersable(WATER));
+    this.dispersables.add(new Dispersable(SUGAR));
   }
 
   public void collectNodes(List<PlantNode> nodes)
@@ -82,7 +83,7 @@ public abstract class PlantNode
 
   public void addWater(float amount)
   {
-    dispersables.get(WATER).addValue(amount);
+    dispersables.get(WATER).add(amount);
   }
 
   public float getAngle()
@@ -105,6 +106,11 @@ public abstract class PlantNode
   public Color getDebugColour()
   {
     return debugColour;
+  }
+
+  protected Dispersable get(int type)
+  {
+    return dispersables.get(type);
   }
 
   public abstract float getMass();

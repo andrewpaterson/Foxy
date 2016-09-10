@@ -8,6 +8,7 @@ public class Seed extends PlantNode
   {
     super(parent, 0, angle, new Color(100, 100, 100));
     children.add(new ApicalBud(this, 0));
+    get(SUGAR).add(10);
   }
 
   @Override

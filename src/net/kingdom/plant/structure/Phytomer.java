@@ -27,10 +27,11 @@ public class Phytomer extends PlantNode
   @Override
   public void grow()
   {
-    float water = dispersables.get(WATER).getValue();
+    Dispersable water = get(WATER);
+    Dispersable sugar = get(SUGAR);
     if (length >= maxLength)
     {
-      if (water > 1.0f)
+      if ((water.get() > 1.0f) && (sugar.get() > 1.0f))
       {
         if (children.size() == 1)
         {
@@ -44,22 +45,15 @@ public class Phytomer extends PlantNode
           {
             children.add(new Leaf(this, 10, rangle + getAngleVariance()));
           }
-          dispersables.get(WATER).addValue(-1.0f);
-          children.get(0).dispersables.get(WATER).addValue(1);
-        }
-        else
-        {
-          if (mass < 5)
-          {
-            mass += 0.01;
-            dispersables.get(WATER).addValue(-0.01f);
-          }
+          water.add(-1.0f);
+          sugar.add(-1.0f);
+          children.get(0).get(WATER).add(1);
         }
       }
     }
     else
     {
-      float v = maxLength * water;
+      float v = maxLength * water.get();
       if (length < v)
       {
         length = v;
@@ -69,6 +63,17 @@ public class Phytomer extends PlantNode
         }
       }
     }
+
+    if ((water.get() > 0.001f) && (sugar.get() > 0.001f))
+    {
+      if (mass < 5)
+      {
+        mass += 0.001f;
+        water.add(-0.0001f);
+        sugar.add(-0.0001f);
+      }
+    }
+
   }
 
   @Override
@@ -99,7 +104,7 @@ public class Phytomer extends PlantNode
 
   public void addWater(float amount)
   {
-    dispersables.get(WATER).addValue(amount);
+    get(WATER).add(amount);
   }
 }
 

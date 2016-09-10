@@ -45,14 +45,14 @@ public class Dispersable
       float difference = value - adjacentNode.getValue(type);
       if (difference > 0)
       {
-        float dispersed = (difference / lowPressures) * 0.5f;
+        float dispersed = (difference / lowPressures) * 0.1f;
         adjacentNode.addCalcValue(type, dispersed);
         calcValue -= dispersed;
       }
     }
   }
 
-  public void addValue(float amount)
+  public void add(float amount)
   {
     this.value += amount;
   }
@@ -62,7 +62,7 @@ public class Dispersable
     this.calcValue += amount;
   }
 
-  public float getValue()
+  public float get()
   {
     return value;
   }

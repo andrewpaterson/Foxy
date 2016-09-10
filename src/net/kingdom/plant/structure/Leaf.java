@@ -15,16 +15,25 @@ public class Leaf extends PlantNode
   @Override
   public void grow()
   {
+    Dispersable water = get(WATER);
     if (size < 1)
     {
-      float water = dispersables.get(WATER).getValue();
-      size += water * 0.5f;
+      size += water.get() * 0.5f;
       if (size > 1)
       {
         size = 1.0f;
       }
-      dispersables.get(WATER).addValue(-water);
+      water.add(-water.get());
     }
+    else
+    {
+      if (water.get() > 0.01f)
+      {
+        water.add(-0.01f);
+      }
+    }
+    get(SUGAR).add(0.1f);
+
   }
 
   @Override
