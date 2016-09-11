@@ -64,16 +64,15 @@ public class Phytomer extends PlantNode
       }
     }
 
-    if ((water.get() > 0.001f) && (sugar.get() > 0.001f))
+    if ((water.get() >= 0.001f) && (sugar.get() >= 0.01f))
     {
       if (mass < 5)
       {
         mass += 0.001f;
         water.add(-0.01f);
-        sugar.add(-0.01f);
+        sugar.add(-0.1f);
       }
     }
-
   }
 
   @Override

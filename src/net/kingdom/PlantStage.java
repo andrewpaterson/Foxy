@@ -18,12 +18,16 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kingdom.plant.structure.PlantNode.SUGAR;
+import static net.kingdom.plant.structure.PlantNode.WATER;
 
-public class PlantStage extends PictureStage
+
+public class PlantStage extends PictureStage implements TreeDebug
 {
   protected List<Tree> trees;
   protected RayScene rayScene;
   protected Float2 light;
+  protected int debugType;
 
   public PlantStage(int renderWidth, int renderHeight)
   {
@@ -145,7 +149,7 @@ public class PlantStage extends PictureStage
 
   private void addTree(float x, float y)
   {
-    Tree tree = new Tree(new Float2(x, y));
+    Tree tree = new Tree(new Float2(x, y), this);
     trees.add(tree);
 
     rayScene.add(tree);
@@ -159,6 +163,93 @@ public class PlantStage extends PictureStage
       trees.clear();
       rayScene.clear();
     }
+    else if (input.getKey() == KeyEvent.VK_1)
+    {
+      debugType = 0;
+    }
+    else if (input.getKey() == KeyEvent.VK_2)
+    {
+      debugType = 1;
+    }
+    else if (input.getKey() == KeyEvent.VK_3)
+    {
+      debugType = 2;
+    }
+  }
+
+  @Override
+  public Color getDebugColour(PlantNode plantNode)
+  {
+    if (debugType == 0)
+    {
+      return plantNode.getDebugColour();
+    }
+    else if (debugType == 1)
+    {
+      float value = plantNode.getValue(WATER);
+      return getBlueColor(value);
+    }
+    else if (debugType == 2)
+    {
+      float value = plantNode.getValue(SUGAR);
+      value /= 5;
+      return getGreenColor(value);
+    }
+    else
+    {
+      return Color.YELLOW;
+    }
+  }
+
+  private Color getBlueColor(float value)
+  {
+    if (value < 0)
+    {
+      return Color.RED;
+    }
+    float major = calculateMajorColour(value);
+    float minor = calculateMinorColour(value);
+    return new Color(minor, minor, major);
+  }
+
+  private Color getGreenColor(float value)
+  {
+    if (value < 0)
+    {
+      return Color.RED;
+    }
+
+    float major = calculateMajorColour(value);
+    float minor = calculateMinorColour(value);
+    return new Color(minor, major, minor);
+  }
+
+  private float calculateMajorColour(float value)
+  {
+    float major = 1;
+    if (value <= 1.0f)
+    {
+      major = value;
+    }
+    else if (value <= 2.0f)
+    {
+      major = 1;
+    }
+    return major;
+  }
+
+  private float calculateMinorColour(float value)
+  {
+    float minor = 1;
+    if (value <= 1.0f)
+    {
+      minor = 0.08f - ((1.0f - value) * 0.08f);
+    }
+    else if (value <= 2.0f)
+    {
+      minor = value / 2;
+    }
+    return minor;
   }
 }
 

@@ -5,6 +5,7 @@ import net.engine.shape.Capsule;
 import net.kingdom.plant.structure.PlantNode;
 import net.kingdom.plant.structure.Seed;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,13 @@ public class Tree extends RaycastGroup
   private List<RaycastCapsule> capsules;
   private PlantNode start;
   private Float2 position;
+  private TreeDebug debug;
 
-  public Tree(Float2 position)
+  public Tree(Float2 position, TreeDebug debug)
   {
     super();
     this.position = position;
+    this.debug = debug;
     capsules = new ArrayList<>();
 
     start = new Seed(null, 0);
@@ -71,7 +74,11 @@ public class Tree extends RaycastGroup
 
     if (length > 0.00001f)
     {
-      capsules.add(new RaycastCapsule(new Capsule(startPos, (float) Math.sqrt(plantNode.getMass()), end, plantNode.getMass()), plantNode.getDebugColour()));
+      capsules.add(new RaycastCapsule(new Capsule(startPos,
+              (float) Math.sqrt(plantNode.getMass()),
+              end,
+              (float) Math.sqrt(plantNode.getMass())),
+              getDebugColour(plantNode)));
     }
 
     List<PlantNode> childNodes = plantNode.getChildNodes();
@@ -79,6 +86,11 @@ public class Tree extends RaycastGroup
     {
       addCapsule(end, angle, childNode);
     }
+  }
+
+  private Color getDebugColour(PlantNode plantNode)
+  {
+    return debug.getDebugColour(plantNode);
   }
 
   private Float2 rotate(float length, float angle)

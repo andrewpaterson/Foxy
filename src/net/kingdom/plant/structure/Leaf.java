@@ -33,7 +33,6 @@ public class Leaf extends PlantNode
       }
     }
     get(SUGAR).add(0.1f);
-
   }
 
   @Override

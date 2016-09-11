@@ -20,6 +20,7 @@ public abstract class Bud extends PlantNode
     if ((water.get() > 1.0f) && (sugar.get() > 1.0f))
     {
       water.add(-1.0f);
+      sugar.add(-1.0f);
       new Phytomer(this, parent, 20 + GlobalRandom.random.nextInt(20));
     }
   }
