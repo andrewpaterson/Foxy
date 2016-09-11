@@ -5,24 +5,24 @@ import java.util.List;
 public class Dispersable
 {
   public float value;
-  public float calcValue;
+  public float delta;
   public int type;
 
   public Dispersable(int type)
   {
     this.value = 0;
-    this.calcValue = 0;
+    this.delta = 0;
     this.type = type;
   }
 
   public void preDisperse()
   {
-    this.calcValue = 0;
+    this.delta = 0;
   }
 
   public void postDisperse()
   {
-    this.value += calcValue;
+    this.value += delta;
   }
 
   public void disperse(PlantNode plantNode)
@@ -45,9 +45,9 @@ public class Dispersable
       float difference = value - adjacentNode.getValue(type);
       if (difference > 0)
       {
-        float dispersed = (difference / lowPressures) * 0.1f;
-        adjacentNode.addCalcValue(type, dispersed);
-        calcValue -= dispersed;
+        float dispersed = (difference / lowPressures) * plantNode.getTransferRate();
+        adjacentNode.delta(type, dispersed);
+        delta -= dispersed;
       }
     }
   }
@@ -57,9 +57,9 @@ public class Dispersable
     this.value += amount;
   }
 
-  public void addCalcValue(float amount)
+  public void delta(float amount)
   {
-    this.calcValue += amount;
+    this.delta += amount;
   }
 
   public float get()

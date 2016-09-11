@@ -144,10 +144,14 @@ public abstract class PlantNode
     return dispersables.get(type).value;
   }
 
-  public void addCalcValue(int type, float amount)
+  public void delta(int type, float amount)
   {
-    Dispersable dispersable = dispersables.get(type);
-    dispersable.addCalcValue(amount);
+    dispersables.get(type).delta(amount);
+  }
+
+  public float getTransferRate()
+  {
+    return 0.1f;
   }
 }
 

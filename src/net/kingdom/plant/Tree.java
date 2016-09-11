@@ -71,7 +71,7 @@ public class Tree extends RaycastGroup
 
     if (length > 0.00001f)
     {
-      capsules.add(new RaycastCapsule(new Capsule(startPos, plantNode.getMass(), end, plantNode.getMass()), plantNode.getDebugColour()));
+      capsules.add(new RaycastCapsule(new Capsule(startPos, (float) Math.sqrt(plantNode.getMass()), end, plantNode.getMass()), plantNode.getDebugColour()));
     }
 
     List<PlantNode> childNodes = plantNode.getChildNodes();

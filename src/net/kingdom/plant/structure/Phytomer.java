@@ -69,8 +69,8 @@ public class Phytomer extends PlantNode
       if (mass < 5)
       {
         mass += 0.001f;
-        water.add(-0.0001f);
-        sugar.add(-0.0001f);
+        water.add(-0.01f);
+        sugar.add(-0.01f);
       }
     }
 
@@ -105,6 +105,11 @@ public class Phytomer extends PlantNode
   public void addWater(float amount)
   {
     get(WATER).add(amount);
+  }
+
+  public float getTransferRate()
+  {
+    return mass * super.getTransferRate();
   }
 }
 
