@@ -18,6 +18,7 @@ public abstract class PlantNode
   protected float angle;
 
   protected List<Dispersable> dispersables;
+  protected float age;
 
   public PlantNode(PlantNode parent, float length, float angle, Color debugColour)
   {
@@ -32,6 +33,7 @@ public abstract class PlantNode
     this.dispersables = new ArrayList<>();
     this.dispersables.add(new Dispersable(WATER));
     this.dispersables.add(new Dispersable(SUGAR));
+    this.age = 0;
   }
 
   public void collectNodes(List<PlantNode> nodes)
@@ -152,6 +154,11 @@ public abstract class PlantNode
     }
   }
 
+  public void age()
+  {
+    age += 0.01f;
+  }
+
   public float getValue(int type)
   {
     return dispersables.get(type).value;
@@ -162,9 +169,35 @@ public abstract class PlantNode
     dispersables.get(type).delta(amount);
   }
 
-  public float getTransferRate()
+  public float getTransferRate(int type)
   {
-    return 0.1f;
+    if (type == WATER)
+    {
+      return 0.1f;
+    }
+    else if (type == SUGAR)
+    {
+      return 0.05f;
+    }
+    else
+    {
+      return 0;
+    }
+  }
+
+  public Seed getSeed()
+  {
+    PlantNode plantNode = this;
+    while (!plantNode.isSeed())
+    {
+      plantNode = plantNode.parent;
+    }
+    return null;
+  }
+
+  protected boolean isSeed()
+  {
+    return false;
   }
 }
 

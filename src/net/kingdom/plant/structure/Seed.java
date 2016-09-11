@@ -21,5 +21,10 @@ public class Seed extends PlantNode
   {
     return 3;
   }
+
+  protected boolean isSeed()
+  {
+    return true;
+  }
 }
 

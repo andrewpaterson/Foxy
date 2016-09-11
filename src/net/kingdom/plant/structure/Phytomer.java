@@ -106,9 +106,9 @@ public class Phytomer extends PlantNode
     get(WATER).add(amount);
   }
 
-  public float getTransferRate()
+  public float getTransferRate(int type)
   {
-    return mass * super.getTransferRate();
+    return mass * super.getTransferRate(type);
   }
 }
 

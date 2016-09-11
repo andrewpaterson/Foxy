@@ -45,7 +45,7 @@ public class Dispersable
       float difference = value - adjacentNode.getValue(type);
       if (difference > 0)
       {
-        float dispersed = (difference / lowPressures) * plantNode.getTransferRate();
+        float dispersed = (difference / lowPressures) * plantNode.getTransferRate(type);
         adjacentNode.delta(type, dispersed);
         delta -= dispersed;
       }

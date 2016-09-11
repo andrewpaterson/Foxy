@@ -57,6 +57,7 @@ public class Tree extends RaycastGroup
     for (PlantNode node : nodes)
     {
       node.grow();
+      node.age();
     }
 
     capsules = new ArrayList<>();

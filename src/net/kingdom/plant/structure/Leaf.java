@@ -5,13 +5,11 @@ import java.awt.*;
 public class Leaf extends PlantNode
 {
   protected float size;
-  protected float age;
 
   public Leaf(PlantNode parent, float length, float angle)
   {
     super(parent, length, angle, new Color(20, 255, 20));
     this.size = 0;
-    this.age = 0;
   }
 
   @Override
@@ -36,8 +34,7 @@ public class Leaf extends PlantNode
     }
     get(SUGAR).add(0.1f);
 
-    age += 0.01f;
-    if (age > 100)
+    if (age > 40)
     {
       parent.remove(this);
     }
