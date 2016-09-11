@@ -76,6 +76,19 @@ public abstract class PlantNode
     return replacee;
   }
 
+  public void remove(PlantNode plantNode)
+  {
+    for (int i = 0; i < children.size(); i++)
+    {
+      PlantNode current = children.get(i);
+      if (current == plantNode)
+      {
+        children.remove(i);
+        return;
+      }
+    }
+  }
+
   public List<PlantNode> getChildNodes()
   {
     return children;
