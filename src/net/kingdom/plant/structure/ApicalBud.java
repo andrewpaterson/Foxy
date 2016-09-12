@@ -1,12 +1,12 @@
 package net.kingdom.plant.structure;
 
+import net.kingdom.plant.Tree;
+
 public class ApicalBud extends Bud
 {
-  public ApicalBud(PlantNode parent, float angle)
+  public ApicalBud(Tree tree, PlantNode parent, float angle)
   {
-    super(parent, angle);
+    super(tree, parent, angle);
   }
 }
-
-
 

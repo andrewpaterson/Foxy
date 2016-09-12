@@ -1,5 +1,7 @@
 package net.kingdom.plant.structure;
 
+import net.kingdom.plant.Tree;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ public abstract class PlantNode
   public static int WATER = 0;
   public static int SUGAR = 1;
 
+  protected Tree tree;
   protected Color debugColour;
 
   protected List<PlantNode> children;
@@ -20,8 +23,9 @@ public abstract class PlantNode
   protected List<Dispersable> dispersables;
   protected float age;
 
-  public PlantNode(PlantNode parent, float length, float angle, Color debugColour)
+  public PlantNode(Tree tree, PlantNode parent, float length, float angle, Color debugColour)
   {
+    this.tree = tree;
     this.debugColour = debugColour;
 
     this.parent = parent;
@@ -185,19 +189,9 @@ public abstract class PlantNode
     }
   }
 
-  public Seed getSeed()
+  public Tree getTree()
   {
-    PlantNode plantNode = this;
-    while (!plantNode.isSeed())
-    {
-      plantNode = plantNode.parent;
-    }
-    return null;
-  }
-
-  protected boolean isSeed()
-  {
-    return false;
+    return tree;
   }
 }
 

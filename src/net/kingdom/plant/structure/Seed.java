@@ -1,14 +1,16 @@
 package net.kingdom.plant.structure;
 
+import net.kingdom.plant.Tree;
+
 import java.awt.*;
 
 public class Seed extends PlantNode
 {
-  public Seed(PlantNode parent, float angle)
+  public Seed(Tree tree, PlantNode parent, float angle)
   {
-    super(parent, 0, angle, new Color(100, 100, 100));
-    children.add(new ApicalBud(this, 0));
-    get(SUGAR).add(10);
+    super(tree, parent, 0, angle, new Color(100, 100, 100));
+    children.add(new ApicalBud(tree, this, 0));
+    get(SUGAR).add(20);
   }
 
   @Override
@@ -20,11 +22,6 @@ public class Seed extends PlantNode
   public float getMass()
   {
     return 3;
-  }
-
-  protected boolean isSeed()
-  {
-    return true;
   }
 }
 

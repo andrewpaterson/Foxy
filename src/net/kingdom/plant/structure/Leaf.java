@@ -1,14 +1,16 @@
 package net.kingdom.plant.structure;
 
+import net.kingdom.plant.Tree;
+
 import java.awt.*;
 
 public class Leaf extends PlantNode
 {
   protected float size;
 
-  public Leaf(PlantNode parent, float length, float angle)
+  public Leaf(Tree tree, PlantNode parent, float length, float angle)
   {
-    super(parent, length, angle, new Color(20, 255, 20));
+    super(tree, parent, length, angle, new Color(20, 255, 20));
     this.size = 0;
   }
 
@@ -27,14 +29,14 @@ public class Leaf extends PlantNode
     }
     else
     {
-      if (water.get() > 0.01f)
+      if (water.get() >= 0.01f)
       {
         water.add(-0.01f);
       }
     }
-    get(SUGAR).add(0.1f);
+    get(SUGAR).add(0.02f);
 
-    if (age > 40)
+    if (age > 100)
     {
       parent.remove(this);
     }

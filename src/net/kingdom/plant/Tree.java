@@ -23,7 +23,7 @@ public class Tree extends RaycastGroup
     this.debug = debug;
     capsules = new ArrayList<>();
 
-    start = new Seed(null, 0);
+    start = new Seed(this, null, 0);
   }
 
   @Override
