@@ -34,6 +34,7 @@ public class Leaf extends PlantNode
         water.add(-0.01f);
       }
     }
+
     get(SUGAR).add(0.02f);
 
     if (age > 100)

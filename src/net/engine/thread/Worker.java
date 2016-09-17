@@ -26,7 +26,10 @@ public class Worker
         Work work = workTaken[i];
         workTaken[i] = null;
 
-        work.work();
+        if (work != null)
+        {
+          work.work();
+        }
       }
       return true;
     }
