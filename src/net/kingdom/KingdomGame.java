@@ -24,7 +24,7 @@ public class KingdomGame extends Game
     stageManager.setStage("Fluid");
 
     run();
-xx
+
     Threadanator.getInstance().stop();
   }
 
