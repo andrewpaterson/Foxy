@@ -7,8 +7,8 @@ import net.engine.thread.Threadanator;
 public class KingdomGame extends Game
 {
   public static int SCALE = 2;
-  public static int RENDER_WIDTH = 640;
-  public static int RENDER_HEIGHT = 360;
+  public static int RENDER_WIDTH = (int) (2560/SCALE)-80;
+  public static int RENDER_HEIGHT = (int) (1440/SCALE)-80;
 
   public KingdomGame()
   {
@@ -21,7 +21,7 @@ public class KingdomGame extends Game
 
     stageManager.addStage("Fluid", new FluidStage(10.0f, 500.0f, 10, 0.02f, RENDER_WIDTH, RENDER_HEIGHT));
     stageManager.addStage("Plant", new PlantStage(RENDER_WIDTH, RENDER_HEIGHT));
-    stageManager.setStage("Plant");
+    stageManager.setStage("Fluid");
 
     run();
 
