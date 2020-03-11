@@ -61,7 +61,6 @@ public class Threadanator
 
   private void work(int takeSize)
   {
-
     for (; ; )
     {
       if (!worker.work(takeSize))
@@ -70,7 +69,6 @@ public class Threadanator
       }
     }
   }
-
 
   private boolean areAllRunning()
   {

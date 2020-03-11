@@ -3,6 +3,7 @@ package net.engine.thread.exception;
 /**
  * Created by andrew on 2016/08/26.
  */
-public class AlreadyPreparedException extends RuntimeException
+public class AlreadyPreparedException
+    extends RuntimeException
 {
 }

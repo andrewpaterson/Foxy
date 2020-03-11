@@ -7,7 +7,8 @@ import net.foxy.loading.LoadingScreen;
 import net.foxy.nights.NightOne;
 import net.foxy.title.TitleScreen;
 
-public class FoxyGame extends Game
+public class FoxyGame
+    extends Game
 {
   private CelStore celStore;
 

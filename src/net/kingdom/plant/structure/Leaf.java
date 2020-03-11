@@ -4,7 +4,8 @@ import net.kingdom.plant.Tree;
 
 import java.awt.*;
 
-public class Leaf extends PlantNode
+public class Leaf
+    extends PlantNode
 {
   protected float size;
 

@@ -5,7 +5,8 @@ import net.kingdom.plant.Tree;
 
 import java.awt.*;
 
-public abstract class Bud extends PlantNode
+public abstract class Bud
+    extends PlantNode
 {
   public Bud(Tree tree, PlantNode parent, float angle)
   {
@@ -22,7 +23,7 @@ public abstract class Bud extends PlantNode
     {
       water.add(-1.0f);
       sugar.add(-1.0f);
-      new Phytomer(tree,  this, parent, 20 + GlobalRandom.random.nextInt(20));
+      new Phytomer(tree, this, parent, 20 + GlobalRandom.random.nextInt(20));
     }
   }
 

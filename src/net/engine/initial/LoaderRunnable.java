@@ -1,6 +1,7 @@
 package net.engine.initial;
 
-public class LoaderRunnable implements Runnable
+public class LoaderRunnable
+    implements Runnable
 {
   private boolean done;
   private Loader loader;

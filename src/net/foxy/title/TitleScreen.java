@@ -2,16 +2,19 @@ package net.foxy.title;
 
 import net.engine.cel.CelStore;
 import net.engine.game.StageManager;
-import net.engine.input.*;
-import net.engine.scene.SpriteMap;
+import net.engine.input.GameInput;
+import net.engine.input.InputHandler;
 import net.engine.scene.Sprite;
+import net.engine.scene.SpriteMap;
 import net.foxy.FoxyStage;
 
 import java.awt.*;
 
 import static net.engine.global.GlobalRandom.random;
 
-public class TitleScreen extends FoxyStage implements InputHandler
+public class TitleScreen
+    extends FoxyStage
+    implements InputHandler
 {
   protected SpriteMap spriteMap = new SpriteMap();
   protected Sprite startText;

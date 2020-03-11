@@ -84,7 +84,6 @@ public class RayScene
     return intQuotient;
   }
 
-
   public void add(RaycastObject object)
   {
     raycastObjects.add(object);
@@ -157,7 +156,6 @@ public class RayScene
     {
       right = blockColumns - 1;
     }
-
 
     for (int y = top; y <= bottom; y++)
     {

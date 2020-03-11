@@ -5,7 +5,8 @@ import net.engine.picture.ComponentPicture;
 
 import java.awt.image.WritableRaster;
 
-public class ComponentRasterWork extends BasePictureRasterWork
+public class ComponentRasterWork
+    extends BasePictureRasterWork
 {
   private ComponentPicture picture;
 

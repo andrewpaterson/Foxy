@@ -1,6 +1,7 @@
 package net.engine.thread;
 
-public class ThreadRunnable implements Runnable
+public class ThreadRunnable
+    implements Runnable
 {
   private Thread thread;
   private Worker worker;

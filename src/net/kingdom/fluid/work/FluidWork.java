@@ -3,7 +3,8 @@ package net.kingdom.fluid.work;
 import net.engine.thread.Work;
 import net.kingdom.fluid.FluidField;
 
-public abstract class FluidWork extends Work
+public abstract class FluidWork
+    extends Work
 {
   protected FluidField fluidField;
 

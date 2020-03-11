@@ -10,7 +10,8 @@ import java.awt.*;
 
 import static net.engine.global.GlobalRandom.random;
 
-public class LoadingScreen extends FoxyStage
+public class LoadingScreen
+    extends FoxyStage
 {
   private Loader loader;
 

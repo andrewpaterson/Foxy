@@ -7,7 +7,8 @@ import net.engine.initial.Loader;
 
 import java.awt.*;
 
-public class FoxyLoader extends Loader
+public class FoxyLoader
+    extends Loader
 {
   private CelStore celStore;
 

@@ -4,7 +4,8 @@ import net.kingdom.plant.Tree;
 
 import java.awt.*;
 
-public class Seed extends PlantNode
+public class Seed
+    extends PlantNode
 {
   public Seed(Tree tree, PlantNode parent, float angle)
   {

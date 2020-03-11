@@ -4,7 +4,8 @@ import net.engine.input.*;
 
 import java.awt.*;
 
-public abstract class Stage implements InputHandler
+public abstract class Stage
+    implements InputHandler
 {
   protected StageManager stageManager;
 

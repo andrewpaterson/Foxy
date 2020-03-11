@@ -39,7 +39,6 @@ public class Dispersable
     }
     lowPressures += 1;
 
-
     for (PlantNode adjacentNode : adjacentNodes)
     {
       float difference = value - adjacentNode.getValue(type);

@@ -4,7 +4,8 @@ import net.engine.picture.Picture;
 import net.kingdom.FluidStage;
 import net.kingdom.fluid.FluidField;
 
-public class FluidDrawWork extends FluidWork
+public class FluidDrawWork
+    extends FluidWork
 {
   private FluidStage fluidStage;
   private int y;

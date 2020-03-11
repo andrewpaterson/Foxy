@@ -2,7 +2,8 @@ package net.engine.picture;
 
 import java.awt.*;
 
-public class ComponentPicture extends Picture
+public class ComponentPicture
+    extends Picture
 {
   protected int pixels[];
 

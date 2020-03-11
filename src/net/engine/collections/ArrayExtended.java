@@ -1,13 +1,10 @@
 package net.engine.collections;
 
-
-import net.engine.cel.Cel;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ArrayExtended<E> extends ArrayList<E>
+public class ArrayExtended<E>
+    extends ArrayList<E>
 {
   private E defaultValue;
 

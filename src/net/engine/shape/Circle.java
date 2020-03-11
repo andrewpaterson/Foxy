@@ -2,7 +2,8 @@ package net.engine.shape;
 
 import net.engine.math.Float2;
 
-public class Circle extends Shape
+public class Circle
+    extends Shape
 {
   public Float2 center;
   public float radius;

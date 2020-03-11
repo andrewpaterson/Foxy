@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameFrame
-        extends JFrame
+    extends JFrame
 {
   private GameCanvas canvas;
   private GameInput input;

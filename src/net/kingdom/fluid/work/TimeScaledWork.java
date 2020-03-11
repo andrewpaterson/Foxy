@@ -2,7 +2,8 @@ package net.kingdom.fluid.work;
 
 import net.kingdom.fluid.FluidField;
 
-public class TimeScaledWork extends FluidWork
+public class TimeScaledWork
+    extends FluidWork
 {
   private float[] destination;
   private float[] source;

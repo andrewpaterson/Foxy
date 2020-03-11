@@ -8,7 +8,8 @@ import net.engine.shape.result.DistanceResult;
 
 import java.awt.*;
 
-public class RaycastCapsule extends RaycastObject
+public class RaycastCapsule
+    extends RaycastObject
 {
   protected Capsule capsule;
   protected Color colour;

@@ -1,6 +1,7 @@
 package net.engine.input;
 
-public class WheelInput extends BaseInput
+public class WheelInput
+    extends BaseInput
 {
   private float rotation;
 

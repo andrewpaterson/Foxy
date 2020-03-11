@@ -7,7 +7,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class Sprite extends Movable
+public class Sprite
+    extends Movable
 {
   protected ArrayExtended<Cel> cels;
   protected int celFrame;

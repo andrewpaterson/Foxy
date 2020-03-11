@@ -2,7 +2,8 @@ package net.kingdom.fluid.work;
 
 import net.kingdom.fluid.FluidField;
 
-public class FluidAdvectWork extends FluidWork
+public class FluidAdvectWork
+    extends FluidWork
 {
   private int y;
   private int index;
@@ -78,7 +79,7 @@ public class FluidAdvectWork extends FluidWork
       oneMinusYVelocityDecimal = 1 - yVelocityDecimal;
 
       density[offset] = oneMinusXVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex, yIndex1)]) +
-              xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
+                        xVelocityDecimal * (oneMinusYVelocityDecimal * densityPrevious[IX(xIndex1, yIndex)] + yVelocityDecimal * densityPrevious[IX(xIndex1, yIndex1)]);
     }
   }
 }

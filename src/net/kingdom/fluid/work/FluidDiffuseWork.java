@@ -2,7 +2,8 @@ package net.kingdom.fluid.work;
 
 import net.kingdom.fluid.FluidField;
 
-public class FluidDiffuseWork extends FluidWork
+public class FluidDiffuseWork
+    extends FluidWork
 {
   private float[] destination;
   private float[] source;

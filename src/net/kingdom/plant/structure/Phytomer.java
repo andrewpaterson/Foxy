@@ -6,7 +6,8 @@ import java.awt.*;
 
 import static net.engine.global.GlobalRandom.random;
 
-public class Phytomer extends PlantNode
+public class Phytomer
+    extends PlantNode
 {
   private float mass;
   private float maxLength;

@@ -6,7 +6,8 @@ import net.foxy.FoxyStage;
 
 import java.awt.*;
 
-public class NightOne extends FoxyStage
+public class NightOne
+    extends FoxyStage
 {
   protected float brightness;
   protected float direction;

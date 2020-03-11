@@ -4,7 +4,8 @@ import net.engine.thread.Work;
 
 import java.awt.image.WritableRaster;
 
-public abstract class BasePictureRasterWork extends Work
+public abstract class BasePictureRasterWork
+    extends Work
 {
   protected int width;
   protected WritableRaster raster;

@@ -2,7 +2,8 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-public class CopyByteArrayWork extends Work
+public class CopyByteArrayWork
+    extends Work
 {
   private byte[] destination;
   private byte[] source;

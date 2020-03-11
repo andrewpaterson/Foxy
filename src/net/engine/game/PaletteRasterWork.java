@@ -5,7 +5,8 @@ import net.engine.picture.PalettePicture;
 import java.awt.*;
 import java.awt.image.WritableRaster;
 
-public class PaletteRasterWork extends BasePictureRasterWork
+public class PaletteRasterWork
+    extends BasePictureRasterWork
 {
   private PalettePicture picture;
 

@@ -9,7 +9,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tree extends RaycastGroup
+public class Tree
+    extends RaycastGroup
 {
   private List<RaycastCapsule> capsules;
   private PlantNode start;
@@ -76,10 +77,10 @@ public class Tree extends RaycastGroup
     if (length > 0.00001f)
     {
       capsules.add(new RaycastCapsule(new Capsule(startPos,
-              (float) Math.sqrt(plantNode.getMass()),
-              end,
-              (float) Math.sqrt(plantNode.getMass())),
-              getDebugColour(plantNode)));
+                                                  (float) Math.sqrt(plantNode.getMass()),
+                                                  end,
+                                                  (float) Math.sqrt(plantNode.getMass())),
+                                      getDebugColour(plantNode)));
     }
 
     List<PlantNode> childNodes = plantNode.getChildNodes();

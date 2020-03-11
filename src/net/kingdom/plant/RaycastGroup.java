@@ -4,7 +4,8 @@ import net.engine.common.EngineException;
 
 import java.util.List;
 
-public abstract class RaycastGroup extends RaycastObject
+public abstract class RaycastGroup
+    extends RaycastObject
 {
   public RaycastGroup()
   {

@@ -2,7 +2,8 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-public class CopyFloatArrayWork extends Work
+public class CopyFloatArrayWork
+    extends Work
 {
   private float[] destination;
   private float[] source;

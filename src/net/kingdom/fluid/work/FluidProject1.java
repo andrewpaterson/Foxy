@@ -2,7 +2,8 @@ package net.kingdom.fluid.work;
 
 import net.kingdom.fluid.FluidField;
 
-public class FluidProject1 extends FluidWork
+public class FluidProject1
+    extends FluidWork
 {
   private float[] destinationVelocityX;
   private float[] destinationVelocityY;

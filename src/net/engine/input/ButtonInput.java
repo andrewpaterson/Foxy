@@ -1,6 +1,7 @@
 package net.engine.input;
 
-public class ButtonInput extends BaseInput
+public class ButtonInput
+    extends BaseInput
 {
   protected boolean pressed;
   protected Button button;

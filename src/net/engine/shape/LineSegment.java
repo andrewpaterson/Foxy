@@ -3,7 +3,8 @@ package net.engine.shape;
 import net.engine.math.Float2;
 import net.engine.shape.result.DistanceResult;
 
-public class LineSegment extends Shape
+public class LineSegment
+    extends Shape
 {
   public Float2 start;
   public Float2 direction;

@@ -23,9 +23,9 @@ public class ColourGradient
     {
       float f = (float) (i - startIndex) / (float) (endIndex - startIndex);
       colors[i] = new Color(interpolate(f, start.getRed(), end.getRed()),
-              interpolate(f, start.getGreen(), end.getGreen()),
-              interpolate(f, start.getBlue(), end.getBlue()),
-              interpolate(f, start.getAlpha(), end.getAlpha()));
+                            interpolate(f, start.getGreen(), end.getGreen()),
+                            interpolate(f, start.getBlue(), end.getBlue()),
+                            interpolate(f, start.getAlpha(), end.getAlpha()));
     }
   }
 

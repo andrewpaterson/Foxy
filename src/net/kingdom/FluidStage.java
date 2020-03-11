@@ -15,7 +15,8 @@ import net.kingdom.fluid.work.FluidDrawWork;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class FluidStage extends PictureStage
+public class FluidStage
+    extends PictureStage
 {
   protected float force;
   protected float clickDensity;
@@ -41,13 +42,13 @@ public class FluidStage extends PictureStage
     this.fluidField = new FluidField(width, height, timeStep, 0, 0, iterations, iterations);
     this.fluidFieldJob = createColourJob(fluidField, height);
     this.picture.setPaletteFromColourGradient(
-            new Color(0, 0, 0), 0,
-            new Color(99, 44, 255), 50,
-            new Color(237, 0, 56), 100,
-            new Color(237, 0, 201), 150,
-            new Color(237, 100, 201), 200,
-            new Color(255, 253, 75), 240,
-            new Color(255, 255, 255), 255);
+        new Color(0, 0, 0), 0,
+        new Color(99, 44, 255), 50,
+        new Color(237, 0, 56), 100,
+        new Color(237, 0, 201), 150,
+        new Color(237, 100, 201), 200,
+        new Color(255, 253, 75), 240,
+        new Color(255, 255, 255), 255);
   }
 
   void drawDensity(Graphics graphics, int windowWidth, int windowHeight)
@@ -89,7 +90,7 @@ public class FluidStage extends PictureStage
     int j = (int) (mouseY * heightScale(height));
 
     if ((i < 1) || (i > fieldWidth)
-            || (j < 1) || (j > fieldHeight))
+        || (j < 1) || (j > fieldHeight))
     {
       return;
     }

@@ -2,7 +2,8 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-public class CopyIntArrayWork extends Work
+public class CopyIntArrayWork
+    extends Work
 {
   private int[] destination;
   private int[] source;

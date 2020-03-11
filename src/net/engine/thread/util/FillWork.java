@@ -2,7 +2,8 @@ package net.engine.thread.util;
 
 import net.engine.thread.Work;
 
-public class FillWork extends Work
+public class FillWork
+    extends Work
 {
   private float[] destination;
   private final int destinationOffset;

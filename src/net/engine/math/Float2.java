@@ -2,7 +2,8 @@ package net.engine.math;
 
 import java.awt.geom.Point2D;
 
-public class Float2 extends Point2D.Float
+public class Float2
+    extends Point2D.Float
 {
   public Float2()
   {

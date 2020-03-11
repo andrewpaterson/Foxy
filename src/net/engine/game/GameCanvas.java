@@ -3,8 +3,8 @@ package net.engine.game;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
-
-public class GameCanvas extends Canvas
+public class GameCanvas
+    extends Canvas
 {
   private BufferStrategy strategy;
 
@@ -22,12 +22,12 @@ public class GameCanvas extends Canvas
 
   public synchronized void render()
   {
-      Graphics graphics = strategy.getDrawGraphics();
+    Graphics graphics = strategy.getDrawGraphics();
 
-      strategy.show();
-      Toolkit.getDefaultToolkit().sync();
+    strategy.show();
+    Toolkit.getDefaultToolkit().sync();
 
-      graphics.dispose();
+    graphics.dispose();
   }
 
   public Graphics beginFrame()

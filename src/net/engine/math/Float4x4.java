@@ -80,16 +80,16 @@ public class Float4x4
   public static Float4x4 rotationX(double rad)
   {
     return new Float4x4(new Float4(1, 0, 0, 0),
-            new Float4(0, (float) Math.cos(rad), -(float) Math.sin(rad), 0),
-            new Float4(0, (float) Math.sin(rad), (float) Math.cos(rad), 0),
-            new Float4(0, 0, 0, 1));
+                        new Float4(0, (float) Math.cos(rad), -(float) Math.sin(rad), 0),
+                        new Float4(0, (float) Math.sin(rad), (float) Math.cos(rad), 0),
+                        new Float4(0, 0, 0, 1));
   }
 
   public static Float4x4 rotationY(double rad)
   {
     return new Float4x4(new Float4((float) Math.cos(rad), 0, (float) Math.sin(rad), 0),
-            new Float4(0, 1, 0, 0),
-            new Float4(-(float) Math.sin(rad), 0, (float) Math.cos(rad), 0),
-            new Float4(0, 0, 0, 1));
+                        new Float4(0, 1, 0, 0),
+                        new Float4(-(float) Math.sin(rad), 0, (float) Math.cos(rad), 0),
+                        new Float4(0, 0, 0, 1));
   }
 }

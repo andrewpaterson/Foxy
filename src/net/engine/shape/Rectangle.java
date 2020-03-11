@@ -2,7 +2,8 @@ package net.engine.shape;
 
 import net.engine.math.Float2;
 
-public class Rectangle extends Shape
+public class Rectangle
+    extends Shape
 {
   public Float2 topLeft;
   public Float2 bottomRight;
@@ -60,7 +61,6 @@ public class Rectangle extends Shape
   {
     return bottomRight;
   }
-
 
   public boolean contains(Float2 position)
   {

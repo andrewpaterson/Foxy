@@ -6,7 +6,8 @@ import net.engine.thread.Work;
 
 import java.util.Random;
 
-public class SpeckleWork extends Work
+public class SpeckleWork
+    extends Work
 {
   private int width;
   private Random random;

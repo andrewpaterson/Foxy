@@ -1,6 +1,7 @@
 package net.engine.input;
 
-public class PointerInput extends BaseInput
+public class PointerInput
+    extends BaseInput
 {
   private PointerLocation location;
 

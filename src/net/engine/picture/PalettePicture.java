@@ -2,7 +2,8 @@ package net.engine.picture;
 
 import java.awt.*;
 
-public class PalettePicture extends Picture
+public class PalettePicture
+    extends Picture
 {
   protected byte pixels[];
   protected Color[] palette;

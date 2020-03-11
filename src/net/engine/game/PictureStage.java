@@ -2,16 +2,17 @@ package net.engine.game;
 
 import net.engine.common.EngineException;
 import net.engine.common.Timer;
-import net.engine.picture.Picture;
 import net.engine.picture.ComponentPicture;
 import net.engine.picture.PalettePicture;
+import net.engine.picture.Picture;
 import net.engine.thread.Threadanator;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
-public abstract class PictureStage extends Stage
+public abstract class PictureStage
+    extends Stage
 {
   protected Picture picture;
   protected BufferedImage bufferedImage;

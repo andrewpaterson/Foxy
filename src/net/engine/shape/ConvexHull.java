@@ -4,7 +4,8 @@ import net.engine.math.Float2;
 
 import java.util.ArrayList;
 
-public class ConvexHull extends Shape
+public class ConvexHull
+    extends Shape
 {
   ArrayList<LineSegment> segments;
   boolean closed;

@@ -6,13 +6,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class InputAdapter
-        implements
-        WindowListener,
-        MouseMotionListener,
-        MouseWheelListener,
-        KeyListener,
-        MouseListener,
-        ComponentListener
+    implements
+    WindowListener,
+    MouseMotionListener,
+    MouseWheelListener,
+    KeyListener,
+    MouseListener,
+    ComponentListener
 
 {
   private GameInput input;

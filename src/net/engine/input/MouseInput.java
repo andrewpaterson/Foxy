@@ -1,6 +1,7 @@
 package net.engine.input;
 
-public class MouseInput extends ButtonInput
+public class MouseInput
+    extends ButtonInput
 {
   private PointerLocation location;
 

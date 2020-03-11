@@ -2,7 +2,6 @@ package net.engine.global;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 public class GlobalGraphics
 {

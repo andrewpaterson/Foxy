@@ -130,7 +130,6 @@ public class Cel
     return bufferedImage.getHeight();
   }
 
-
   public int getLeft()
   {
     int width = bufferedImage.getWidth();

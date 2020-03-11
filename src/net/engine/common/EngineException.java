@@ -1,6 +1,7 @@
 package net.engine.common;
 
-public class EngineException extends RuntimeException
+public class EngineException
+    extends RuntimeException
 {
   public EngineException()
   {

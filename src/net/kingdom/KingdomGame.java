@@ -4,11 +4,12 @@ import net.engine.game.FrameConfig;
 import net.engine.game.Game;
 import net.engine.thread.Threadanator;
 
-public class KingdomGame extends Game
+public class KingdomGame
+    extends Game
 {
   public static int SCALE = 2;
-  public static int RENDER_WIDTH = (int) (2560/SCALE)-80;
-  public static int RENDER_HEIGHT = (int) (1440/SCALE)-80;
+  public static int RENDER_WIDTH = (1920 / SCALE) - 240;
+  public static int RENDER_HEIGHT = (1080 / SCALE) - 240;
 
   public KingdomGame()
   {

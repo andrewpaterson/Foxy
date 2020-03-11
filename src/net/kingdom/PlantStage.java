@@ -21,8 +21,9 @@ import java.util.List;
 import static net.kingdom.plant.structure.PlantNode.SUGAR;
 import static net.kingdom.plant.structure.PlantNode.WATER;
 
-
-public class PlantStage extends PictureStage implements TreeDebug
+public class PlantStage
+    extends PictureStage
+    implements TreeDebug
 {
   protected List<Tree> trees;
   protected RayScene rayScene;
@@ -44,14 +45,14 @@ public class PlantStage extends PictureStage implements TreeDebug
 
     Color[] colors = new Color[256];
     ColourGradient.generate(colors,
-            new Color(140, 190, 255), 0,
-            new Color(100, 150, 255), 120,
-            new Color(50, 100, 255), 205,
-            new Color(50, 255, 50), 210,
-            new Color(30, 200, 30), 220,
-            new Color(130, 200, 60), 230,
-            new Color(105, 72, 7, 255), 240,
-            new Color(72, 42, 14, 255), 255);
+                            new Color(140, 190, 255), 0,
+                            new Color(100, 150, 255), 120,
+                            new Color(50, 100, 255), 205,
+                            new Color(50, 255, 50), 210,
+                            new Color(30, 200, 30), 220,
+                            new Color(130, 200, 60), 230,
+                            new Color(105, 72, 7, 255), 240,
+                            new Color(72, 42, 14, 255), 255);
 
     float scale = 255.0f / renderHeight;
 
@@ -113,9 +114,9 @@ public class PlantStage extends PictureStage implements TreeDebug
     {
       float brightness = closestRayResult.normal.z * 0.5f + 0.5f;
       int colour = Colour.getARGB(1,
-              brightness * ((float) closestRayResult.color.getRed() / 255),
-              brightness * ((float) closestRayResult.color.getGreen() / 255),
-              brightness * ((float) closestRayResult.color.getBlue() / 255));
+                                  brightness * ((float) closestRayResult.color.getRed() / 255),
+                                  brightness * ((float) closestRayResult.color.getGreen() / 255),
+                                  brightness * ((float) closestRayResult.color.getBlue() / 255));
       picture.unsafeSetPixel(x, y, colour);
     }
   }
