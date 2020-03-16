@@ -101,7 +101,7 @@ public class CelTrimmer
 
   private boolean isTransparent(WritableRaster raster, int x, int y)
   {
-    int colour[] = new int[4];
+    int[] colour = new int[4];
     raster.getPixel(x, y, colour);
     return colour[3] == 0;
   }

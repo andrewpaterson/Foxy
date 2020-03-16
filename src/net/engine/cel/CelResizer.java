@@ -17,16 +17,16 @@ public class CelResizer
     // E0 E1
     // E2 E3
 
-    int B[] = new int[4];
-    int D[] = new int[4];
-    int E[] = new int[4];
-    int F[] = new int[4];
-    int H[] = new int[4];
+    int[] B = new int[4];
+    int[] D = new int[4];
+    int[] E = new int[4];
+    int[] F = new int[4];
+    int[] H = new int[4];
 
-    int E0[];
-    int E1[];
-    int E2[];
-    int E3[];
+    int[] E0;
+    int[] E1;
+    int[] E2;
+    int[] E3;
 
     WritableRaster sourceRaster = source.getRaster();
 
@@ -72,14 +72,7 @@ public class CelResizer
 
   private static boolean equals(int[] ai1, int[] ai2)
   {
-    if ((ai1[0] == ai2[0]) && (ai1[1] == ai2[1]) && (ai1[2] == ai2[2]) && (ai1[3] == ai2[3]))
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return (ai1[0] == ai2[0]) && (ai1[1] == ai2[1]) && (ai1[2] == ai2[2]) && (ai1[3] == ai2[3]);
   }
 }
 
