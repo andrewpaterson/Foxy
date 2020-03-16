@@ -31,7 +31,7 @@ public abstract class PictureStage
     graphics.drawImage(bufferedImage, 0, 0, windowWidth, windowHeight, 0, 0, picture.getWidth(), picture.getHeight(), null);
   }
 
-  public BufferedImage convertPalettePictureToImageRaster(Picture picture, BufferedImage image)
+  public void convertPalettePictureToImageRaster(Picture picture, BufferedImage image)
   {
     Threadanator threadanator = Threadanator.getInstance();
 
@@ -58,7 +58,6 @@ public abstract class PictureStage
     threadanator.process(16);
 
     image.releaseWritableTile(0, 0);
-    return image;
   }
 
   protected float widthScale(float windowWidth)
