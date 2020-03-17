@@ -1,16 +1,30 @@
 package net.engine.picture;
 
+import net.engine.picture.palette.GreyPalette;
+
 import java.awt.*;
+import java.util.Arrays;
 
 public class PalettePicture
     extends Picture
 {
-  protected byte pixels[];
+  protected byte[] pixels;
   protected Color[] palette;
 
   public PalettePicture(int width, int height)
   {
+    this(width, height, GreyPalette.create());
+  }
+
+  public PalettePicture(int width, int height, Color[] palette)
+  {
     super(width, height, width);
+    initialisePixels(width, height);
+    this.palette = palette;
+  }
+
+  private void initialisePixels(int width, int height)
+  {
     pixels = (byte[]) data;
 
     for (int y = 0; y < height; y++)
@@ -20,8 +34,6 @@ public class PalettePicture
         pixels[IX(x, y)] = -128;
       }
     }
-
-    palette = new Color[256];
   }
 
   @Override
@@ -67,6 +79,12 @@ public class PalettePicture
   public void setPaletteFromColourGradient(Object... o)
   {
     ColourGradient.generate(palette, o);
+  }
+
+  @Override
+  public void clear(int colourIndex)
+  {
+    Arrays.fill(pixels, toByte(colourIndex));
   }
 }
 

@@ -12,14 +12,14 @@ public class LeneGame
 {
   public LeneGame()
   {
-    super(new FrameConfig("Window", 1024, 768));
+    super(new FrameConfig("Window", 1280, 960));
   }
 
   private void start()
   {
     Threadanator.getInstance().start();
 
-    stageManager.addStage("First Try", new LeneStage(1024, 768));
+    stageManager.addStage("First Try", new PicturePractice(320, 240));
     stageManager.setStage("First Try");
 
     run();

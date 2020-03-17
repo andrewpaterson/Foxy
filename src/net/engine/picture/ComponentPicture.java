@@ -1,11 +1,12 @@
 package net.engine.picture;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class ComponentPicture
     extends Picture
 {
-  protected int pixels[];
+  protected int[] pixels;
 
   public ComponentPicture(int width, int height)
   {
@@ -47,6 +48,12 @@ public class ComponentPicture
   @Override
   public void setPaletteFromColourGradient(Object... o)
   {
+  }
+
+  @Override
+  public void clear(int colourIndex)
+  {
+    Arrays.fill(pixels, colourIndex);
   }
 }
 

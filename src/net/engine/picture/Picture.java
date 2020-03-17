@@ -134,4 +134,7 @@ public abstract class Picture
   public abstract void setPaletteColor(int index, Color color);
 
   public abstract void setPaletteFromColourGradient(Object... o);
+
+  public abstract void clear(int colourIndex);
 }
+

@@ -23,11 +23,21 @@ public class PaletteRasterWork
     {
       int colourIndex = picture.unsafeGetPixel(x, y);
       Color pixelColour = picture.getPaletteColour(colourIndex);
-      this.calculationColour[3] = pixelColour.getAlpha();
-      this.calculationColour[0] = pixelColour.getRed();
-      this.calculationColour[1] = pixelColour.getGreen();
-      this.calculationColour[2] = pixelColour.getBlue();
-      raster.setPixel(x, y, this.calculationColour);
+      if (pixelColour != null)
+      {
+        calculationColour[3] = pixelColour.getAlpha();
+        calculationColour[0] = pixelColour.getRed();
+        calculationColour[1] = pixelColour.getGreen();
+        calculationColour[2] = pixelColour.getBlue();
+      }
+      else
+      {
+        calculationColour[3] = 255;
+        calculationColour[0] = 128;
+        calculationColour[1] = 128;
+        calculationColour[2] = 128;
+      }
+      raster.setPixel(x, y, calculationColour);
     }
   }
 }
