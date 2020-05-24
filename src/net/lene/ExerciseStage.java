@@ -42,3 +42,4 @@ public abstract class ExerciseStage extends PictureStage
     }
   }
 }
+

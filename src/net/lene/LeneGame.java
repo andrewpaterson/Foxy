@@ -12,7 +12,7 @@ public class LeneGame
 {
   public LeneGame()
   {
-    super(new FrameConfig("Window", 1280, 960));
+    super(new FrameConfig("Window", 640, 480));
   }
 
   private void start()
